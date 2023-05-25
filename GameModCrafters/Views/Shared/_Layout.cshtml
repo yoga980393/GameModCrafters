@@ -5,41 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GameModCrafters</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/footer.css" />
+    @*footer_icon*@
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css'>
+    @await RenderSectionAsync("Login_css", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GameModCrafters</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            &copy; 2023 - GameModCrafters - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 order-1">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">登入</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">註冊</a>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-light rounded" type="submit">Search</button>
+                </form>
+            </div>
         </div>
-    </footer>
+    </nav>
+    
+    @RenderBody()
+     
+
+    <div class="footer">
+        <div class="title">
+            <h3>&copy;copyright 2023 by dan</h3>
+        </div>
+        <div class="wrap">
+            <div class="logo">
+                GameModeLogo
+            </div>
+            <div class="icon_img">
+                <a href=""><i class="fi fi-brands-instagram"></i></a>
+                <a href=""><i class="fi fi-brands-facebook"></i></a>
+                <a href=""><i class="fi fi-brands-twitter"></i></a>
+                <a href=""><i class="fi fi-brands-youtube"></i></a>
+                <a href=""><i class="fi fi-brands-twitch"></i></a>
+            </div>
+
+        </div>
+        <div class="wrap_bottom">
+            <div class="company">
+                版權所有
+                &copy; 2023第七組電腦單機mod委託公司
+            </div>
+            <div class="menu">
+                <a href="">服務條款</a>
+                <a href="">隱私策略</a>
+
+            </div>
+        </div>
+
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

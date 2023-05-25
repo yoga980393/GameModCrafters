@@ -1,0 +1,41 @@
+﻿.footer {
+    background-color: black;
+    width: 100%;
+    text-align: center;
+    color: white;
+    padding: 40px;
+}
+
+.wrap {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 24px;
+    border-bottom: #ccc solid 1px;
+    padding: 10px;
+}
+
+.icon_img a {
+    padding: 0 10px;
+    color: white;
+}
+
+.wrap_bottom {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 10px;
+}
+
+.menu {
+    display: flex;
+}
+
+.menu a {
+     color: white;
+     padding: 0 5px;
+}
+
+.menu a:first-child {
+     border-right: #ccc solid 1px;
+}

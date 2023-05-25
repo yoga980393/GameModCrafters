@@ -1,0 +1,67 @@
+﻿<div class="loginwrap">
+    <div class="login">
+        <div class="text">
+            <h1>Log in 登入</h1>
+        </div>
+
+        <div class="form-floating ">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput">電子郵件/使用者名稱</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+            <label for="floatingPassword">密碼</label>
+        </div>
+        <div class="forgot">
+            <i class="fi fi-rr-exclamation"></i>
+
+            <a href="Forgot_Password.html"> 忘記密碼</a>
+
+        </div>
+        <div class="d-grid col-6 mx-auto">
+            <button type="submit" class="btn btn-primary">登入</button>
+        </div>
+
+        <div class="register">
+            <p>需要一個帳戶?</p>
+            <a href="">點我註冊</a>
+        </div>
+    </div>
+
+</div>
+@section Login_css{
+    <style>
+        body {
+            background-color: gray;
+        }
+
+        .loginwrap {
+            width: 50%;
+            height: 100vh;
+            background-color: azure;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login {
+            margin-top: -300px;
+            width: 800px;
+            display: grid;
+            gap: 20px;
+            padding: 50px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .register,
+        .forgot {
+            display: flex;
+            padding: 5px;
+            gap: 10px;
+        }
+    </style>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+}
