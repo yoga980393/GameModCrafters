@@ -2,6 +2,7 @@
 using GameModCrafters.Models;
 using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GameModCrafters.Controllers
@@ -20,7 +21,7 @@ namespace GameModCrafters.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterPage(RegisterViewModel register)
+        public async Task<IActionResult> RegisterPage([Bind("Email, Username, Password")] RegisterViewModel register)
         {
             if(ModelState.IsValid)
             {
@@ -30,9 +31,11 @@ namespace GameModCrafters.Controllers
                     Username = register.Username,
                     Password = register.Password,
                 };
-                string password1 = Request.Form["password1"];
-                string password2 = Request.Form["password2"];
-
+                //string password1 = Request.Form["password1"];
+                //string password2 = Request.Form["password2"];
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+               
             }
             return View(register);
         }

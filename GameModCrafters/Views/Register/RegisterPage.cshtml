@@ -11,37 +11,37 @@
 
         </div>
 
-
-        <form action="/Register/RegisterPage" method="post">
+        @using (Html.BeginForm("RegisterPage", "Register", FormMethod.Post))
+        {
+        @*<form action="/Register/RegisterPage" method="post">*@
             
             <div class="mb-3">
-                <label asp-for="Username" for="exampleInputUsername" class="form-label">使用者名稱</label>
-                <input asp-for="Username" type="Username" class="form-control" id="exampleInputUsername" aria-describedby="emailHelp">
+                <label  for="exampleInputUsername" class="form-label">使用者名稱</label>
+                <input asp-for="Username" name="Username" type="Username" class="form-control" id="exampleInputUsername" aria-describedby="emailHelp">
                
                 @Html.ValidationMessageFor(m=>m.Username,"",new{@class = "text-danger"})
-                @*<span asp-validation-for="Username" class="text-danger"></span>*@
+               
             </div>
 
             <div class="mb-3">
                 <label for="exampleInputEmail" class="form-label">電子郵件</label>
-                <input type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp">
+                <input asp-for="Email" type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp">
                 <div id="emailHelp" class="form-text" style="color:gray">我們絕不會與其他任何人分享您的電子郵件。</div>
+                @Html.ValidationMessageFor(m=>m.Email,"",new{@class = "text-danger"})
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">密碼</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" name="password1"
+                <input asp-for="Password" name="Password" type="password" class="form-control" id="exampleInputPassword1"
                        aria-labelledby="passwordHelpBlock">
-                <div id="passwordHelpBlock" class="form-text">
-                    您的密碼長度必須為 8-20 個字符，包含字母和數字，並且不得包含空格、特殊字符或表情符號。
-                </div>
+                
+                @Html.ValidationMessageFor(m=>m.Password,"",new{@class = "text-danger"})
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword2" class="form-label">確認密碼</label>
-                <input type="password" class="form-control" id="exampleInputPassword2" name="password2"
+                <input asp-for="Password" name="Password" type="password" class="form-control" id="exampleInputPassword2"
                        aria-labelledby="passwordHelpBlock">
-                <div id="passwordHelpBlock" class="form-text">
-                    您的密碼長度必須為 8-20 個字符，包含字母和數字，並且不得包含空格、特殊字符或表情符號。
-                </div>
+                
+                @Html.ValidationMessageFor(m=>m.Password,"",new{@class = "text-danger"})
             </div>
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -49,17 +49,74 @@
             </div>
 
             <div class="d-grid col-12 mx-auto">
-                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">註冊</button>
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" disabled="true">註冊</button>
             </div>
 
-        </form>
+        }
     </div>
 </div>
+<script>
+    function ClickMeNotRobot() {
+        let checkbox = document.getElementById('exampleCheck1')
+        let submitBtn = document.getElementById('submitBtn')
+        checkbox.addEventListener('change', function () {
+            if (checkbox.checked) {
+                submitBtn.removeAttribute('disabled')
+            }
+            else {
+                submitBtn.setAttribute('disabled', true)
+            }
+        })
+    }
+    window.onload = function () {
+        ClickMeNotRobot()
+    }
+</script>
+@*<script>
+    $(document).ready(function () {
+        $('#submitBtn').click(function () {
+            var password1 = $('#exampleInputPassword1').val();
+            var password2 = $('#exampleInputPassword2').val();
+
+            if (password1 !== password2) {
+                // 密碼與確認密碼不相符，執行錯誤處理邏輯
+                console.log("密碼與確認密碼不相符");
+                return;
+            }
+
+            var formData = {
+                email: $('#exampleInputEmail').val(),
+                username: $('#exampleInputUsername').val(),
+                password1: $('#exampleInputPassword1').val()
+            };
+
+            $.ajax({
+                url: '/Register/RegisterPage',
+                method: 'POST',
+                data: formData,
+                success: function (response) {
+                    // 處理成功回應
+                    console.log(response);
+                },
+                error: function (error) {
+                    // 處理錯誤回應
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>*@
+
+
 @section regiserendjs{
+
+
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
 @section register_css{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <style>
         body {
             background-color: gray;
@@ -89,7 +146,7 @@
 
         .login .Sign_in {
             display: flex;
-            align-items: center;
+          
             margin-bottom: 20px;
         }
 
