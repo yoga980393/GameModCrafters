@@ -10,7 +10,7 @@ namespace GameModCrafters.ViewModels
         [Required(ErrorMessage = "此欄位為必填"), MaxLength(255), Display(Name = "用戶名")]
         public string Username { get; set; }
 
-        [Required(ErrorMessage = "您的密碼長度必須為 8-20 個字符"), MaxLength(255), Display(Name = "密碼")]
+        [Required(ErrorMessage = "此欄位為必填"), MaxLength(255), Display(Name = "密碼")]
 
         public string Password { get; set; }
         
