@@ -1,0 +1,134 @@
+﻿@model RegisterViewModel
+<div class="registerwrap">
+    <div class="login">
+
+        <div class="text">
+            <h1>註冊新的帳戶</h1>
+            <div class="Sign_in">
+                <p>已經有帳戶了?</p>
+                <a href="Log_In.html">登入</a>
+            </div>
+
+        </div>
+
+
+        <form action="/Register/RegisterPage" method="post">
+            
+            <div class="mb-3">
+                <label asp-for="Username" for="exampleInputUsername" class="form-label">使用者名稱</label>
+                <input asp-for="Username" type="Username" class="form-control" id="exampleInputUsername" aria-describedby="emailHelp">
+               
+                @Html.ValidationMessageFor(m=>m.Username,"",new{@class = "text-danger"})
+                @*<span asp-validation-for="Username" class="text-danger"></span>*@
+            </div>
+
+            <div class="mb-3">
+                <label for="exampleInputEmail" class="form-label">電子郵件</label>
+                <input type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp">
+                <div id="emailHelp" class="form-text" style="color:gray">我們絕不會與其他任何人分享您的電子郵件。</div>
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">密碼</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" name="password1"
+                       aria-labelledby="passwordHelpBlock">
+                <div id="passwordHelpBlock" class="form-text">
+                    您的密碼長度必須為 8-20 個字符，包含字母和數字，並且不得包含空格、特殊字符或表情符號。
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword2" class="form-label">確認密碼</label>
+                <input type="password" class="form-control" id="exampleInputPassword2" name="password2"
+                       aria-labelledby="passwordHelpBlock">
+                <div id="passwordHelpBlock" class="form-text">
+                    您的密碼長度必須為 8-20 個字符，包含字母和數字，並且不得包含空格、特殊字符或表情符號。
+                </div>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">點擊我確認不是機器人</label>
+            </div>
+
+            <div class="d-grid col-12 mx-auto">
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">註冊</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+@section regiserendjs{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+@section register_css{
+    <style>
+        body {
+            background-color: gray;
+        }
+
+        .registerwrap {
+            width: 100%;
+            height: 100vh;
+            background-color: azure;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .login .text {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login .Sign_in {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .login .Sign_in p {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .login .Sign_in a {
+            text-decoration: none;
+        }
+
+        .login .Sign_in a:hover {
+            text-decoration: underline;
+        }
+
+        .login form .mb-3 {
+            margin-bottom: 20px;
+        }
+
+        .login form .form-text {
+            color: red;
+        }
+
+        .login form label {
+            font-weight: bold;
+        }
+
+        .login form .form-control {
+            border-radius: 5px;
+        }
+
+        .login form .form-check-label {
+            font-weight: normal;
+        }
+
+        .login form #submitBtn {
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+}

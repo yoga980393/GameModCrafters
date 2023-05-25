@@ -1,19 +1,25 @@
-﻿using GameModCrafters.ViewModels;
+﻿using GameModCrafters.Data;
+using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameModCrafters.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly ApplicationDbContext _context;
+        public AccountController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult LoginPage()
         {
             // 登入頁面
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(LoginViewModel model)
+        public IActionResult LoginPage(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
