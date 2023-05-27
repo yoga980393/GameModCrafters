@@ -1,4 +1,4 @@
-﻿using GameModCrafters.ViewModels;
+﻿ using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameModCrafters.Controllers
