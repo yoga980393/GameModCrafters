@@ -1,0 +1,183 @@
+﻿.ck.ck-content {
+    min-height: 200px;
+    /* 設置你希望的最小高度 */
+}
+
+.myEditor {
+    position: relative;
+}
+
+.myGroup {
+    position: absolute;
+    right: 4px;
+    top: 36px;
+    z-index: 1;
+}
+
+.custom-btn {
+    height: 33px;
+    /* 設置您希望的按鈕高度 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.myCheck {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .myCheck .form-control {
+        width: 100px;
+    }
+
+    .myCheck .form-select {
+        width: 100px;
+    }
+
+.editor {
+    display: none;
+}
+
+    .editor.active {
+        display: block;
+    }
+
+.submitBtn {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.tagBtn {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    order: 1;
+}
+
+    .tagBtn:hover {
+        background-color: #0069d9;
+    }
+
+.tagList {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.delete-tag-btn {
+    background-color: red;
+    padding: 0;
+    margin: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    border: none;
+    color: white;
+}
+
+#cropperImage {
+    width: 100%;
+    /* 設定圖片寬度為 100% */
+    height: auto;
+    /* 設定圖片高度為自動 */
+    object-fit: contain;
+    /* 保持圖片寬高比 */
+}
+
+.mod .card {
+    margin-bottom: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.title {
+    font-size: 25px;
+    padding-top: 5px;
+    padding-left: 10px;
+}
+
+.mod img {
+    width: 100%;
+    vertical-align: top;
+}
+
+.mod .name_price {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mod .text {
+    padding: 5px 10px;
+    font-size: 20px;
+}
+
+.mod .name_price h3 {
+    font-size: 20px;
+}
+
+.mod .detail {
+    height: 180px;
+}
+
+    .mod .detail h3 {
+        font-size: 15px;
+    }
+
+    .mod .detail h2 {
+        font-size: 20px;
+    }
+
+        .mod .detail h2 span {
+            margin-right: 5px;
+            color: white;
+        }
+
+.mod .tag {
+    color: orange;
+}
+
+.mod .detail span {
+    color: gray;
+}
+
+.mod .describe {
+    font-size: 13px;
+    text-indent: 26px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mod .data {
+    display: flex;
+    padding: 5px 15px;
+    padding-top: 10px;
+    justify-content: space-between;
+    background-color: #ccc;
+    vertical-align: top;
+}
+
+    .mod .data h3 {
+        font-size: 13px;
+    }
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    box-shadow: 1px 1px 5px 1px #cccccc;
+}

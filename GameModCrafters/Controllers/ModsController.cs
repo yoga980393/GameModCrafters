@@ -50,7 +50,11 @@ namespace GameModCrafters.Controllers
         public IActionResult Create()
         {
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email");
-            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId");
+            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameName");
+
+            var tags = _context.Tags.Select(t => t.TagName).ToList();
+            ViewData["Tags"] = tags;
+
             return View();
         }
 
@@ -59,14 +63,40 @@ namespace GameModCrafters.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ModId,GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod)
+        public async Task<IActionResult> Create([Bind("ModId,GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags)
         {
-            if (ModelState.IsValid)
+            var counter = await _context.Counters.FindAsync(1);
+            string newModId = $"m{counter.Value + 1:D4}";  // Format as 'm0001'
+            counter.Value++;  // Increment counter
+            _context.Counters.Update(counter);
+            await _context.SaveChangesAsync();
+            mod.ModId = newModId;
+
+            foreach (var tagName in SelectedTags)
             {
+                if (tagName == "選擇一個tag") continue;
+
+                // 根據 tag 名稱找到對應的 tag
+                var tag = await _context.Tags.SingleOrDefaultAsync(t => t.TagName == tagName);
+                if (tag != null)
+                {
+                    // 將新的 ModTag 加入到 ModTags 表中
+                    var modTag = new ModTag { ModId = mod.ModId, TagId = tag.TagId };
+                    _context.Add(modTag);
+                }
+            }
+
+            ModelState.Clear();
+            if (TryValidateModel(mod))
+            {
+                mod.CreateTime = DateTime.Now;
+                mod.UpdateTime = DateTime.Now;
                 _context.Add(mod);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email", mod.AuthorId);
             ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", mod.GameId);
             return View(mod);
@@ -153,6 +183,11 @@ namespace GameModCrafters.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var mod = await _context.Mods.FindAsync(id);
+
+            // Find all ModTag entities related to the Mod.
+            var modTags = _context.ModTags.Where(mt => mt.ModId == id);
+            _context.ModTags.RemoveRange(modTags);
+
             _context.Mods.Remove(mod);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

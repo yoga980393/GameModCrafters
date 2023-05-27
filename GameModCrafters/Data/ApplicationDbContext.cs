@@ -26,6 +26,8 @@ namespace GameModCrafters.Data
         public DbSet<PrivateMessage> PrivateMessages { get; set; }
         public DbSet<ContactUs> ContactUsMessages { get; set; }
         public DbSet<CommissionTracking> CommissionTrackings { get; set; }
+        public DbSet<Counter> Counters { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,26 +50,22 @@ namespace GameModCrafters.Data
             modelBuilder.Entity<PrivateMessage>()
                 .HasOne(pm => pm.Sender)
                 .WithMany(u => u.SentMessages)
-                .HasForeignKey(pm => pm.SenderId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(pm => pm.SenderId);
 
             modelBuilder.Entity<PrivateMessage>()
                 .HasOne(pm => pm.Receiver)
                 .WithMany(u => u.ReceivedMessages)
-                .HasForeignKey(pm => pm.ReceiverId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(pm => pm.ReceiverId);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Payer)
                 .WithMany(u => u.Payments)
-                .HasForeignKey(t => t.PayerId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(t => t.PayerId);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Payee)
                 .WithMany(u => u.Incomes)
-                .HasForeignKey(t => t.PayeeId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(t => t.PayeeId);
 
             modelBuilder.Entity<Commission>()
                 .Property(c => c.Budget)
@@ -76,6 +74,19 @@ namespace GameModCrafters.Data
             modelBuilder.Entity<Mod>()
                 .Property(m => m.Price)
                 .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<Counter>()
+                .HasData(new Counter { CounterId = 1, Value = 0 });
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var foreignKeys = entityType.GetForeignKeys();
+
+                foreach (var foreignKey in foreignKeys)
+                {
+                    foreignKey.DeleteBehavior = DeleteBehavior.NoAction;
+                }
+            }
 
             base.OnModelCreating(modelBuilder);
         }
