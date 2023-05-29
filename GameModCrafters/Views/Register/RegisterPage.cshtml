@@ -31,14 +31,14 @@
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">密碼</label>
-                <input asp-for="Password" name="Password" type="password" class="form-control" id="exampleInputPassword1"
+                <input asp-for="Password" name="Password1" type="password" class="form-control" id="exampleInputPassword1"
                        aria-labelledby="passwordHelpBlock">
                 
                 @Html.ValidationMessageFor(m=>m.Password,"",new{@class = "text-danger"})
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword2" class="form-label">確認密碼</label>
-                <input asp-for="Password" name="Password" type="password" class="form-control" id="exampleInputPassword2"
+                <input asp-for="Password" name="Password2" type="password" class="form-control" id="exampleInputPassword2"
                        aria-labelledby="passwordHelpBlock">
                 
                 @Html.ValidationMessageFor(m=>m.Password,"",new{@class = "text-danger"})
