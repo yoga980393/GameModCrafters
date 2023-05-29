@@ -2,7 +2,249 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container my-4">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+        </div>
+
+        <div class="carousel-inner carousel-custom-height">
+        </div>
+
+        <button class="carousel-control-prev " type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="Bulletin">
+                <div class="BulletinTitle">
+                    <h3 class="title">公告：</h3>
+                    <h4 class="list">公告列表 ></h4>
+                </div>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="Bulletin">
+                <div class="BulletinTitle">
+                    <h3 class="title">最新消息：</h3>
+                    <h4 class="list">消息列表 ></h4>
+                </div>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+                <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="badge bg-secondary">tag</span> Launch demo modal
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-4 mod">
+    <h3>熱門Mod：</h3>
+    <div class="row" id="modCardRow">
+        <!-- 改用js產生 -->
+    </div>
+</div>
+
+<div class="container my-4 author">
+    <h3>熱門作者：</h3>
+    <div class="row" id="authorRow">
+        <!-- 改用js產生 -->
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section css{
+    <link rel="stylesheet" href="~/css/HomePageStyle.css" />
+}
+
+@section js{
+
+    <script>
+
+        let imgArray = [1, 2, 3, 4, 5];
+        let modCardArray = [1, 2, 3, 4]
+        let authorCardArray = [5, 6, 7, 8]
+        let data = {
+            author: "mod名字",
+            price: 100,
+            game: "遊戲名稱",
+            name: "mod名稱",
+            create_time: "2021/01/01",
+            update_time: "2021/01/01",
+            description: "mod描述",
+            capacity: "10mb",
+            likes: 5,
+            favorites: 5,
+            downloads: 5
+        }
+        let authorData = {
+            name: "作者名字",
+            works: 5,
+            likes: 100
+        }
+
+        function createImg() {
+            let carousel_inner = document.querySelector(".carousel-inner");
+
+            imgArray.forEach((element, index) => {
+                let isActive = index === 0 ? " active" : "";
+                let img = ` <div class="carousel-item${isActive}" data-bs-interval="3000">
+                                <img src="https://picsum.photos/300/200/?random=${element}" class="d-block w-100" alt="...">
+                                <div class="carousel-caption d-none d-md-block">
+                                <h5>遊戲 ${element}</h5>
+                                <p>遊戲 ${element} 的說明文字</p>
+                                </div>
+                            </div>`;
+                carousel_inner.innerHTML += img;
+            });
+        }
+        function indicator() {
+            let carousel_indicators = document.querySelector(".carousel-indicators");
+
+            imgArray.forEach((element, index) => {
+                let isActive = index === 0 ? " active" : "";
+                let img = ` <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to=${index} class=${isActive}
+                            aria-label="Slide ${index + 1}"></button>`;
+                carousel_indicators.innerHTML += img;
+            });
+        }
+        function modCard() {
+            let row = document.querySelector("#modCardRow");
+            modCardArray.forEach((item) => {
+                let card = `<div class="col-12 col-md-3">
+                                    <div class="card">
+                                        <div class="pic">
+                                            <img src="https://picsum.photos/300/200/?random=${item}">
+                                        </div>
+                                        <div class="text">
+                                            <div class="name_price">
+                                                <h3 class="name">${data.name}</h3>
+                                                <h3 class="price">$ ${data.price}</h3>
+                                            </div>
+                                            <div class="detail">
+                                                <h2 class="tag"><span class="badge bg-secondary">${data.game}</span><span class="badge bg-secondary">tag1</span><span class="badge bg-secondary">tag2</span></h2>
+                                                <h3 class="author"><span>作者：</span>${data.author}</h3>
+                                                <h3 class="creatTime"><span>上傳日期：</span>${data.create_time}</h3>
+                                                <h3 class="UpdateTime"><span>更新日期：</span>${data.update_time}</h3>
+                                                <p class="describe">${data.description}</p>
+                                            </div>
+                                        </div>
+                                        <div class="data">
+                                            <h3><span>容量：</span>${data.capacity}</h3>
+                                            <h3><span>點贊：</span>${data.likes}</h3>
+                                            <h3><span>收藏：</span>${data.favorites}</h3>
+                                            <h3><span>下載：</span>${data.downloads}</h3>
+                                        </div>
+                                    </div>
+                                </div>`
+
+                row.innerHTML += card;
+            })
+
+        }
+        function author() {
+            let row = document.querySelector("#authorRow");
+            authorCardArray.forEach(item => {
+                let card = `<div class="col-12 col-md-3">
+                                    <a href="">
+                                        <div class="card">
+                                            <div class="pic">
+                                                <img src="https://picsum.photos/300/200/?random=${item}">
+                                            </div>
+                                            <div class="authorData">
+                                                <h3 class="name">${authorData.name}</h3>
+                                                <div class="detail">
+                                                    <div>作品數量：${authorData.works}</div>
+                                                    <div>獲讚數：${authorData.likes}</div>
+                                                </div>
+                                            </div>
+                                            <div class="avatar">
+                                                <img src="https://picsum.photos/100/100/?random=${item + 4}">
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>`
+                row.innerHTML += card;
+            })
+        }
+
+        window.onload = function () {
+            createImg();
+            indicator();
+            modCard()
+            author()
+        };
+    </script>
+}

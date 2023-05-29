@@ -1,0 +1,172 @@
+﻿* {
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+img {
+    vertical-align: top;
+    width: 100%;
+}
+
+body {
+    background-color: azure;
+}
+
+/*公告部分*/
+.Bulletin {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #ddd;
+}
+
+.carousel-custom-height img {
+    height: 400px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.btn {
+    text-align: start;
+    border-radius: 0;
+}
+
+.BulletinTitle{
+    display: flex;
+    justify-content: space-between;
+    margin:0 5px;
+}
+
+    .BulletinTitle .list {
+        color: gray;
+        font-size: 20px;
+        display:block;
+        line-height:40px;
+    }
+/*modcard*/
+.mod .card {
+    margin-bottom: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.title {
+    font-size: 25px;
+    padding-top: 5px;
+    padding-left: 10px;
+}
+
+.mod .name_price {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mod .text {
+    padding: 5px 10px;
+    font-size: 20px;
+}
+
+.mod .name_price h3 {
+    font-size: 20px;
+}
+
+.mod .detail {
+    height: 180px;
+}
+
+    .mod .detail h3 {
+        font-size: 15px;
+    }
+
+    .mod .detail h2 {
+        font-size: 20px;
+    }
+
+        .mod .detail h2 span {
+            margin-right: 5px;
+            color: white;
+        }
+
+.mod .tag {
+    color: orange;
+}
+
+.mod .detail span {
+    color: gray;
+}
+
+.mod .describe {
+    font-size: 13px;
+    text-indent: 26px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mod .data {
+    display: flex;
+    padding: 5px 15px;
+    padding-top: 10px;
+    justify-content: space-between;
+    background-color: #ccc;
+    vertical-align: top;
+}
+
+    .mod .data h3 {
+        font-size: 13px;
+    }
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    box-shadow: 1px 1px 5px 1px #cccccc;
+}
+
+/*author*/
+.author .card {
+    position: relative;
+}
+
+.author img {
+    vertical-align: top;
+    width: 100%;
+}
+
+.author .detail {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 15px;
+    padding-left: 100px;
+}
+
+    .author .detail div {
+        font-size: 15px;
+    }
+
+.author .avatar {
+    border-radius: 50%;
+    overflow: hidden;
+    position: absolute;
+    bottom: -5px;
+    left: -5px;
+    border: 2px solid white;
+}
+
+.author .name {
+    padding-left: 105px;
+}
+
+.author .authorData {
+    padding: 10px 0;
+    background-color: #eee;
+}
