@@ -1,0 +1,95 @@
+﻿@model IEnumerable<GameModCrafters.Models.Commission>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CommissionTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CommissionDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Budget)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Deadline)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Trash)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Delegator)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Game)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CommissionStatus)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CommissionTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CommissionDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Budget)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Deadline)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsDone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Trash)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Delegator.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Game.GameId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CommissionStatus.CommissionStatusId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.CommissionId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CommissionId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.CommissionId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

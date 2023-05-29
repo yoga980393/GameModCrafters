@@ -1,0 +1,85 @@
+﻿@model GameModCrafters.Models.Commission
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Commission</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CommissionId" class="control-label"></label>
+                <input asp-for="CommissionId" class="form-control" />
+                <span asp-validation-for="CommissionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DelegatorId" class="control-label"></label>
+                <select asp-for="DelegatorId" class ="form-control" asp-items="ViewBag.DelegatorId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="GameId" class="control-label"></label>
+                <select asp-for="GameId" class ="form-control" asp-items="ViewBag.GameId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CommissionTitle" class="control-label"></label>
+                <input asp-for="CommissionTitle" class="form-control" />
+                <span asp-validation-for="CommissionTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CommissionDescription" class="control-label"></label>
+                <input asp-for="CommissionDescription" class="form-control" />
+                <span asp-validation-for="CommissionDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Budget" class="control-label"></label>
+                <input asp-for="Budget" class="form-control" />
+                <span asp-validation-for="Budget" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Deadline" class="control-label"></label>
+                <input asp-for="Deadline" class="form-control" />
+                <span asp-validation-for="Deadline" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CommissionStatusId" class="control-label"></label>
+                <select asp-for="CommissionStatusId" class ="form-control" asp-items="ViewBag.CommissionStatusId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreateTime" class="control-label"></label>
+                <input asp-for="CreateTime" class="form-control" />
+                <span asp-validation-for="CreateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UpdateTime" class="control-label"></label>
+                <input asp-for="UpdateTime" class="form-control" />
+                <span asp-validation-for="UpdateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsDone" /> @Html.DisplayNameFor(model => model.IsDone)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Trash" /> @Html.DisplayNameFor(model => model.Trash)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
