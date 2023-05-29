@@ -21,7 +21,7 @@ namespace GameModCrafters.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterPage([Bind("Email, Username, Password")] RegisterViewModel register)
+        public async Task<IActionResult> RegisterPage([Bind("Email, Username, Password1,Password2")] RegisterViewModel register)
         {
             if(ModelState.IsValid)
             {
@@ -29,7 +29,7 @@ namespace GameModCrafters.Controllers
                 {
                     Email = register.Email,
                     Username = register.Username,
-                    Password = register.Password,
+                    Password = register.Password1,
                 };
                 //string password1 = Request.Form["password1"];
                 //string password2 = Request.Form["password2"];

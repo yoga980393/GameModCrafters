@@ -14,8 +14,13 @@ namespace GameModCrafters.ViewModels
         [Required(ErrorMessage = "此欄位為必填"), Display(Name = "密碼")]
         [StringLength(20, MinimumLength = 8, ErrorMessage = "需介於8-20字元")]
 
-        public string Password { get; set; }
-        
+        public string Password1 { get; set; }
+
+        [Required(ErrorMessage = "此欄位為必填"), Display(Name = "密碼")]
+        [StringLength(20, MinimumLength = 8, ErrorMessage = "需介於8-20字元")]
+
+        public string Password2 { get; set; }
+
 
     }
 }
