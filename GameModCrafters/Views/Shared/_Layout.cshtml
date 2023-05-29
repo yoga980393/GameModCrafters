@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="~/css/footer.css" />
     @*footer_icon*@
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css'>
-    @await RenderSectionAsync("Login_css", required: false)
     @await RenderSectionAsync("css", required: false)
 </head>
 <body>
@@ -73,6 +72,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("regiserendjs", required: false)
+    @await RenderSectionAsync("js", required: false)
 </body>
 </html>
