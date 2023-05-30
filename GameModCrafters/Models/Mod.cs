@@ -8,7 +8,7 @@ namespace GameModCrafters.Models
 {
     public class Mod
     {
-        [Key, Required, MaxLength(255), Display(Name = "Mod ID")]
+        [Key, MaxLength(255), Display(Name = "Mod ID")]
         public string ModId { get; set; }
 
         [Display(Name = "遊戲ID")]
@@ -18,6 +18,7 @@ namespace GameModCrafters.Models
         public string AuthorId { get; set; }
 
         [MaxLength(255), Display(Name = "Mod名稱")]
+        [Required(ErrorMessage = "必須輸入一個名字")]
         public string ModName { get; set; }
 
         [Display(Name = "描述")]
