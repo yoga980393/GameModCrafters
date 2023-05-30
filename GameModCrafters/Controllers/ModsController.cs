@@ -1,28 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GameModCrafters.Data;
+using GameModCrafters.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GameModCrafters.Data;
-using GameModCrafters.Models;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GameModCrafters.Controllers
 {
     public class ModsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
 
-        public ModsController(ApplicationDbContext context)
+        public ModsController(ApplicationDbContext context, ILogger<ModsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Mods
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Mods.Include(m => m.Author).Include(m => m.Game);
+            var applicationDbContext = _context.Mods
+                .Where(m => m.ModId != null)
+                .Include(m => m.Author)
+                .Include(m => m.Game);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -63,7 +68,7 @@ namespace GameModCrafters.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ModId,GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags)
+        public async Task<IActionResult> Create([Bind("GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags)
         {
             var counter = await _context.Counters.FindAsync(1);
             string newModId = $"m{counter.Value + 1:D4}";  // Format as 'm0001'
@@ -86,19 +91,20 @@ namespace GameModCrafters.Controllers
                 }
             }
 
-            ModelState.Clear();
-            if (TryValidateModel(mod))
+            if (ModelState.IsValid)
             {
                 mod.CreateTime = DateTime.Now;
                 mod.UpdateTime = DateTime.Now;
                 _context.Add(mod);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
 
-
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email", mod.AuthorId);
-            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", mod.GameId);
+            var tags = _context.Tags.Select(t => t.TagName).ToList();
+            ViewData["Tags"] = tags;
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email");
+            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameName");
+            ViewData["SelectedTags"] = SelectedTags;
             return View(mod);
         }
 

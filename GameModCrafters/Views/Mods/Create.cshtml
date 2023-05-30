@@ -12,6 +12,7 @@
         <div class="mb-3">
             <label asp-for="ModName" class="form-label" for="titleInput">Mod名稱</label>
             <input asp-for="ModName" type="text" class="form-control" id="titleInput" autocomplete="off">
+            <span asp-validation-for="ModName" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
@@ -68,15 +69,10 @@
                             付費
                         </label>
                         <input class="form-control" type="text" id="priceInput" disabled>
-                        <select class="form-select" id="currencyInput" aria-label="Default select example" disabled>
-                            <option selected>貨幣</option>
-                            <option value="1">NTD</option>
-                            <option value="2">USD</option>
-                            <option value="3">RMB</option>
-                        </select>
+                        <div>NTD</div>
                     </div>
 
-                    <input asp-for="Price" type="hidden" value="0">
+                    <input asp-for="Price" type="hidden">
                 </div>
 
                 <div class="mb-3">
@@ -235,6 +231,9 @@
             // 在表單提交時，手動更新隱藏的 input 欄位的值
             $('#Description').val(myEditor1.getData());
             $('#InstallationInstructions').val(myEditor2.getData());
+
+            localStorage.setItem('editor1Data', myEditor1.getData());
+            localStorage.setItem('editor2Data', myEditor2.getData());
         });
 
         $(".editorSwitch").on("click", function () {
@@ -243,10 +242,41 @@
             $(".editor").eq(pageIndex).addClass("active");
         });
 
+        $(document).ready(function () {
+            // Get the editor data from local storage
+            let editor1Data = localStorage.getItem('editor1Data');
+            let editor2Data = localStorage.getItem('editor2Data');
+
+            // Initialize the editors with the saved data
+            if (editor1Data) {
+                myEditor1.setData(editor1Data);
+            }
+
+            if (editor2Data) {
+                myEditor2.setData(editor2Data);
+            }
+
+            // Clear the local storage (optional)
+            localStorage.removeItem('editor1Data');
+            localStorage.removeItem('editor2Data');
+        });
     </script>
 
     <script>
         $(document).ready(function () {
+            let price = parseFloat($("#Price").val());  // get price from hidden field
+            console.log($("#Price").val());
+            if (price > 0) {
+                $("#flexRadioDefault2").prop("checked", true);
+                $("#priceInput").prop("disabled", false);
+                $("#priceInput").val(price);
+                updatePreviewPrice()
+                // you need to set value for #priceInput and #currencyInput according to the price
+                // ...
+            } else {
+                $("#flexRadioDefault1").prop("checked", true);
+            }
+
             $("input[type=radio][name=flexRadioDefault]").on("change", function () {
                 if ($("#flexRadioDefault2").is(":checked")) {
                     $("#priceInput").prop("disabled", false);
@@ -259,30 +289,15 @@
             });
 
             // Update price when #flexRadioDefault2, #priceInput, or #currencyInput changes
-            $("#flexRadioDefault2, #priceInput, #currencyInput").on("change", () => {
-                let currency = $("#currencyInput").val();
+            $("#flexRadioDefault2, #priceInput").on("change", () => {
                 let inputPrice = parseFloat($("#priceInput").val());  // get price input
-                let price;
-                if (currency == 1) {
-                    price = inputPrice;
-                }
-                else if (currency == 2) {
-                    price = inputPrice * 30;
-                }
-                else {
-                    price = inputPrice * 5;
-                }
-                $("#Price").val(price);
+                $("#Price").val(inputPrice);
                 console.log(price);
             });
         });
     </script>
 
     <script>
-        $(".editorSwitch").on("click", function () {
-            var pageIndex = $(this).index();
-        })
-
         var allTags = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["Tags"]));
 
         function generateDropdownItems(tags) {
@@ -367,6 +382,32 @@
                 });
             });
         }
+
+        $(document).ready(function () {
+            var selectedTags = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["SelectedTags"]));
+            console.log(selectedTags);
+            if (selectedTags){
+                selectedTags.forEach(function (tag, index) {
+                    $(".tagBtn").trigger('click');  // 模拟点击事件以创建一个新的标签输入框
+                    var newTagInput = $(".tagList .dropdown").last();  // 获取新创建的标签输入框
+
+                    // 设置新创建的标签的状态为选中状态，并更新隐藏的输入框的值
+                    newTagInput.find('.dropdown-toggle').text(tag);
+                    newTagInput.find('input[name="SelectedTags"]').val(tag);
+
+                    // 更新预览区域的标签显示
+                    var previewTag = $(`<span class="badge bg-secondary" id="tag-${index}">未選擇</span>`);
+                    $("#previewTag").append(previewTag);
+                    previewTag.text(tag || "未選擇");
+
+                    // 移除前一个 "未选中" 标签
+                    previewTag.prev().remove();
+                });
+            }
+
+            // 更新所有下拉菜单的显示状态
+            updateDropdownMenus();
+        });
     </script>
 
     <script>
@@ -445,14 +486,12 @@
                 $("#previewPrice").text("free");
             } else {
                 var price = $("#priceInput").val();
-                var currency = $("#currencyInput option:selected").text();
-                $("#previewPrice").text(price + " " + currency);
+                $("#previewPrice").text(price + " NTD");
             }
         }
 
         $("input[type='radio'][name='flexRadioDefault']").on("change", updatePreviewPrice);
         $("#priceInput").on("input", updatePreviewPrice);
-        $("#currencyInput").on("change", updatePreviewPrice);
 
         function formatDate(date) {
             const yyyy = date.getFullYear();
