@@ -78,6 +78,13 @@ namespace GameModCrafters.Data
             modelBuilder.Entity<Counter>()
                 .HasData(new Counter { CounterId = 1, Value = 0 });
 
+            modelBuilder.Entity<CommissionStatus>()
+               .HasData(new CommissionStatus { CommissionStatusId= "s01", Status= "待接受"},
+                        new CommissionStatus { CommissionStatusId = "s02", Status = "進行中" },
+                        new CommissionStatus { CommissionStatusId = "s03", Status = "已完成" },
+                        new CommissionStatus { CommissionStatusId = "s04", Status = "已取消" }
+               );
+
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 var foreignKeys = entityType.GetForeignKeys();
