@@ -4,81 +4,81 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="container Entrust">
+    <h1>委託發布</h1>
+    <div class="row">
+        <form>
+            <div class="mb-3">
+                <label for="gameName" class="form-label">委託標題:</label>
+                <input type="text" class="form-control" id="gameName" >
+            </div>
+            <div class="mb-3">
+                <label for="gameName" class="form-label">遊戲名稱:</label>
+                <input type="search" class="form-control" id="gameName" >
+            </div>
+            <div class="mb-3">
+                <label for="details" class="form-label">委託詳情:</label>
+                <div id="editor"></div>
+            </div>
+            <div class="mb-3">
+                <label for="">預算:</label>
+                <input type="text" class="budgetinput" id="budge">
+            </div>
+            <div class="btn">
+                <button type="submit" class="btn btn-primary">發布</button>
+                <button type="submit" class="btn btn-primary">儲存草稿</button>
+                <button type="submit" class="btn btn-primary">刪除</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-<div>
-    <h4>Commission</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CommissionTitle)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CommissionTitle)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CommissionDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CommissionDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Budget)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Budget)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Deadline)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Deadline)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreateTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreateTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdateTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdateTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsDone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsDone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Trash)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Trash)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Delegator)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Delegator.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Game)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Game.GameId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CommissionStatus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CommissionStatus.CommissionStatusId)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.CommissionId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+@section css {
+    <link rel="stylesheet" href="~/css/Entrust.css" />
+}
+
+@section js {
+
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
+
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                // ...other configurations,
+                extraPlugins: [Base64UploadAdapterPlugin]
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        function Base64UploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
+                return new Base64UploadAdapter(loader);
+            };
+        }
+
+        class Base64UploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file
+                    .then(file => new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            resolve({ default: reader.result });
+                        };
+                        reader.onerror = error => {
+                            reject(error);
+                        };
+                        reader.readAsDataURL(file);
+                    }));
+            }
+
+            abort() { }
+        }
+
+    </script>
+}
