@@ -50,7 +50,8 @@
                 // ...other configurations,
                 extraPlugins: [Base64UploadAdapterPlugin]
             })
-
+            .then(editor => {
+                myEditor = editor;
             .catch(error => {
                 console.error(error);
             });
@@ -82,6 +83,11 @@
 
             abort() { }
         }
+
+        $('form').on('submit', function (e) {
+            // 在表單提交時，手動更新隱藏的 input 欄位的值
+            $('#CommissionDescription').val(myEditor.getData());
+        });
 
     </script>
 }
