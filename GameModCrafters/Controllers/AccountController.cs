@@ -47,7 +47,7 @@ namespace GameModCrafters.Controllers
                 
                 
             }
-            return View(model);//失敗
+            return View(model);//失敗111
         }
         [HttpGet]
         public IActionResult RegisterPage()
