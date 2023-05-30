@@ -70,6 +70,13 @@ namespace GameModCrafters.Controllers
             
             if (ModelState.IsValid)
             {
+                var counter = await _context.Counters.FindAsync(1);
+                string newCommissionId = $"C{counter.Value + 1:D4}";  // Format as 'C0001'
+                counter.Value++;  // Increment counter
+                _context.Counters.Update(counter);
+                await _context.SaveChangesAsync();
+                commission.CommissionId = newCommissionId;
+
                 commission.CreateTime = DateTime.Now;
                 commission.UpdateTime = DateTime.Now;
                 var SelectGameId = from gi in _context.Games
