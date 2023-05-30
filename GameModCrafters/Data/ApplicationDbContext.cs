@@ -76,7 +76,10 @@ namespace GameModCrafters.Data
                 .HasColumnType("decimal(18, 2)");
 
             modelBuilder.Entity<Counter>()
-                .HasData(new Counter { CounterId = 1, Value = 0 });
+                .HasData(
+                    new Counter { CounterId = 1, Value = 0 , Name = "Mod"},
+                    new Counter { CounterId = 2, Value = 0, Name = "Commission" }
+                );
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
