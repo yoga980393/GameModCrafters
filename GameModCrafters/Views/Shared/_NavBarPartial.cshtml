@@ -1,4 +1,14 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+﻿@using Microsoft.AspNetCore.Http;
+@{
+    var email = "";
+    if (ViewContext.HttpContext.Session.GetString("Email") != null)
+    {
+        email = ViewContext.HttpContext.Session.GetString("Email");
+    }
+    
+}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" href="#">Navbar</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -38,12 +48,27 @@
             </ul>
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">登入</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">註冊</a>
-                </li>
+                @if(email!="")
+                {
+                   
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="LoginPage">個人專區</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light">Hello @email</a>
+                        
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="LoginPage">登入</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="RegisterPage">註冊</a>
+                    </li>
+                }
+
             </ul>
         </div>
     </div>

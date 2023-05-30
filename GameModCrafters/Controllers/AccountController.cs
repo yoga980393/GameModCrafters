@@ -1,6 +1,7 @@
 ﻿using GameModCrafters.Data;
 using GameModCrafters.Models;
 using GameModCrafters.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -32,15 +33,19 @@ namespace GameModCrafters.Controllers
                 if(user==null)
                 {
                     user = _context.Users.FirstOrDefault(x => x.Email == model.Text && x.Password == model.Password);
-                    if (user == null)
+                    if (user != null)
                     {
-                        ModelState.AddModelError("Text", "帳號或密碼錯誤");
-                        return View(model);//失敗
+                        HttpContext.Session.SetString("Email", model.Text);
+                        return RedirectToAction("Index", "Home");//成功
+                        
                     }
-                    return RedirectToAction("Index", "Home");//成功
+                    ModelState.AddModelError("Text", "帳號或密碼錯誤");
+                    return View(model);//失敗
+                    
                 }
                 else
                 {
+                    HttpContext.Session.SetString("Email", _context.Users.FirstOrDefault(x=>x.Username==model.Text)?.Email);
                     return RedirectToAction("Index", "Home");//成功
                 }
                 
@@ -108,6 +113,10 @@ namespace GameModCrafters.Controllers
             
             // 以下是一個示例：要求密碼至少包含 8 個字符，並且包含至少一個大寫字母和一個數字
             return password.Length <= 20 && password.Length >= 8 && password.Any(char.IsUpper) && password.Any(char.IsDigit);
+        }
+        public IActionResult PersonPage()
+        {
+            return View();
         }
     }
 }

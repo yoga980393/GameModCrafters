@@ -26,7 +26,7 @@ namespace GameModCrafters
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
+            services.AddSession(); // 添加Session服務
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             Configuration.GetConnectionString("ApplicationDbContext")));
         }
@@ -46,6 +46,8 @@ namespace GameModCrafters
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseSession(); // 啟用Session
 
             app.UseRouting();
 

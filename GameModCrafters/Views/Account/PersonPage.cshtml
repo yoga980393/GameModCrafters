@@ -1,0 +1,1347 @@
+﻿
+<div class="container-fluid position_height">
+    <div class="container-fluid ImgWrap">
+        <img src="https://picsum.photos/1260/900/?random=10" class="img-fluid Img_cover" id="Cover_pic" alt="...">
+
+
+    </div>
+    <div class="container Cover_container">
+        <div class="Cover">
+            <div class="pic_name">
+                <div class="personal_pic">
+                    <img src="https://picsum.photos/200/200/?random=7" id="personal_pic">
+                </div>
+                <div class="Cover_text">
+                    <h1 class="name" id="Username">名字</h1>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="Edit">
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#Edit_pic_modal"
+                    id="Editpicbtn">
+                編輯封面照片
+            </button>
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                    data-bs-target="#Edit_Profile_modal">
+                編輯個人檔案
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ----------Modal -->
+<!-- 封面照片 -->
+<div class="modal modal-xl" id="Edit_pic_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">編輯封面照片</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <button type="button" class="btn btn-secondary btn-sm " id="Edit_pic">上傳照片</button>
+                <!-- <input type="file" id="imageInput"> -->
+                <!-- <button type="button" class="btn btn-secondary btn-sm " id="cropButton">剪切</button> -->
+            </div>
+            <div class="modal_img">
+                <img src="" id="preview_cover_pic" alt="">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary  CoverClose" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="cropcoverButton">確定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 個人照片 -->
+<div class="modal modal-xl" id="Edit_Profile_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">編輯個人檔案</h1>
+                <button type="button" class="btn-close fork_btn" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body person">
+                <button type="button" class="btn btn-secondary btn-sm " id="EditName_btn">編輯名字</button>
+                <form class="row g-3 nameform d-none">
+                    <!-- d-none-->
+                    <div class="col-sm-5">
+                        <label for="inputUsername" class="visually-hidden">Username</label>
+                        <input type="text" class="form-control" id="inputUsername" placeholder="Username">
+                        <div id="UsernameHelp" class="form-text">名字已經有人使用</div>
+                    </div>
+                    <div class="col-sm">
+                        <button type="button" class="btn btn-primary btn-sm " id="confirm_Name_btn">確認</button>
+                    </div>
+                </form>
+
+                <button type="button" class="btn btn-secondary btn-sm " id="Edit_Profile">上傳照片</button>
+
+
+
+            </div>
+            <!-- <div class="modal-body">
+                <button type="button" class="btn btn-secondary btn-sm " id="Edit_Name_btn">編輯名字</button>
+            </div> -->
+            <div class="modal_img">
+                <img src="" id="preview_person_pic" alt="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary personClose" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="croppersonButton">確定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ----------Modal -->
+<div class="container my-4 mod Released_mods">
+    <h2>發布的mod</h2>
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="more-mod-Pagination">
+        <nav aria-label="Page navigation ">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<div class="container wire"></div>
+<div class="container entrust Release_Area_Wrap paging">
+    <div class="title">
+        <h3>委託的mod:</h3>
+
+    </div>
+    <div class="container text-center mod-list">
+        <div class="row align-items-start">
+            <div class="col-6 title">
+                Title
+            </div>
+            <div class="col SendernName">
+                發文人
+            </div>
+            <div class="col SenderDate">
+                發文日
+            </div>
+            <div class="col LastReply">
+                最後回覆
+            </div>
+        </div>
+        <div class="row align-items-start">
+            <div class="col-6 title">
+                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            </div>
+            <div class="col SendernName">
+                jack
+            </div>
+            <div class="col SenderDate">
+                One of three columns
+            </div>
+            <div class="col LastReply">
+                One of three columns
+            </div>
+        </div>
+        <div class="row align-items-start">
+            <div class="col-6 title">
+                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            </div>
+            <div class="col SendernName">
+                One of three columns
+            </div>
+            <div class="col SenderDate">
+                One of three columns
+            </div>
+            <div class="col LastReply">
+                One of three columns
+            </div>
+        </div>
+        <div class="row align-items-start">
+            <div class="col-6 title">
+                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            </div>
+            <div class="col SendernName">
+                One of three columns
+            </div>
+            <div class="col SenderDate">
+                One of three columns
+            </div>
+            <div class="col LastReply">
+                One of three columns
+            </div>
+        </div>
+        <div class="row align-items-start">
+            <div class="col-6 title">
+                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            </div>
+            <div class="col SendernName">
+                One of three columns
+            </div>
+            <div class="col SenderDate">
+                One of three columns
+            </div>
+            <div class="col LastReply">
+                One of three columns
+            </div>
+        </div>
+        <div class="row align-items-start">
+            <div class="col-6 title">
+                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            </div>
+            <div class="col SendernName">
+                One of three columns
+            </div>
+            <div class="col SenderDate">
+                One of three columns
+            </div>
+            <div class="col LastReply">
+                One of three columns
+            </div>
+        </div>
+        <div class="row align-items-start">
+            <div class="col-6 title">
+                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            </div>
+            <div class="col SendernName">
+                One of three columns
+            </div>
+            <div class="col SenderDate">
+                One of three columns
+            </div>
+            <div class="col LastReply">
+                One of three columns
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div class="container wire"></div>
+<div class="container my-4 mod Downloaded_mod">
+    <h2>下載的mod</h2>
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="more-mod-Pagination">
+        <nav aria-label="Page navigation ">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<div class="container wire"></div>
+<div class="container my-4 mod favorite_mod">
+    <h2>收藏的mod</h2>
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="favorite_icon">
+                    <div class="triangle"></div>
+                    <i class="fas fa-star star_icon"></i>
+                </div>
+
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="favorite_icon">
+                    <div class="triangle"></div>
+                    <i class="fas fa-star star_icon"></i>
+                </div>
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="favorite_icon">
+                    <div class="triangle"></div>
+                    <i class="fas fa-star star_icon"></i>
+                </div>
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="favorite_icon">
+                    <div class="triangle"></div>
+                    <i class="fas fa-star star_icon"></i>
+                </div>
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <img src="https://picsum.photos/300/200/?random=10" class="card-img-top" alt="...">
+                <div class="favorite_icon">
+                    <div class="triangle"></div>
+                    <i class="fas fa-star star_icon"></i>
+                </div>
+                <div class="card-body">
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">mod名字</h3>
+                            <h3 class="price">＄價格</h3>
+                        </div>
+                        <div class="detail">
+                            <h3 class="tag">tag</h3>
+                            <h3 class="author"><span>作者：</span>作者名</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>2023-04-18</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>2023-04-18</h3>
+                            <p class="describe">
+                                描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述述描述描述描述描述描述描述描述描述。
+                            </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="data">
+                    <h3><span>容量：</span>10mb</h3>
+                    <h3><span>點贊：</span>5</h3>
+                    <h3><span>收藏：</span>3</h3>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="more-mod-Pagination">
+        <nav aria-label="Page navigation ">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script>
+    window.onload = function () {
+
+        // uploadCoverImg()
+        // CropCoverImg()
+
+        handleCoverImg()
+        handlePersonImg()
+        // uploadPersonImg()
+        // CropPersonImg()
+        Edit_Name()
+        favorite_star()
+    }
+
+    function favorite_star() {
+        let star_icons = document.querySelectorAll('.star_icon');
+        star_icons.forEach(star_icon => {
+            star_icon.addEventListener('click', function () {
+                star_icon.classList.toggle('active');
+            });
+        });
+    }
+
+    function Edit_Name() {
+        let form = document.querySelector('.nameform')
+        let confirm_btn = document.getElementById("confirm_Name_btn")
+        let inputUsername = document.getElementById("inputUsername")
+        let EditName_btn = document.getElementById("EditName_btn")
+        let Username = document.getElementById("Username")
+        EditName_btn.addEventListener('click', function () {
+            if (form.classList.contains('d-none')) {
+                form.classList.remove('d-none')
+            }
+            else {
+                form.classList.add('d-none')
+            }
+        })
+        confirm_btn.addEventListener('click', function () {
+            let newName = inputUsername.value;
+            console.log(newName)
+            Username.textContent = newName;
+
+        })
+    }
+    let cropperperson
+    function handlePersonImg() {
+        let editbtn = document.getElementById('Edit_Profile')
+        let preview_person_pic = document.getElementById('preview_person_pic')
+        editbtn.addEventListener('click', function () {
+            let input = document.createElement('input')
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.click();
+            input.addEventListener('change', function () {
+                let reader = new FileReader()
+                reader.readAsDataURL(input.files[0])
+                reader.addEventListener('load', function () {
+                    preview_person_pic.src = reader.result
+                    if (cropperperson) {
+                        cropperperson.destroy()
+                    }
+                    initCropPersonImg()
+                })
+            })
+        })
+    }
+    let cropBoxes = [];
+    function initCropPersonImg() {
+        let cropButton = document.getElementById("croppersonButton");
+        let personal_pic = document.getElementById("personal_pic");
+        let previewPersonPic = document.getElementById("preview_person_pic");
+        cropperperson = new Cropper(previewPersonPic, {
+            aspectRatio: 1 / 1,
+            cropBoxResizable: true,
+            cropBoxMovable: true,
+            autoCropArea: 1,
+            viewMode: 2
+        });
+        let observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                cropBoxes = document.querySelectorAll('.cropper-crop-box, .cropper-view-box');
+                cropBoxes.forEach((box) => {
+                    box.style.borderRadius = '50%';
+                });
+            });
+        });
+        let options = {
+            childList: true,
+            attributes: true,
+            subtree: true,
+        };
+        observer.observe(document.body, options);
+        let personClose = document.querySelector('.personClose');
+        let fork_btn = document.querySelector('.btn-close.fork_btn');
+        personClose.addEventListener('click', function () {
+            cropBoxes.forEach((box) => {
+                box.style.borderRadius = 'none';
+            });
+            observer.disconnect(); //停止MutationObserver实例的观察功能的方法
+            cropperperson.destroy();
+        })
+        fork_btn.addEventListener('click', function () {
+            cropBoxes.forEach((box) => {
+                box.style.borderRadius = 'none';
+            });
+            observer.disconnect(); //停止MutationObserver实例的观察功能的方法
+            cropperperson.destroy();
+        })
+        // 當按鈕被點擊時，剪裁圖片並在控制台中輸出剪裁後的圖片數據
+        cropButton.addEventListener('click', function () {
+            let croppedCanvas = cropperperson.getCroppedCanvas();
+            // console.log(croppedCanvas.toDataURL());
+
+            personal_pic.src = croppedCanvas.toDataURL();
+            cropperperson.destroy(); // 清除緩存
+            // observer.disconnect();
+        })
+    }
+
+
+    function uploadCoverImg() {
+        let editbtn = document.getElementById('Edit_pic');
+        let preview_cover_pic = document.getElementById('preview_cover_pic');
+
+        editbtn.addEventListener('click', function () {
+
+            console.log("preview_cover_pic1:", preview_cover_pic.src)
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.click();
+            input.addEventListener('change', function () {
+                let reader = new FileReader();
+                // preview_cover_pic.src = ''; // 清空預覽圖
+                console.log("preview_cover_pic2:", preview_cover_pic.src)
+                reader.readAsDataURL(input.files[0]);
+                reader.addEventListener('load', function () {
+                    preview_cover_pic.src = reader.result;
+                    console.log(input.value);
+                });
+            });
+        });
+        // console.log("preview_cover_pic:",preview_cover_pic.src)
+
+        // // 在 input 值未更改的情况下手动更新预览图片
+        // editbtn.addEventListener('mouseover', function () {
+        //     if (preview_cover_pic.src != null) {
+        //         preview_cover_pic.src = '';
+        //         preview_cover_pic.src = preview_cover_pic.src;
+        //     }
+        // });
+    }
+
+    function CropCoverImg() {
+        let cropButton = document.getElementById('cropcoverButton');
+        let Cover_pic = document.getElementById('Cover_pic');
+
+
+        // 等待图片加载完成后再初始化cropper
+        document.getElementById('preview_cover_pic').addEventListener('load', function () {
+            var cropper = new Cropper(this, {
+                aspectRatio: 14 / 6,
+                cropBoxResizable: true,
+                cropBoxMovable: true,
+                autoCropArea: 1,
+                viewMode: 2
+            });
+            //把圓框調回來方形
+            // setTimeout(() => {
+            //     let cropBoxes = document.querySelectorAll('.cropper-crop-box, .cropper-view-box');
+            //     console.log(cropBoxes);
+            //     cropBoxes.forEach((box) => {
+            //         box.style.borderRadius = 'none';
+            //     });
+            // }, 500);
+            let observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    let cropBoxes = document.querySelectorAll('.cropper-crop-box, .cropper-view-box');
+                    cropBoxes.forEach((box) => {
+                        box.style.borderRadius = '';
+                    });
+                });
+            });
+
+            let options = {
+                childList: true,
+                attributes: true,
+                subtree: true,
+            };
+
+            observer.observe(document.body, options);
+            let CoverClose = document.querySelector('.CoverClose');
+            CoverClose.addEventListener('click', function () {
+                observer.disconnect(); //停止MutationObserver实例的观察功能的方法
+            })
+
+
+            // 當按鈕被點擊時，剪裁圖片並在控制台中輸出剪裁後的圖片數據
+            cropButton.addEventListener('click', function () {
+                let croppedCanvas = cropper.getCroppedCanvas();
+                // console.log(croppedCanvas.toDataURL());
+                // let cropimg = document.createElement('img');
+                Cover_pic.src = croppedCanvas.toDataURL();
+                cropper.destroy(); // 清除緩存
+                // observer.disconnect(); //停止MutationObserver实例的观察功能的方法
+            })
+        })
+
+    }
+
+    let croppercover; // 定義全局變量 croppercover
+    function handleCoverImg() {
+        let editbtn = document.getElementById('Edit_pic');
+        let cropButton = document.getElementById('cropcoverButton');
+
+        editbtn.addEventListener('click', function () {
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.click();
+            input.addEventListener('change', function () {
+                let reader = new FileReader();
+                reader.readAsDataURL(input.files[0]);
+                reader.addEventListener('load', function () {
+                    preview_cover_pic.src = reader.result;
+                    if (croppercover) {
+                        croppercover.destroy(); // 如果有，清除緩存
+                    }
+                    initCoverCropper(); // 初始化新的 cropper 實例
+                });
+            });
+        });
+
+
+    }
+
+    function initCoverCropper() {
+        let preview_cover_pic = document.getElementById('preview_cover_pic');
+        croppercover = new Cropper(preview_cover_pic, {
+            aspectRatio: 14 / 6,
+            cropBoxResizable: true,
+            cropBoxMovable: true,
+            autoCropArea: 1,
+            viewMode: 2
+        });
+        let cropButton = document.getElementById('cropcoverButton');
+        let Cover_pic = document.getElementById('Cover_pic');
+        cropButton.addEventListener('click', function () {
+            let croppedCanvas = croppercover.getCroppedCanvas();
+            Cover_pic.src = croppedCanvas.toDataURL();
+            croppercover.destroy(); // 清除緩存
+        });
+    }
+
+</script>
+@section js{
+
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+@section css{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.css">
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/cropperjs/2.0.0-alpha.1/cropper.css">
+    <script src="https://cdn.bootcss.com/cropperjs/2.0.0-alpha.1/cropper.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.5.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <style>
+        * {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            background-color: azure;
+        }
+
+        .ImgWrap {
+            max-width: 1400px;
+            max-height: 600px;
+            overflow: hidden;
+            text-align: center;
+            /* position: relative; */
+        }
+
+        .ImgWrap .Img_cover {
+            object-fit: cover;
+            width: 100%;
+            height: auto;
+            /* position: relative; */
+        }
+
+        /* ---------Modal */
+        .modal_img {
+            /* max-width: 1400px; */
+            /* max-height: 500px; */
+            /* overflow: hidden; */
+            text-align: center;
+        }
+
+        .modal_img img {
+            object-fit: cover;
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+
+        #Edit_Profile_modal .person {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #Edit_Profile_modal .person button {
+            width: 100px;
+        }
+
+        #Edit_Profile_modal .person .form-text {
+            color: red;
+        }
+
+        /* .cropper-crop-box.activeradius, .cropper-view-box.activeradius {
+            border-radius: 50%;
+        } */
+
+        /* ---------Modal */
+        .ImgWrap button {
+            background-color: #ccc;
+            color: #000;
+            border: 1px solid gray;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+
+        .Cover .personal_pic {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            /* position: absolute; */
+        }
+
+        .Cover .personal_pic img {
+            display: block;
+            /* width: 200px;
+        height: 200px; */
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            /* background-size: cover; */
+            /* background-position: center; */
+        }
+
+        .Cover .pic_name {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+        }
+
+        .Cover .Cover_text {
+            margin: 0 20px;
+            padding: 1px 20px;
+            background-color: #fff;
+            border-radius: 20px;
+            color: gray;
+        }
+
+        .Cover {
+            /* display: flex; */
+            /* justify-content: center; */
+        }
+
+        .Cover_container {
+            /* display: flex;
+            justify-content: space-between;
+            align-items: flex-end; */
+            padding: 20px 0 20px 0;
+            border-bottom: gray solid 3px;
+            /* position: absolute;
+            bottom: 25%;
+            left: 0%;
+            right: 0%;
+            z-index: 5; */
+        }
+
+        .Cover_container .Edit {
+            display: flex;
+            justify-content: end;
+            /* background-color: aqua; */
+        }
+
+        .Cover_container .Edit button {
+            margin: 10px;
+        }
+
+        /* ---------------發布mod */
+        .row .text .describe {
+            text-indent: 3em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 13px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .mod .data {
+            display: flex;
+            width: 100%;
+            padding: 5px 15px;
+            padding-top: 10px;
+            justify-content: space-between;
+            background-color: #ccc;
+            vertical-align: top;
+        }
+
+        .mod .data h3 {
+            font-size: 13px;
+        }
+
+        .mod .name_price {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .mod .text {
+            padding: 5px 10px;
+            font-size: 20px;
+        }
+
+        .mod .name_price h3 {
+            font-size: 20px;
+        }
+
+        .mod .detail h3 {
+            font-size: 15px;
+        }
+
+        .mod .detail h2 {
+            font-size: 20px;
+        }
+
+        .mod .detail h2 span {
+            margin-right: 5px;
+            color: white;
+        }
+
+        .mod .tag {
+            color: orange;
+        }
+
+        .mod .detail span {
+            color: gray;
+        }
+
+        .mod .row .card {
+            margin: 10px 0;
+        }
+
+        .more-mod-Pagination {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .more-mod-Pagination nav {
+            display: inline-block;
+        }
+        /* ---------委託的mod--------- */
+        .Release_Area_Wrap {
+            background-color: #bdbcbc;
+            /* background-image: linear-gradient(to bottom, #d7e9f7, #c6dced); */
+            border-top: 1px solid #a4b6c3;
+            border-bottom: 1px solid #a4b6c3;
+            margin: 10px auto;
+            padding: 10px 0;
+            /* display: flex;
+            justify-content: center;
+            align-items: center; */
+        }
+
+        .entrust_link a {
+            padding: 0 5px;
+        }
+
+        .entrust .row {
+            /* background-color: #ccc; */
+            padding: 20px;
+        }
+
+
+
+        .row:nth-child(even) {
+            background: linear-gradient(to right, #f6f6f6, #e9e9e9);
+        }
+
+        .row:nth-child(odd) {
+            background: linear-gradient(to right, #e9e9e9, #f6f6f6);
+        }
+
+        .row .title {
+            display: flex;
+            justify-content: center;
+        }
+
+        .Release_Area_Wrap {
+            padding: 20px;
+        }
+        /* 收藏的mod--------------- */
+        .favorite_mod .card {
+            position: relative;
+        }
+
+        .favorite_mod .card .favorite_icon {
+            position: absolute;
+            background-color: red;
+            padding: 5px;
+            width: fit-content;
+            box-shadow: 2px 2px 10px 2px #888;
+            top: 0;
+            left: 5px;
+        }
+
+        .favorite_mod .card .favorite_icon .star_icon {
+            /* font-size: 30px; */
+            cursor: pointer;
+            color: gold;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 10px solid red;
+            position: absolute;
+            left: 0;
+            top: 34px;
+        }
+
+        .star_icon.active {
+            color: #fff !important;
+        }
+
+        /* ------分割線---mod------ */
+        .wire {
+            border-bottom: 3px solid gray;
+        }
+
+        /* -------------footer */
+        .footer {
+            background-color: black;
+            width: 100%;
+            text-align: center;
+            color: white;
+            padding: 40px;
+        }
+
+        .footer .title h3 {
+            display: block;
+            margin: auto;
+        }
+
+        .wrap {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px;
+            border-bottom: #ccc solid 1px;
+            padding: 10px;
+        }
+
+        .icon_img a {
+            padding: 0 10px;
+            color: white;
+        }
+
+        .wrap_bottom {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 10px;
+        }
+
+        .menu {
+            display: flex;
+        }
+
+        .menu a {
+            color: white;
+            padding: 0 5px;
+        }
+
+        .menu a:first-child {
+            border-right: #ccc solid 1px;
+        }
+
+        /* -------------footer */
+    </style>
+}
+
