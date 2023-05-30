@@ -19,7 +19,7 @@
             <div class="mb-3">
                 <label asp-for="CommissionDescription" class="form-label">委託詳情:</label>
                 <div id="editor"></div>
-                <input asp-for="CommissionDescription" class="form-control" type="hidden"/>
+                <input asp-for="CommissionDescription" class="form-control" type="hidden" />
             </div>
             <div class="mb-3">
                 <label asp-for="Budget">預算:</label>
@@ -44,14 +44,18 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
 
     <script>
+
         let myEditor;
         ClassicEditor
             .create(document.querySelector('#editor'), {
                 // ...other configurations,
                 extraPlugins: [Base64UploadAdapterPlugin]
             })
+
             .then(editor => {
                 myEditor = editor;
+            })
+
             .catch(error => {
                 console.error(error);
             });
@@ -84,10 +88,12 @@
             abort() { }
         }
 
+
         $('form').on('submit', function (e) {
             // 在表單提交時，手動更新隱藏的 input 欄位的值
             $('#CommissionDescription').val(myEditor.getData());
         });
+
 
     </script>
 }
