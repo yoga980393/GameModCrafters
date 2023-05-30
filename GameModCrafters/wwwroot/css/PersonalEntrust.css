@@ -1,0 +1,21 @@
+﻿body {
+
+}
+
+.Entrust {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 56%;
+}
+
+.ck.ck-content {
+    min-height: 200px;
+}
+
+.btnCantaner {
+    display: flex;
+    width: 100%;
+    gap: 5px;
+}
+
+

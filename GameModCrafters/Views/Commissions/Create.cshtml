@@ -4,82 +4,96 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Commission</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="container Entrust">
+    <h1>委託發布</h1>
+    <div class="row">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CommissionId" class="control-label"></label>
-                <input asp-for="CommissionId" class="form-control" />
-                <span asp-validation-for="CommissionId" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="CommissionTitle" class="form-label">委託標題:</label>
+                <input type="text" class="form-control" asp-for="CommissionTitle">
             </div>
-            <div class="form-group">
-                <label asp-for="DelegatorId" class="control-label"></label>
-                <select asp-for="DelegatorId" class ="form-control" asp-items="ViewBag.DelegatorId"></select>
+            <div class="mb-3">
+                <label asp-for="GameId" class="form-label">遊戲名稱:</label>
+                <input type="search" class="form-control" asp-for="GameId">
             </div>
-            <div class="form-group">
-                <label asp-for="GameId" class="control-label"></label>
-                <select asp-for="GameId" class ="form-control" asp-items="ViewBag.GameId"></select>
+            <div class="mb-3">
+                <label asp-for="CommissionDescription" class="form-label">委託詳情:</label>
+                <div id="editor"></div>
+                <input asp-for="CommissionDescription" class="form-control" type="hidden" />
             </div>
-            <div class="form-group">
-                <label asp-for="CommissionTitle" class="control-label"></label>
-                <input asp-for="CommissionTitle" class="form-control" />
-                <span asp-validation-for="CommissionTitle" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="Budget">預算:</label>
+                <input type="text" class="budgetinput" asp-for="Budget">
             </div>
-            <div class="form-group">
-                <label asp-for="CommissionDescription" class="control-label"></label>
-                <input asp-for="CommissionDescription" class="form-control" />
-                <span asp-validation-for="CommissionDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Budget" class="control-label"></label>
-                <input asp-for="Budget" class="form-control" />
-                <span asp-validation-for="Budget" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Deadline" class="control-label"></label>
-                <input asp-for="Deadline" class="form-control" />
-                <span asp-validation-for="Deadline" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CommissionStatusId" class="control-label"></label>
-                <select asp-for="CommissionStatusId" class ="form-control" asp-items="ViewBag.CommissionStatusId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreateTime" class="control-label"></label>
-                <input asp-for="CreateTime" class="form-control" />
-                <span asp-validation-for="CreateTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdateTime" class="control-label"></label>
-                <input asp-for="UpdateTime" class="form-control" />
-                <span asp-validation-for="UpdateTime" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsDone" /> @Html.DisplayNameFor(model => model.IsDone)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Trash" /> @Html.DisplayNameFor(model => model.Trash)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="btnCantaner">
+                <button type="submit" class="btn btn-primary">發布</button>
+                <button type="submit" class="btn btn-primary">儲存草稿</button>
+                <button type="submit" class="btn btn-primary">刪除</button>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section css {
+    <link rel="stylesheet" href="~/css/PersonalEntrust.css" />
+}
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section js {
+
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
+
+    <script>
+
+        let myEditor;
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                // ...other configurations,
+                extraPlugins: [Base64UploadAdapterPlugin]
+            })
+
+            .then(editor => {
+                myEditor = editor;
+            })
+
+            .catch(error => {
+                console.error(error);
+            });
+
+        function Base64UploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
+                return new Base64UploadAdapter(loader);
+            };
+        }
+
+        class Base64UploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file
+                    .then(file => new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            resolve({ default: reader.result });
+                        };
+                        reader.onerror = error => {
+                            reject(error);
+                        };
+                        reader.readAsDataURL(file);
+                    }));
+            }
+
+            abort() { }
+        }
+
+
+        $('form').on('submit', function (e) {
+            // 在表單提交時，手動更新隱藏的 input 欄位的值
+            $('#CommissionDescription').val(myEditor.getData());
+        });
+
+
+    </script>
 }
