@@ -31,7 +31,7 @@ namespace GameModCrafters.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Set composite keys
+            // Set composite keys1
             modelBuilder.Entity<CommissionTracking>()
                 .HasKey(ct => new { ct.UserId, ct.CommissionId });
 
