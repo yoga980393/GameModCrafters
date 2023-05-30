@@ -32,6 +32,8 @@ namespace GameModCrafters.Models
 
         [Required, Display(Name = "是否被封鎖")]
         public bool Baned { get; set; }
+        [Required, Display(Name = "email確認")]
+        public bool EmailConfirmed { get; set; }
 
         // Navigation property
         public ICollection<Mod> Mods { get; set; }
