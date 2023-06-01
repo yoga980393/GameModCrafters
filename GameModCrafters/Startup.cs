@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+
 namespace GameModCrafters
 {
     public class Startup
@@ -32,11 +34,13 @@ namespace GameModCrafters
             .AddCookie(options =>
             {
                 //預設登入驗證網址為Account/Login, 若想變更才需要設定LoginPath
-                //options.LoginPath = new PathString("/Account/Login/");
+                
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.SlidingExpiration = true;
-                options.AccessDeniedPath = "/Account/LoginPage/";
+                options.LoginPath = new PathString("/Account/LoginPage/");
+                //options.AccessDeniedPath = "/Account/Forbidden/";  //拒絕訪問
             });
+            services.AddAuthorization();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             Configuration.GetConnectionString("ApplicationDbContext")));
         }
