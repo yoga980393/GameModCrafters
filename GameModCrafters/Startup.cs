@@ -38,7 +38,7 @@ namespace GameModCrafters
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.SlidingExpiration = true;
                 options.LoginPath = new PathString("/Account/LoginPage/");
-                //options.AccessDeniedPath = "/Account/Forbidden/";  //©Úµ´³X°Ý
+                //options.AccessDeniedPath = "/Account/Forbidden/";  //©Úµ´³X°Ý!
             });
             services.AddAuthorization();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
