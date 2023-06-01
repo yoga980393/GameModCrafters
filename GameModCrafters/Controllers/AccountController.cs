@@ -113,7 +113,7 @@ namespace GameModCrafters.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("LoginPage"); // 成功
+                return RedirectToAction("LoginPage"); // 成功!
             }
 
             return View(register); // 失敗
