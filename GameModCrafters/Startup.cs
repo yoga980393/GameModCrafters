@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 namespace GameModCrafters
 {
     public class Startup
@@ -27,10 +27,20 @@ namespace GameModCrafters
         {
             services.AddControllersWithViews();
             services.AddSession(); // 添加Session服務
+                                   //加入Cookie驗證, 同時設定選項
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                //預設登入驗證網址為Account/Login, 若想變更才需要設定LoginPath
+                //options.LoginPath = new PathString("/Account/Login/");
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.SlidingExpiration = true;
+                options.AccessDeniedPath = "/Account/LoginPage/";
+            });
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             Configuration.GetConnectionString("ApplicationDbContext")));
         }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -46,12 +56,14 @@ namespace GameModCrafters
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseAuthentication(); //驗證
 
+             
             app.UseSession(); // 啟用Session
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthorization(); //授權
 
             app.UseEndpoints(endpoints =>
             {
