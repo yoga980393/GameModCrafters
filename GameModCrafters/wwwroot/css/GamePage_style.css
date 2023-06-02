@@ -1,0 +1,388 @@
+﻿* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: gray;
+}
+
+img {
+    vertical-align: top;
+    width: 100%;
+}
+
+.Game_Cover {
+    position: relative;
+}
+
+.ImgWrap {
+    width: 100%;
+    max-height: 600px;
+    overflow: hidden;
+    text-align: center;
+}
+
+    .ImgWrap .Img_cover {
+        object-fit: cover;
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+
+.Game_Cover .GameName {
+    position: absolute;
+    right: 100px;
+    bottom: 100px;
+    color: white;
+    background-color: #cccccc;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.mod .card {
+    margin-bottom: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.mod .name_price {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mod .text {
+    padding: 5px 10px;
+    font-size: 20px;
+}
+
+.mod .name_price h3 {
+    font-size: 20px;
+}
+
+.mod .detail {
+    height: 180px;
+}
+
+    .mod .detail h3 {
+        font-size: 15px;
+    }
+
+    .mod .detail h2 {
+        font-size: 20px;
+    }
+
+        .mod .detail h2 span {
+            margin-right: 5px;
+            color: white;
+        }
+
+.mod .tag {
+    color: orange;
+}
+
+.mod .detail span {
+    color: gray;
+}
+
+.mod .describe {
+    font-size: 13px;
+    text-indent: 26px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 40px;
+}
+
+.mod .data {
+    display: flex;
+    padding: 5px 15px;
+    padding-top: 10px;
+    justify-content: space-between;
+    background-color: #ccc;
+    vertical-align: top;
+}
+
+    .mod .data h3 {
+        font-size: 13px;
+    }
+
+
+
+.titleorALL {
+    padding-top: 10px;
+}
+
+.bg_color {
+    background-color: #999;
+}
+
+    .bg_color .titleorALL .text {
+        margin-left: 60px;
+    }
+
+.more_mods {
+    background-color: #777;
+    margin: auto;
+    padding: 20px 0;
+    position: relative;
+    border-bottom: 5px solid white;
+}
+
+.ModGameClassification,
+.entrustClassification {
+    display: flex;
+    margin: 0 60px;
+    gap: 5px;
+}
+    .ModGameClassification .upload-button {
+        margin-left: auto;
+    }
+
+    .ModGameClassification button,
+    .ModGameClassification a,
+    .entrustClassification button {
+        padding: 10px;
+        border: 1px solid white;
+        background-color: rgb(170, 163, 163);
+        border-radius: 5px;
+    }
+
+        .ModGameClassification button:hover,
+        .ModGameClassification a:hover,
+        .entrustClassification button:hover {
+            transition: .5s;
+            background-color: azure;
+        }
+
+    .ModGameClassification select {
+        border: none;
+        display: block;
+        width: 120px;
+        padding: 10px;
+        border: 1px solid white;
+        background-color: rgb(170, 163, 163);
+        border-radius: 5px;
+        /* padding: 0 40px;
+    margin: 10px 10px; */
+    }
+
+.paging_title {
+    display: none;
+}
+
+    .paging_title.active {
+        display: block;
+    }
+
+/* ---- */
+
+
+
+
+.more-mod-Pagination {
+    text-align: center;
+    padding: 10px;
+}
+
+    .more-mod-Pagination nav {
+        display: inline-block;
+    }
+
+.label_tag nav {
+    display: flex;
+    gap: 20px;
+    position: absolute;
+    top: -35px;
+    left: 70px;
+}
+
+    .label_tag nav button {
+        background-color: rgb(170, 163, 163);
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        padding: 3px 5px 0 5px;
+        border: none;
+    }
+
+    .label_tag nav .bttn:hover {
+        transition: .5s;
+        background-color: gold;
+        color: black;
+    }
+
+.paging {
+    display: none;
+}
+
+.bttn.active {
+    background-color: gold;
+    color: black;
+}
+
+.paging.active {
+    display: block;
+}
+
+/* ------------------------ */
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+/* entrust------------------------------ */
+
+.Release_Area_Wrap {
+    background-color: #bdbcbc;
+    /* background-image: linear-gradient(to bottom, #d7e9f7, #c6dced); */
+    border-top: 1px solid #a4b6c3;
+    border-bottom: 1px solid #a4b6c3;
+    margin: 10px auto;
+    padding: 10px 0;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+
+.entrust_link a {
+    padding: 0 5px;
+}
+
+.entrust .row {
+    /* background-color: #ccc; */
+    padding: 20px;
+}
+
+
+
+.row:nth-child(even) {
+    background: linear-gradient(to right, #f6f6f6, #e9e9e9);
+}
+
+.row:nth-child(odd) {
+    background: linear-gradient(to right, #e9e9e9, #f6f6f6);
+}
+
+.row .title {
+    display: flex;
+    justify-content: center;
+}
+
+.Release_Area_Wrap {
+    padding: 20px;
+}
+
+/* --------------forum---- */
+.forum {
+    /* border: 1px solid black; */
+    color: white;
+    padding: 20px;
+}
+
+    .forum i,
+    .forum h5 {
+        display: inline;
+    }
+
+    .forum .Border {
+        border-bottom: 3px solid white;
+        margin: 20px 0;
+    }
+
+.forum_link {
+    display: flex;
+    gap: 20px;
+}
+
+.Bahamut {
+    display: flex;
+    /* justify-content: flex-end; */
+}
+
+.bahamut_img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border-radius: 20%;
+    /* margin: auto; */
+}
+
+.NGA_img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border-radius: 20%;
+}
+
+    .NGA_img h5 {
+        color: white;
+        background-color: brown;
+        border-radius: 10px;
+        padding: 10px 20px;
+    }
+
+/* -------------footer */
+.footer {
+    background-color: black;
+    width: 100%;
+    text-align: center;
+    color: white;
+    padding: 40px;
+}
+
+    .footer .title h3 {
+        display: block;
+        margin: auto;
+    }
+
+.wrap {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 24px;
+    border-bottom: #ccc solid 1px;
+    padding: 10px;
+}
+
+.icon_img a {
+    padding: 0 10px;
+    color: white;
+}
+
+.wrap_bottom {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 10px;
+}
+
+.menu {
+    display: flex;
+}
+
+    .menu a {
+        color: white;
+        padding: 0 5px;
+    }
+
+        .menu a:first-child {
+            border-right: #ccc solid 1px;
+        }
+/* -------------footer */
+
+.create{
+    display:flex;
+}

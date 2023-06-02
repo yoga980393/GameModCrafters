@@ -1,4 +1,4 @@
-﻿@model GameModCrafters.Models.Mod
+﻿@model Mod
 
 @{
     ViewData["Title"] = "Create";
@@ -231,9 +231,6 @@
             // 在表單提交時，手動更新隱藏的 input 欄位的值
             $('#Description').val(myEditor1.getData());
             $('#InstallationInstructions').val(myEditor2.getData());
-
-            localStorage.setItem('editor1Data', myEditor1.getData());
-            localStorage.setItem('editor2Data', myEditor2.getData());
         });
 
         $(".editorSwitch").on("click", function () {
@@ -243,22 +240,8 @@
         });
 
         $(document).ready(function () {
-            // Get the editor data from local storage
-            let editor1Data = localStorage.getItem('editor1Data');
-            let editor2Data = localStorage.getItem('editor2Data');
-
-            // Initialize the editors with the saved data
-            if (editor1Data) {
-                myEditor1.setData(editor1Data);
-            }
-
-            if (editor2Data) {
-                myEditor2.setData(editor2Data);
-            }
-
-            // Clear the local storage (optional)
-            localStorage.removeItem('editor1Data');
-            localStorage.removeItem('editor2Data');
+            myEditor1.setData($("#Description").val());
+            myEditor2.setData($('#InstallationInstructions').val());
         });
     </script>
 
@@ -275,6 +258,7 @@
                 // ...
             } else {
                 $("#flexRadioDefault1").prop("checked", true);
+                $("#Price").val(0)
             }
 
             $("input[type=radio][name=flexRadioDefault]").on("change", function () {

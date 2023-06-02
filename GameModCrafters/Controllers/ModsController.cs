@@ -1,5 +1,6 @@
 ﻿using GameModCrafters.Data;
 using GameModCrafters.Models;
+using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace GameModCrafters.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
+        private const int PageSize = 8;
 
         public ModsController(ApplicationDbContext context, ILogger<ModsController> logger)
         {
@@ -22,13 +24,44 @@ namespace GameModCrafters.Controllers
         }
 
         // GET: Mods
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var applicationDbContext = _context.Mods
+            var mods = _context.Mods
                 .Where(m => m.ModId != null)
                 .Include(m => m.Author)
-                .Include(m => m.Game);
-            return View(await applicationDbContext.ToListAsync());
+                .Include(m => m.Game)
+                .Include(m => m.ModLikes)
+                .Include(m => m.Favorite)
+                .Include(m => m.Downloaded)
+                .Include(m => m.ModTags)
+                    .ThenInclude(mt => mt.Tag)
+                .Select(m => new ModViewModel
+                {
+                    ModId = m.ModId,
+                    Thumbnail = m.Thumbnail,
+                    ModName = m.ModName,
+                    Price = m.Price,
+                    GameName = m.Game.GameName,
+                    AuthorName = m.Author.Username,
+                    CreateTime = m.CreateTime,
+                    UpdateTime = m.UpdateTime,
+                    Description = m.Description,
+                    Capacity = 0,
+                    LikeCount = m.ModLikes.Count,
+                    FavoriteCount = m.Favorite.Count,
+                    DownloadCount = m.Downloaded.Count,
+                    TagNames = m.ModTags.Select(mt => mt.Tag.TagName).ToList()
+                })
+                .OrderByDescending(m => m.CreateTime);
+
+            var pagedModel = new PagedModsModel
+            {
+                Mods = await mods.Skip((page - 1) * PageSize).Take(PageSize).ToListAsync(),
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(await mods.CountAsync() / (double)PageSize)
+            };
+
+            return View(pagedModel);
         }
 
         // GET: Mods/Details/5
@@ -70,7 +103,13 @@ namespace GameModCrafters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags)
         {
-            var counter = await _context.Counters.FindAsync(1);
+            var counter = await _context.Counters.SingleOrDefaultAsync(c => c.Name == "Mod");
+            if (counter == null)
+            {
+                _logger.LogInformation("Counter with name 'Mod' was not found.");
+                // Handle the case when there is no counter named 'Mod'
+                // For example, create a new counter with name 'Mod' and value 0
+            }
             string newModId = $"m{counter.Value + 1:D4}";  // Format as 'm0001'
             counter.Value++;  // Increment counter
             _context.Counters.Update(counter);
@@ -91,13 +130,27 @@ namespace GameModCrafters.Controllers
                 }
             }
 
+            if (!ModelState.IsValid)
+            {
+                foreach (var state in ModelState)
+                {
+                    _logger.LogInformation($"Key: {state.Key}, ValidationState: {state.Value.ValidationState}");
+
+                    if (state.Value.Errors.Any())
+                    {
+                        var errors = String.Join(",", state.Value.Errors.Select(e => e.ErrorMessage));
+                        _logger.LogInformation($"Errors: {errors}");
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 mod.CreateTime = DateTime.Now;
                 mod.UpdateTime = DateTime.Now;
                 _context.Add(mod);
                 await _context.SaveChangesAsync();
-                //return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
             }
 
             var tags = _context.Tags.Select(t => t.TagName).ToList();
@@ -107,6 +160,7 @@ namespace GameModCrafters.Controllers
             ViewData["SelectedTags"] = SelectedTags;
             return View(mod);
         }
+
 
         // GET: Mods/Edit/5
         public async Task<IActionResult> Edit(string id)
