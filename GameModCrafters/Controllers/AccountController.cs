@@ -42,7 +42,7 @@ namespace GameModCrafters.Controllers
         {
             if (ModelState.IsValid)
             {
-                var encryptedPassword = _hashService.SHA512Hash(model.Password);
+                var encryptedPassword = _hashService.SHA512Hash(model.Password);//加密
                 var user = _context.Users.FirstOrDefault(x => (x.Username == model.Text || x.Email == model.Text) && x.Password == encryptedPassword);
 
                 if (user != null)
