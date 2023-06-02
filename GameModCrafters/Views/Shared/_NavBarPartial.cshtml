@@ -48,7 +48,7 @@
             </ul>
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                @if(email!="")
+                @*@if(email!="")
                 {
                    
                     <li class="nav-item">
@@ -61,6 +61,32 @@
                 }
                 else
                 {
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="LoginPage">登入</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="RegisterPage">註冊</a>
+                    </li>
+                }*@
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="PersonPage">個人專區</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light">Hello @email</a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" asp-controller="Account" asp-action="Signout">登出</a>
+
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="PersonPage">個人專區</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="LoginPage">登入</a>
                     </li>

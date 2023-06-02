@@ -1,13 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Models;
+using GameModCrafters.Encryption;
 
 namespace GameModCrafters.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        private readonly IHashService _hashService;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IHashService hashService)
             : base(options)
         {
+            _hashService = hashService;
         }
 
         public DbSet<User> Users { get; set; }
@@ -31,6 +34,14 @@ namespace GameModCrafters.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Password以SHA512加密
+            modelBuilder.Entity<User>().HasData(
+                new User {  Username = "大明", Email = "kevinxi@gmail.com", Password = _hashService.SHA512Hash("A12345") },
+                new User { Username = "中明", Email = "marylee@gmail.com", Password = _hashService.SHA512Hash("B12345") },
+                new User { Username = "wTestw", Email = "johnwei@gmail.com", Password = _hashService.SHA512Hash("C12345") }
+                );
+
+
             // Set composite keys1
             modelBuilder.Entity<CommissionTracking>()
                 .HasKey(ct => new { ct.UserId, ct.CommissionId });
