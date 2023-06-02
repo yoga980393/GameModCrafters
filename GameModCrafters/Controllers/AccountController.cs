@@ -14,14 +14,18 @@ using Microsoft.AspNetCore.Authentication;
 using System;
 using Microsoft.Win32;
 using Microsoft.EntityFrameworkCore;
+using GameModCrafters.Encryption;
 
 namespace GameModCrafters.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IHashService _hashService;
+     
         private readonly ApplicationDbContext _context;
-        public AccountController(ApplicationDbContext context)
+        public AccountController(ApplicationDbContext context,IHashService hashService)
         {
+            _hashService = hashService;
             _context = context;
         }
         [HttpGet]
@@ -38,7 +42,8 @@ namespace GameModCrafters.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _context.Users.FirstOrDefault(x => (x.Username == model.Text || x.Email == model.Text) && x.Password == model.Password);
+                var encryptedPassword = _hashService.SHA512Hash(model.Password);
+                var user = _context.Users.FirstOrDefault(x => (x.Username == model.Text || x.Email == model.Text) && x.Password == encryptedPassword);
 
                 if (user != null)
                 {
@@ -63,6 +68,7 @@ namespace GameModCrafters.Controllers
 
             return View(model); // 失敗
         }
+        
         [HttpGet]
         [AllowAnonymous]
         public IActionResult RegisterPage()
@@ -106,7 +112,7 @@ namespace GameModCrafters.Controllers
                 {
                     Email = register.Email,
                     Username = register.Username,
-                    Password = register.Password1,
+                    Password = _hashService.SHA512Hash(register.Password1) ,
                     RegistrationDate = DateTime.UtcNow // 取得當前的 UTC 時間
                 };
 

@@ -1,4 +1,4 @@
-﻿
+﻿using GameModCrafters.Encryption;
 using System.Linq;
 using System;
 using System.Security.Cryptography;
@@ -27,10 +27,7 @@ namespace GameModCrafters.Encryption
 
                 sb = new StringBuilder();
 
-                //for (int i = 0; i < encryption.Length; i++)
-                //{
-                //    sb.Append(encryption[i].ToString("x2"));
-                //}
+               
 
                 foreach (byte bt in encryption)
                 {
