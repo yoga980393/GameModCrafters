@@ -87,6 +87,7 @@
                             <input class="form-control" type="file" id="coverImage" name="coverImage"
                                    accept="image/*">
                         </div>
+                        <input asp-for="Thumbnail" type="hidden">
                     </div>
                 </div>
 
@@ -432,24 +433,24 @@
 
         // 剪裁按鈕事件
         $("#cropImageBtn").on("click", function () {
-            // 獲得剪裁後的圖片
             cropper.getCroppedCanvas().toBlob(function (blob) {
-                // 讀取剪裁後的圖片
-                var reader = new FileReader();
-                reader.readAsDataURL(blob);
-                reader.onloadend = function () {
-                    var base64data = reader.result;
-                    console.log(base64data)
+                var formData = new FormData();
+                formData.append("file", blob, "cropped.jpg"); // 設定你想要的檔案名稱
 
-                    // 將剪裁後的圖片顯示在按鈕後面
-                    $("#previewImage").attr("src", base64data);
-
-                    // 關閉剪裁視窗
-                    $("#cropperModal").modal("hide");
-
-                    // 銷毀 cropper 實例
-                    cropper.destroy();
-                };
+                fetch('/Mods/UploadFile', { // 改成你的Controller和方法的路徑
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        $("#previewImage").attr("src", data.fileUrl);
+                        $("#Thumbnail").val(data.fileUrl)
+                        $("#cropperModal").modal("hide");
+                        cropper.destroy();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             });
         });
     </script>

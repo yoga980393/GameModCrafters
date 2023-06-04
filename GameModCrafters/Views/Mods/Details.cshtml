@@ -1,84 +1,115 @@
-﻿@model GameModCrafters.Models.Mod
+﻿@model ModDetailViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-3 my-3">
+            <a href="" class="author">
+                <div class="card">
+                    <div class="pic">
+                        <img src="https://picsum.photos/300/200/?random=2">
+                    </div>
+                    <div class="authorData">
+                        <h3 class="name">@Model.AuthorName</h3>
+                        <div class="detail">
+                            <div> 作品數量：@Model.AuthorWorkCount</div>
+                            <div> 獲讚數：@Model.AuthorLikesReceived</div>
+                        </div>
+                    </div>
+                    <div class="avatar">
+                        <img src="https://picsum.photos/100/100/?random=1">
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-9">
+            <div class="content">
+                <h2>@Model.ModName</h2>
+                <div id="tag"></div>
+                <hr>
+                <div class="date_like">
+                    <h4>上船日期：@Model.CreateTime 更新日期：@Model.UpdateTime</h4>
+                    <div class="like">
+                        <button type="button" class="btn btn-light">
+                            <i class="fas fa-thumbs-up"
+                               style="color: pink"></i> @Model.LikeCount
+                        </button>
+                        <button type="button" class="btn btn-light">
+                            <i class="fas fa-star" style="color: pink"></i> @Model.FavoriteCount
+                        </button>
+                    </div>
+                </div>
+                <div class="introduction active" id="Description"></div>
+                <div class="introduction" id="InstallationInstructions"></div>
+                <div class="introduction">
+                    <div class="message">
+                        userName:留言內容
+                    </div>
+                    <div class="message">
+                        userName:留言內容
+                    </div>
+                    <div class="message">
+                        userName:留言內容
+                    </div>
+                    <div class="message">
+                        userName:留言內容
+                    </div>
+                    <div class="input-container">
+                        <input type="text" class="input" placeholder="輸入你的留言" />
+                        <button class="submit">提交</button>
+                    </div>
+                </div>
 
-<div>
-    <h4>Mod</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InstallationInstructions)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InstallationInstructions)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DownloadLink)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DownloadLink)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Thumbnail)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Thumbnail)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreateTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreateTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdateTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdateTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsDone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsDone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Author.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Game)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Game.GameId)
-        </dd>
-    </dl>
+                <div class="tag-buttons">
+                    <button class="btn btn-outline-secondary btn_active">模組簡介</button>
+                    <button class="btn btn-outline-secondary">安裝方式</button>
+                    <button class="btn btn-outline-secondary">留言區</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.ModId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@section css{
+    <link href="~/css/moddetailstyle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+}
+
+@section js{
+    <script>
+        $(document).ready(function () {
+            $(".tag-buttons button").on("click", function () {
+                var pageIndex = $(this).index();
+
+                $(".btn.btn-outline-secondary.btn_active").removeClass("btn_active");
+                $(".btn.btn-outline-secondary").eq(pageIndex).addClass("btn_active");
+
+                // Hide the currently active page and remove the active class
+                $(".introduction.active").removeClass("active").hide();
+
+                // Show the selected page and add the active class
+                $(".introduction").eq(pageIndex).addClass("active").show();
+            });
+
+            $("#Description").html("@Html.Raw(Model.Description)");
+            $("#InstallationInstructions").html("@Html.Raw(Model.InstallationInstructions)");
+
+            AddTag();
+        });
+
+        function AddTag() {
+            var tagContainer = $("#tag");
+            var tagNames = @Html.Raw(Json.Serialize(Model.Tags));
+            tagNames.forEach(function (tagName) {
+                var spanElement = document.createElement("span");
+                spanElement.className = "badge bg-secondary";
+                spanElement.textContent = tagName;
+                tagContainer.append(spanElement); 
+            });
+        }
+    </script>
+}

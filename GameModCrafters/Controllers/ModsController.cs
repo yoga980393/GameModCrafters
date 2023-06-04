@@ -1,12 +1,16 @@
 ﻿using GameModCrafters.Data;
 using GameModCrafters.Models;
 using GameModCrafters.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace GameModCrafters.Controllers
@@ -24,10 +28,30 @@ namespace GameModCrafters.Controllers
         }
 
         // GET: Mods
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(FilterViewModel filter, int page = 1)
         {
+            var now = DateTime.Now;
+            DateTime startDate;
+
+            switch (filter.TimeFilter)
+            {
+                case 1:  // 一天内
+                    startDate = now.AddDays(-1);
+                    break;
+                case 2:  // 一周内
+                    startDate = now.AddDays(-7);
+                    break;
+                case 3:  // 一个月内
+                    startDate = now.AddMonths(-1);
+                    break;
+                default:  // 全部（不设置开始日期）
+                    startDate = DateTime.MinValue;
+                    break;
+            }
+
             var mods = _context.Mods
-                .Where(m => m.ModId != null)
+                .Where(m => m.ModId != null && (string.IsNullOrEmpty(filter.SearchString) || m.ModName.Contains(filter.SearchString)))
+                .Where(m => m.CreateTime >= startDate)
                 .Include(m => m.Author)
                 .Include(m => m.Game)
                 .Include(m => m.ModLikes)
@@ -51,14 +75,38 @@ namespace GameModCrafters.Controllers
                     FavoriteCount = m.Favorite.Count,
                     DownloadCount = m.Downloaded.Count,
                     TagNames = m.ModTags.Select(mt => mt.Tag.TagName).ToList()
-                })
-                .OrderByDescending(m => m.CreateTime);
+                });
+                
+
+            switch (filter.SortFilter)
+            {
+                case "uploadTime":
+                    mods = (filter.OrderFilter == "desc") ? mods.OrderByDescending(m => m.CreateTime) : mods.OrderBy(m => m.CreateTime);
+                    break;
+                case "updateTime":
+                    mods = (filter.OrderFilter == "desc") ? mods.OrderByDescending(m => m.UpdateTime) : mods.OrderBy(m => m.UpdateTime);
+                    break;
+                case "downloadCount":
+                    mods = (filter.OrderFilter == "desc") ? mods.OrderByDescending(m => m.DownloadCount) : mods.OrderBy(m => m.DownloadCount);
+                    break;
+                case "name":
+                    mods = (filter.OrderFilter == "desc") ? mods.OrderByDescending(m => m.ModName) : mods.OrderBy(m => m.ModName);
+                    break;
+                default: 
+                    mods = mods.OrderByDescending(m => m.CreateTime);
+                    break;
+            }
+
+            if (filter.PageSize <= 0)
+            {
+                filter.PageSize = 8; // fallback to default value if invalid input
+            }
 
             var pagedModel = new PagedModsModel
             {
-                Mods = await mods.Skip((page - 1) * PageSize).Take(PageSize).ToListAsync(),
+                Mods = await mods.Skip((page - 1) * filter.PageSize).Take(filter.PageSize).ToListAsync(),
                 CurrentPage = page,
-                TotalPages = (int)Math.Ceiling(await mods.CountAsync() / (double)PageSize)
+                TotalPages = (int)Math.Ceiling(await mods.CountAsync() / (double)filter.PageSize)
             };
 
             return View(pagedModel);
@@ -75,13 +123,33 @@ namespace GameModCrafters.Controllers
             var mod = await _context.Mods
                 .Include(m => m.Author)
                 .Include(m => m.Game)
+                .Include(m => m.ModTags).ThenInclude(mt => mt.Tag)
                 .FirstOrDefaultAsync(m => m.ModId == id);
+
             if (mod == null)
             {
                 return NotFound();
             }
 
-            return View(mod);
+            var modDetailViewModel = new ModDetailViewModel
+            {
+                ModId = mod.ModId,
+                ModName = mod.ModName,
+                Tags = mod.ModTags?.Select(mt => mt.Tag?.TagName ?? "無資料").ToList() ?? new List<string> { "無資料" },
+                CreateTime = mod.CreateTime,
+                UpdateTime = mod.UpdateTime,
+                Description = mod.Description,
+                InstallationInstructions = mod.InstallationInstructions,
+                LikeCount = mod.ModLikes?.Count() ?? 0,
+                FavoriteCount = mod.Favorite?.Count() ?? 0,
+                DownloadCount = mod.Downloaded?.Count() ?? 0,
+                Price = mod.Price,
+                AuthorName = mod.Author.Username,
+                AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
+                AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId)
+            };
+
+            return View(modDetailViewModel);
         }
 
         // GET: Mods/Create
@@ -256,6 +324,31 @@ namespace GameModCrafters.Controllers
         private bool ModExists(string id)
         {
             return _context.Mods.Any(e => e.ModId == id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Invalid file.");
+            }
+
+            var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+            var extension = Path.GetExtension(file.FileName);
+            var date = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var random = Guid.NewGuid().ToString().Substring(0, 4); // 生成一個4位數的隨機字串
+            var newFileName = $"{fileName}_{date}_{random}{extension}";
+
+            var filePath = Path.Combine("wwwroot/ModImages", newFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            var fileUrl = Url.Content("~/ModImages/" + newFileName);
+            return Ok(new { fileUrl });
         }
     }
 }
