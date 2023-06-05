@@ -82,9 +82,15 @@ namespace GameModCrafters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterPage([Bind("Email, Username, Password1,Password2")] RegisterViewModel register)
         {
-            
+
+
+           
+
+
+                //---------
+
             if (ModelState.IsValid)
-            {
+                {
                 bool isEmailExists = _context.Users.Any(u => u.Email == register.Email);
                 bool isUsernameExists = _context.Users.Any(m => m.Username == register.Username);
                 if (isUsernameExists)
@@ -102,26 +108,33 @@ namespace GameModCrafters.Controllers
                     return View(register);
                 }
 
-                bool isPasswordValid = IsPasswordValid(register.Password1);
+               
 
-                if (!isPasswordValid)
+                if (register.Password1 == register.Password2)
                 {
-                    ModelState.AddModelError("Password1", "密碼至少包含 8-20 個字符，並且包含至少一個大寫字母和一個數字");
+                    bool isPasswordValid = IsPasswordValid(register.Password1);
+                    if (isPasswordValid == false)
+                    {
+                        ModelState.AddModelError("Password1", "密碼至少包含 8-20 個字符，並且包含至少一個大寫字母和一個數字");
+                        return View(register);
+                    }
+                    var user = new User
+                    {
+                        Email = register.Email,
+                        Username = register.Username,
+                        Password = _hashService.SHA512Hash(register.Password1),
+                        RegistrationDate = DateTime.UtcNow // 取得當前的 UTC 時間
+                    };
+                    _context.Users.Add(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("LoginPage");//成功
+                }
+                else
+                {
+                    ModelState.AddModelError("Password1", "密碼和確認密碼不一樣");
+                    ModelState.AddModelError("Password2", "密碼和確認密碼不一樣");
                     return View(register);
                 }
-
-                var user = new User
-                {
-                    Email = register.Email,
-                    Username = register.Username,
-                    Password = _hashService.SHA512Hash(register.Password1) ,
-                    RegistrationDate = DateTime.UtcNow // 取得當前的 UTC 時間
-                };
-
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("LoginPage"); // 成功!
             }
 
             return View(register); // 失敗
