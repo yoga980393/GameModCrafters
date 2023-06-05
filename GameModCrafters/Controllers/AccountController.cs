@@ -108,33 +108,27 @@ namespace GameModCrafters.Controllers
                     return View(register);
                 }
 
-               
+                
 
-                if (register.Password1 == register.Password2)
+
+                bool isPasswordValid = IsPasswordValid(register.Password1);
+                if (!isPasswordValid)
                 {
-                    bool isPasswordValid = IsPasswordValid(register.Password1);
-                    if (isPasswordValid == false)
-                    {
-                        ModelState.AddModelError("Password1", "密碼至少包含 8-20 個字符，並且包含至少一個大寫字母和一個數字");
-                        return View(register);
-                    }
-                    var user = new User
-                    {
-                        Email = register.Email,
-                        Username = register.Username,
-                        Password = _hashService.SHA512Hash(register.Password1),
-                        RegistrationDate = DateTime.UtcNow // 取得當前的 UTC 時間
-                    };
-                    _context.Users.Add(user);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("LoginPage");//成功
-                }
-                else
-                {
-                    ModelState.AddModelError("Password1", "密碼和確認密碼不一樣");
-                    ModelState.AddModelError("Password2", "密碼和確認密碼不一樣");
+                    ModelState.AddModelError("Password1", "密碼至少包含 8-20 個字符，並且包含至少一個大寫字母和一個數字");
                     return View(register);
                 }
+
+                var user = new User
+                {
+                    Email = register.Email,
+                    Username = register.Username,
+                    Password = _hashService.SHA512Hash(register.Password1),
+                    RegistrationDate = DateTime.UtcNow, // 取得當前的 UTC 時間
+                    
+                };
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("LoginPage");//成功
             }
 
             return View(register); // 失敗
