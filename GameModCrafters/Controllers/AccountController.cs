@@ -51,8 +51,8 @@ namespace GameModCrafters.Controllers
                     //通過以上帳密比對成立後, 以下開始建立授權
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.NameIdentifier,user.Email ),
-                        new Claim(ClaimTypes.Name,user.Username ),//model.Text.ToString()
+                        new Claim(ClaimTypes.NameIdentifier,user.Email ),//email
+                        new Claim(ClaimTypes.Name,user.Username ),//增加使用者   model.Text.ToString()
                         //new Claim(ClaimTypes.Role, "Administrator") // 如果要有「群組、角色、權限」，可以加入這一段  
 
                     };
