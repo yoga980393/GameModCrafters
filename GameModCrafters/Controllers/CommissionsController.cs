@@ -7,17 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Data;
 using GameModCrafters.Models;
+using Microsoft.Extensions.Logging;
 
 namespace GameModCrafters.Controllers
 {
     public class CommissionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
 
-        public CommissionsController(ApplicationDbContext context)
+        public CommissionsController(ApplicationDbContext context, ILogger<CommissionsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
+
 
         // GET: Commissions
         public async Task<IActionResult> Index()
@@ -27,25 +31,25 @@ namespace GameModCrafters.Controllers
         }
 
         // GET: Commissions/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Details(string id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var commission = await _context.Commissions
-                .Include(c => c.CommissionStatus)
-                .Include(c => c.Delegator)
-                .Include(c => c.Game)
-                .FirstOrDefaultAsync(m => m.CommissionId == id);
-            if (commission == null)
-            {
-                return NotFound();
-            }
+        //    var commission = await _context.Commissions
+        //        .Include(c => c.CommissionStatus)
+        //        .Include(c => c.Delegator)
+        //        .Include(c => c.Game)
+        //        .FirstOrDefaultAsync(m => m.CommissionId == id);
+        //    if (commission == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(commission);
-        }
+        //    return View(commission);
+        //}
 
         // GET: Commissions/Create
         public IActionResult Create()
@@ -61,10 +65,41 @@ namespace GameModCrafters.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommissionId,DelegatorId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
+        public async Task<IActionResult> Create([Bind("CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
+            if (!ModelState.IsValid)
+            {
+                foreach (var state in ModelState)
+                {
+                    _logger.LogInformation($"Key: {state.Key}, ValidationState: {state.Value.ValidationState}");
+
+                    if (state.Value.Errors.Any())
+                    {
+                        var errors = String.Join(",", state.Value.Errors.Select(e => e.ErrorMessage));
+                        _logger.LogInformation($"Errors: {errors}");
+                    }
+                }
+            }
+
+
             if (ModelState.IsValid)
             {
+                var counter = await _context.Counters.FindAsync(1);
+                string newCommissionId = $"C{counter.Value + 1:D4}";  // Format as 'D0001'
+                counter.Value++;  // Increment counter
+                _context.Counters.Update(counter);
+                await _context.SaveChangesAsync();
+                commission.CommissionId = newCommissionId;
+                
+                commission.CreateTime = DateTime.Now;
+                commission.UpdateTime = DateTime.Now;
+                var SelectGameId = from gi in _context.Games
+                             where commission.GameId == gi.GameName
+                             select gi.GameId;
+                string gameId = SelectGameId.FirstOrDefault();
+
+                commission.GameId = gameId;
+                
                 _context.Add(commission);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

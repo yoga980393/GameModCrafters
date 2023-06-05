@@ -7,7 +7,7 @@
 <div class="container Entrust">
     <h1>委託發布</h1>
     <div class="row">
-        <form asp-action="Create">
+        <form  method="post">
             <div class="mb-3">
                 <label asp-for="CommissionTitle" class="form-label">委託標題:</label>
                 <input type="text" class="form-control" asp-for="CommissionTitle">
@@ -26,9 +26,10 @@
                 <input type="text" class="budgetinput" asp-for="Budget">
             </div>
             <div class="btnCantaner">
-                <button type="submit" class="btn btn-primary">發布</button>
-                <button type="submit" class="btn btn-primary">儲存草稿</button>
-                <button type="submit" class="btn btn-primary">刪除</button>
+                <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />
+                <input type="submit" value="修改" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
+                <input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />
+                <input type="submit" value="刪除" asp-controller="Commissions" asp-action="Delete" class="btn btn-primary form-control" />
             </div>
         </form>
     </div>
@@ -45,7 +46,6 @@
 
     <script>
 
-        let myEditor;
         ClassicEditor
             .create(document.querySelector('#editor'), {
                 // ...other configurations,
