@@ -85,7 +85,7 @@ namespace GameModCrafters.Controllers
             if (ModelState.IsValid)
             {
                 var counter = await _context.Counters.FindAsync(1);
-                string newCommissionId = $"C{counter.Value + 1:D4}";  // Format as 'C0001'
+                string newCommissionId = $"C{counter.Value + 1:D4}";  // Format as 'D0001'
                 counter.Value++;  // Increment counter
                 _context.Counters.Update(counter);
                 await _context.SaveChangesAsync();
