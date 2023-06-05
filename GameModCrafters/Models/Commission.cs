@@ -7,10 +7,10 @@
 
     public class Commission
     {
-        [Key, Required, MaxLength(255), Display(Name = "委託ID")]
+        [Key, MaxLength(255), Display(Name = "委託ID")]
         public string CommissionId { get; set; }
 
-        [Required, MaxLength(255), Display(Name = "委託者ID")]
+        [ MaxLength(255), Display(Name = "委託者ID")]
         public string DelegatorId { get; set; }
 
         [MaxLength(255), Display(Name = "遊戲ID")]

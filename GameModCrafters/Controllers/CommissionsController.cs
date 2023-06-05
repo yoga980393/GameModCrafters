@@ -22,6 +22,7 @@ namespace GameModCrafters.Controllers
             _logger = logger;
         }
 
+
         // GET: Commissions
         public async Task<IActionResult> Index()
         {
@@ -64,10 +65,23 @@ namespace GameModCrafters.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommissionId,DelegatorId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
+        public async Task<IActionResult> Create([Bind("CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
+            if (!ModelState.IsValid)
+            {
+                foreach (var state in ModelState)
+                {
+                    _logger.LogInformation($"Key: {state.Key}, ValidationState: {state.Value.ValidationState}");
 
-            
+                    if (state.Value.Errors.Any())
+                    {
+                        var errors = String.Join(",", state.Value.Errors.Select(e => e.ErrorMessage));
+                        _logger.LogInformation($"Errors: {errors}");
+                    }
+                }
+            }
+
+
             if (ModelState.IsValid)
             {
                 var counter = await _context.Counters.FindAsync(1);
@@ -76,7 +90,7 @@ namespace GameModCrafters.Controllers
                 _context.Counters.Update(counter);
                 await _context.SaveChangesAsync();
                 commission.CommissionId = newCommissionId;
-
+                
                 commission.CreateTime = DateTime.Now;
                 commission.UpdateTime = DateTime.Now;
                 var SelectGameId = from gi in _context.Games
