@@ -7,34 +7,36 @@
 <div class="container Entrust">
     <h1>委託發布</h1>
     <div class="row">
-        <form>
+        <form method="post">
             <div class="mb-3">
-                <label for="gameName" class="form-label">委託標題:</label>
-                <input type="text" class="form-control" id="gameName" >
+                <label asp-for="CommissionTitle" class="form-label">委託標題:</label>
+                <input type="text" class="form-control" asp-for="CommissionTitle">
             </div>
             <div class="mb-3">
-                <label for="gameName" class="form-label">遊戲名稱:</label>
-                <input type="search" class="form-control" id="gameName" >
+                <label asp-for="GameId" class="form-label">遊戲名稱:</label>
+                <input type="search" class="form-control" asp-for="GameId">
             </div>
             <div class="mb-3">
-                <label for="details" class="form-label">委託詳情:</label>
+                <label asp-for="CommissionDescription" class="form-label">委託詳情:</label>
                 <div id="editor"></div>
+                <input asp-for="CommissionDescription" class="form-control" type="hidden" />
             </div>
             <div class="mb-3">
-                <label for="">預算:</label>
-                <input type="text" class="budgetinput" id="budge">
+                <label asp-for="Budget">預算:</label>
+                <input type="text" class="budgetinput" asp-for="Budget">
             </div>
-            <div class="btn">
-                <button type="submit" class="btn btn-primary">發布</button>
-                <button type="submit" class="btn btn-primary">儲存草稿</button>
-                <button type="submit" class="btn btn-primary">刪除</button>
+            <div class="btnCantaner">
+                <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />
+                <input type="submit" value="修改" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
+                <input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />
+                <input type="submit" value="刪除" asp-controller="Commissions" asp-action="Delete" class="btn btn-primary form-control" />
             </div>
         </form>
     </div>
 </div>
 
 @section css {
-    <link rel="stylesheet" href="~/css/Entrust.css" />
+    <link rel="stylesheet" href="~/css/PersonalEntrust.css" />
 }
 
 @section js {
@@ -43,11 +45,17 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
 
     <script>
+
         ClassicEditor
             .create(document.querySelector('#editor'), {
                 // ...other configurations,
                 extraPlugins: [Base64UploadAdapterPlugin]
             })
+
+            .then(editor => {
+                myEditor = editor;
+            })
+
             .catch(error => {
                 console.error(error);
             });
@@ -79,6 +87,13 @@
 
             abort() { }
         }
+
+
+        $('form').on('submit', function (e) {
+            // 在表單提交時，手動更新隱藏的 input 欄位的值
+            $('#CommissionDescription').val(myEditor.getData());
+        });
+
 
     </script>
 }
