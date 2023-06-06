@@ -82,7 +82,7 @@ namespace GameModCrafters.Controllers
                 }
             }
 
-            var counter = await _context.Counters.SingleOrDefaultAsync(c => c.Name == "Commission");
+            var counter = await _context.Counters.SingleOrDefaultAsync(c => c.CounterName == "Commission");
             if (counter == null)
             {
                 _logger.LogInformation("Counter with name 'Mod' was not found.");
