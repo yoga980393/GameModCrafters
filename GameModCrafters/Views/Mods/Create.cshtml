@@ -2,11 +2,12 @@
 
 @{
     ViewData["Title"] = "Create";
+    var nameIdentifier = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 }
 
 <div class="container">
     <form asp-action="Create" asp-controller="Mods" method="post">
-        <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
+        <input asp-for="AuthorId" type="hidden" value="@nameIdentifier" />
         <input class="form-check-input" asp-for="IsDone" /> @Html.DisplayNameFor(model => model.IsDone)
 
         <div class="mb-3">

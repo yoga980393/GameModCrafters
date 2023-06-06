@@ -128,6 +128,19 @@ namespace GameModCrafters.Data
                     }
                 );
 
+            modelBuilder.Entity<Tag>()
+                .HasData(
+                    new Tag { TagId = "t001", TagName = "劇情" },
+                    new Tag { TagId = "t002", TagName = "數值" },
+                    new Tag { TagId = "t003", TagName = "武器" },
+                    new Tag { TagId = "t004", TagName = "道具" },
+                    new Tag { TagId = "t005", TagName = "地圖" },
+                    new Tag { TagId = "t006", TagName = "音樂" },
+                    new Tag { TagId = "t007", TagName = "美術" },
+                    new Tag { TagId = "t008", TagName = "程式" },
+                    new Tag { TagId = "t009", TagName = "其他" }
+                );
+
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 var foreignKeys = entityType.GetForeignKeys();

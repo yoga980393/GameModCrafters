@@ -488,6 +488,53 @@ namespace GameModCrafters.Migrations
                     b.HasKey("TagId");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            TagId = "t001",
+                            TagName = "劇情"
+                        },
+                        new
+                        {
+                            TagId = "t002",
+                            TagName = "數值"
+                        },
+                        new
+                        {
+                            TagId = "t003",
+                            TagName = "武器"
+                        },
+                        new
+                        {
+                            TagId = "t004",
+                            TagName = "道具"
+                        },
+                        new
+                        {
+                            TagId = "t005",
+                            TagName = "地圖"
+                        },
+                        new
+                        {
+                            TagId = "t006",
+                            TagName = "音樂"
+                        },
+                        new
+                        {
+                            TagId = "t007",
+                            TagName = "美術"
+                        },
+                        new
+                        {
+                            TagId = "t008",
+                            TagName = "程式"
+                        },
+                        new
+                        {
+                            TagId = "t009",
+                            TagName = "其他"
+                        });
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Transaction", b =>

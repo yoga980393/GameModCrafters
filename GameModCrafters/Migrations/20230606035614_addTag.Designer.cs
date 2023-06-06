@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameModCrafters.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230605092728_upDataSeedData")]
-    partial class upDataSeedData
+    [Migration("20230606035614_addTag")]
+    partial class addTag
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -176,7 +176,7 @@ namespace GameModCrafters.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("CounterName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Value")
@@ -190,13 +190,13 @@ namespace GameModCrafters.Migrations
                         new
                         {
                             CounterId = 1,
-                            Name = "Mod",
+                            CounterName = "Mod",
                             Value = 0
                         },
                         new
                         {
                             CounterId = 2,
-                            Name = "Commission",
+                            CounterName = "Commission",
                             Value = 0
                         });
                 });
@@ -273,6 +273,32 @@ namespace GameModCrafters.Migrations
                     b.HasKey("GameId");
 
                     b.ToTable("Games");
+
+                    b.HasData(
+                        new
+                        {
+                            GameId = "g001",
+                            CreateTime = new DateTime(2023, 5, 27, 17, 21, 0, 0, DateTimeKind.Unspecified),
+                            Description = "mcTest",
+                            GameName = "Minecraft",
+                            Thumbnail = "mcImg"
+                        },
+                        new
+                        {
+                            GameId = "g002",
+                            CreateTime = new DateTime(2023, 5, 28, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            Description = "fnTest",
+                            GameName = "Fortnite",
+                            Thumbnail = "fnImg"
+                        },
+                        new
+                        {
+                            GameId = "g003",
+                            CreateTime = new DateTime(2023, 5, 29, 14, 15, 0, 0, DateTimeKind.Unspecified),
+                            Description = "owTest",
+                            GameName = "Overwatch",
+                            Thumbnail = "owImg"
+                        });
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Log", b =>
@@ -464,6 +490,53 @@ namespace GameModCrafters.Migrations
                     b.HasKey("TagId");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            TagId = "t001",
+                            TagName = "劇情"
+                        },
+                        new
+                        {
+                            TagId = "t002",
+                            TagName = "數值"
+                        },
+                        new
+                        {
+                            TagId = "t003",
+                            TagName = "武器"
+                        },
+                        new
+                        {
+                            TagId = "t004",
+                            TagName = "道具"
+                        },
+                        new
+                        {
+                            TagId = "t005",
+                            TagName = "地圖"
+                        },
+                        new
+                        {
+                            TagId = "t006",
+                            TagName = "音樂"
+                        },
+                        new
+                        {
+                            TagId = "t007",
+                            TagName = "美術"
+                        },
+                        new
+                        {
+                            TagId = "t008",
+                            TagName = "程式"
+                        },
+                        new
+                        {
+                            TagId = "t009",
+                            TagName = "其他"
+                        });
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Transaction", b =>
