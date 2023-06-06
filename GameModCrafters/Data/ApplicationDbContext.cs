@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Models;
 using GameModCrafters.Encryption;
+using System;
 
 namespace GameModCrafters.Data
 {
@@ -88,8 +89,8 @@ namespace GameModCrafters.Data
 
             modelBuilder.Entity<Counter>()
                 .HasData(
-                    new Counter { CounterId = 1, Value = 0 , Name = "Mod"},
-                    new Counter { CounterId = 2, Value = 0, Name = "Commission" }
+                    new Counter { CounterId = 1, Value = 0 , CounterName = "Mod"},
+                    new Counter { CounterId = 2, Value = 0, CounterName = "Commission" }
                 );
 
             modelBuilder.Entity<CommissionStatus>()
@@ -98,6 +99,47 @@ namespace GameModCrafters.Data
                         new CommissionStatus { CommissionStatusId = "s03", Status = "已完成" },
                         new CommissionStatus { CommissionStatusId = "s04", Status = "已取消" }
                );
+
+            modelBuilder.Entity<Game>()
+                .HasData(
+                    new Game
+                    {
+                        GameId = "g001",
+                        GameName = "Minecraft",
+                        Description = "mcTest",
+                        Thumbnail = "mcImg",
+                        CreateTime = new DateTime(2023, 5, 27, 17, 21, 0)
+                    },
+                    new Game
+                    {
+                        GameId = "g002",
+                        GameName = "Fortnite",
+                        Description = "fnTest",
+                        Thumbnail = "fnImg",
+                        CreateTime = new DateTime(2023, 5, 28, 10, 30, 0)
+                    },
+                    new Game
+                    {
+                        GameId = "g003",
+                        GameName = "Overwatch",
+                        Description = "owTest",
+                        Thumbnail = "owImg",
+                        CreateTime = new DateTime(2023, 5, 29, 14, 15, 0)
+                    }
+                );
+
+            modelBuilder.Entity<Tag>()
+                .HasData(
+                    new Tag { TagId = "t001", TagName = "劇情" },
+                    new Tag { TagId = "t002", TagName = "數值" },
+                    new Tag { TagId = "t003", TagName = "武器" },
+                    new Tag { TagId = "t004", TagName = "道具" },
+                    new Tag { TagId = "t005", TagName = "地圖" },
+                    new Tag { TagId = "t006", TagName = "音樂" },
+                    new Tag { TagId = "t007", TagName = "美術" },
+                    new Tag { TagId = "t008", TagName = "程式" },
+                    new Tag { TagId = "t009", TagName = "其他" }
+                );
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {

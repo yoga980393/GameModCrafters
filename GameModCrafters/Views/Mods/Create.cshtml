@@ -2,12 +2,12 @@
 
 @{
     ViewData["Title"] = "Create";
+    var nameIdentifier = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 }
 
 <div class="container">
     <form asp-action="Create" asp-controller="Mods" method="post">
-        <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
-        <input class="form-check-input" asp-for="IsDone" /> @Html.DisplayNameFor(model => model.IsDone)
+        <input asp-for="AuthorId" type="hidden" value="@nameIdentifier" />
 
         <div class="mb-3">
             <label asp-for="ModName" class="form-label" for="titleInput">Mod名稱</label>
@@ -92,8 +92,8 @@
                 </div>
 
                 <div class="mt-5 submitBtn">
-                    <button type="submit" class="btn btn-primary">儲存草稿</button>
-                    <button type="submit" class="btn btn-primary">確認送出</button>
+                    <button type="submit" class="btn btn-primary" name="IsDone" value="false">儲存草稿</button>
+                    <button type="submit" class="btn btn-primary" name="IsDone" value="true">確認送出</button>
                 </div>
             </div>
 
@@ -435,7 +435,7 @@
         $("#cropImageBtn").on("click", function () {
             cropper.getCroppedCanvas().toBlob(function (blob) {
                 var formData = new FormData();
-                formData.append("file", blob, "cropped.jpg"); // 設定你想要的檔案名稱
+                formData.append("file", blob, "cropped.jpg"); // 設定你想要的檔案名稱1
 
                 fetch('/Mods/UploadFile', { // 改成你的Controller和方法的路徑
                     method: 'POST',
@@ -460,6 +460,10 @@
             let inputText = $(this).val();
             $("#previewName").text(inputText);
         });
+
+        $(() => {
+            $("#previewName").text($("#titleInput").val());
+        })
 
         $("#GameId").on("change", function () {
             let selectedText = $(this).find("option:selected").text();

@@ -181,3 +181,7 @@ body {
     .submit:hover {
         background-color: #f80;
     }
+
+.ModOption{
+    display: flex;
+}

@@ -1,6 +1,7 @@
 ﻿using GameModCrafters.Data;
 using GameModCrafters.Models;
 using GameModCrafters.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -52,6 +53,7 @@ namespace GameModCrafters.Controllers
             var mods = _context.Mods
                 .Where(m => m.ModId != null && (string.IsNullOrEmpty(filter.SearchString) || m.ModName.Contains(filter.SearchString)))
                 .Where(m => m.CreateTime >= startDate)
+                .Where(m => m.IsDone)
                 .Include(m => m.Author)
                 .Include(m => m.Game)
                 .Include(m => m.ModLikes)
@@ -153,6 +155,7 @@ namespace GameModCrafters.Controllers
         }
 
         // GET: Mods/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email");
@@ -168,10 +171,11 @@ namespace GameModCrafters.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags)
         {
-            var counter = await _context.Counters.SingleOrDefaultAsync(c => c.Name == "Mod");
+            var counter = await _context.Counters.SingleOrDefaultAsync(c => c.CounterName == "Mod");
             if (counter == null)
             {
                 _logger.LogInformation("Counter with name 'Mod' was not found.");
@@ -243,17 +247,28 @@ namespace GameModCrafters.Controllers
             {
                 return NotFound();
             }
+
+            // 獲取該 Mod 的所有 Tag 名稱
+            var selectedTags = await _context.ModTags
+                .Where(mt => mt.ModId == id)
+                .Select(mt => mt.Tag.TagName)
+                .ToListAsync();
+
+            var tags = _context.Tags.Select(t => t.TagName).ToList();
+            ViewData["Tags"] = tags;
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email", mod.AuthorId);
             ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", mod.GameId);
+            ViewData["SelectedTags"] = selectedTags;
             return View(mod);
         }
+
 
         // POST: Mods/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ModId,GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod)
+        public async Task<IActionResult> Edit(string id, [Bind("ModId, GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags)
         {
             if (id != mod.ModId)
             {
@@ -264,6 +279,7 @@ namespace GameModCrafters.Controllers
             {
                 try
                 {
+                    mod.UpdateTime = DateTime.Now;
                     _context.Update(mod);
                     await _context.SaveChangesAsync();
                 }

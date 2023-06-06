@@ -12,5 +12,7 @@ namespace GameModCrafters.ViewModels
         [Required(ErrorMessage = "此欄位為必填"), MaxLength(255), Display(Name = "密碼")]
         
         public string Password { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }
