@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Data;
 using GameModCrafters.Models;
+using GameModCrafters.ViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace GameModCrafters.Controllers
@@ -54,10 +55,11 @@ namespace GameModCrafters.Controllers
         // GET: Commissions/Create
         public IActionResult Create()
         {
-            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId");
+            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "Status");
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email");
             ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId");
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email");
+            
             return View();
         }
 
@@ -68,6 +70,10 @@ namespace GameModCrafters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DelegatorId,CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
+            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
+            ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
+            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", commission.GameId);
+
             if (!ModelState.IsValid)
             {
                 foreach (var state in ModelState)
@@ -100,20 +106,25 @@ namespace GameModCrafters.Controllers
 
                 commission.CreateTime = DateTime.Now;
                 commission.UpdateTime = DateTime.Now;
-                var SelectGameId = from gi in _context.Games
-                             where commission.GameId == gi.GameName
-                             select gi.GameId;
-                string gameId = SelectGameId.FirstOrDefault();
+                //var SelectGameId = from gi in _context.Games
+                //             where commission.GameId == gi.GameName
+                //             select gi.GameId;
+                //string gameId = SelectGameId.FirstOrDefault();
 
-                commission.GameId = gameId;
-                
+                //commission.GameId = gameId;
+                commission.GameId = _context.Games.FirstOrDefault(gi => commission.GameId == gi.GameName)?.GameId;
+                commission.IsDone = false;
+                commission.Trash = false;
                 _context.Add(commission);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
-            ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
-            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", commission.GameId);
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
+            
             return View(commission);
         }
 
@@ -122,13 +133,13 @@ namespace GameModCrafters.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             var commission = await _context.Commissions.FindAsync(id);
             if (commission == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
@@ -145,7 +156,7 @@ namespace GameModCrafters.Controllers
         {
             if (id != commission.CommissionId)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             if (ModelState.IsValid)
@@ -159,7 +170,7 @@ namespace GameModCrafters.Controllers
                 {
                     if (!CommissionExists(commission.CommissionId))
                     {
-                        return NotFound();
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
@@ -179,7 +190,7 @@ namespace GameModCrafters.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             var commission = await _context.Commissions
@@ -189,7 +200,7 @@ namespace GameModCrafters.Controllers
                 .FirstOrDefaultAsync(m => m.CommissionId == id);
             if (commission == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             return View(commission);
