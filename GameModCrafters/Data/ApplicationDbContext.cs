@@ -88,8 +88,8 @@ namespace GameModCrafters.Data
 
             modelBuilder.Entity<Counter>()
                 .HasData(
-                    new Counter { CounterId = 1, Value = 0 , Name = "Mod"},
-                    new Counter { CounterId = 2, Value = 0, Name = "Commission" }
+                    new Counter { CounterId = 1, Value = 0 , CounterName = "Mod"},
+                    new Counter { CounterId = 2, Value = 0, CounterName = "Commission" }
                 );
 
             modelBuilder.Entity<CommissionStatus>()
