@@ -119,6 +119,10 @@ namespace GameModCrafters.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
             
             
             return View(commission);
