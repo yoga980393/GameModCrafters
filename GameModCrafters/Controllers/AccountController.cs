@@ -15,6 +15,7 @@ using System;
 using Microsoft.Win32;
 using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Encryption;
+using System.Xml.Linq;
 
 namespace GameModCrafters.Controllers
 {
@@ -228,9 +229,14 @@ namespace GameModCrafters.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> IsUsernameInUse(string username)
         {
             var userWithNewUsername = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (username.Length<20 && username.Length<3)
+            {
+                return Json("名字至少3-20字元");
+            }
             if (userWithNewUsername == null)
             {
                 // 從授權資訊取得當前用戶的 Email
@@ -243,7 +249,9 @@ namespace GameModCrafters.Controllers
 
                 // 儲存變更到資料庫
                 await _context.SaveChangesAsync();
-
+                var claimsIdentity = new ClaimsIdentity();
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, username));
+                User.AddIdentity(claimsIdentity);
                 return Json("更改成功");
             }
             else

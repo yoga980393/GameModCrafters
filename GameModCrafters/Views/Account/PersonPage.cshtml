@@ -78,7 +78,7 @@
                     <form class="row g-3 nameform d-none" asp-action="PersonPage" asp-controller="Account" method="post">
                         <div class="col-sm-5">
                             <label for="inputUsername" class="visually-hidden">Username</label>
-                            <input type="text" class="form-control" id="inputUsername" placeholder="username">
+                            <input asp-for="Username" type="text" class="form-control" id="inputUsername" placeholder="username">
                             <span id="usernameError" class="text-danger"></span>
                         </div>
                         <div class="col-sm">
@@ -751,25 +751,7 @@
     </div>
 </div>
 <script>
-    //$("#confirm_Name_btn").on("click", function () {
-    //    var nameValue = $("#inputUsername").val(); // 取得名字的值
-    //    var formData = new FormData();
-    //    formData.append("Name", nameValue); // 將名字的值加入 FormData
-    //    fetch('PersonPage', { // 改成你的Controller和方法的路徑
-    //        method: 'POST',
-    //        body: formData
-    //    })
-    //    .then(function (response) {
-    //        if (response.ok) {
-    //            // 處理成功回應的程式碼
-    //        } else {
-    //            // 處理錯誤回應的程式碼
-    //        }
-    //    })
-    //    .catch(function (error) {
-    //        // 處理錯誤的程式碼
-    //    });
-    //});
+   
 
         $("#confirm_Name_btn").click(function () {
             var username = $("#inputUsername").val();
