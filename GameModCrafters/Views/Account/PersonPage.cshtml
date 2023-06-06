@@ -759,6 +759,7 @@
                 if (data == "更改成功") {
                     // 顯示成功訊息
                     $("#usernameError").text(data).removeClass("text-danger").addClass("text-success");
+                    $("#navbarname").text(username);
                 } else {
                     // 顯示錯誤訊息
                     $("#usernameError").text(data).removeClass("text-success").addClass("text-danger");
