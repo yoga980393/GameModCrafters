@@ -8,6 +8,9 @@
     <h1>委託發布</h1>
     <div class="row">
         <form method="post">
+            <select asp-for="CommissionStatusId" class="form-control" asp-items="ViewBag.CommissionStatusId"></select>
+            <select asp-for="DelegatorId" class="form-control" asp-items="ViewBag.DelegatorId"></select>
+
             <div class="mb-3">
                 <label asp-for="CommissionTitle" class="form-label">委託標題:</label>
                 <input type="text" class="form-control" asp-for="CommissionTitle">

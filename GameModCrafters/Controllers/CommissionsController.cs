@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Data;
 using GameModCrafters.Models;
+using GameModCrafters.ViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace GameModCrafters.Controllers
@@ -128,13 +129,13 @@ namespace GameModCrafters.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             var commission = await _context.Commissions.FindAsync(id);
             if (commission == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
@@ -151,7 +152,7 @@ namespace GameModCrafters.Controllers
         {
             if (id != commission.CommissionId)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             if (ModelState.IsValid)
@@ -165,7 +166,7 @@ namespace GameModCrafters.Controllers
                 {
                     if (!CommissionExists(commission.CommissionId))
                     {
-                        return NotFound();
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
@@ -185,7 +186,7 @@ namespace GameModCrafters.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             var commission = await _context.Commissions
@@ -195,7 +196,7 @@ namespace GameModCrafters.Controllers
                 .FirstOrDefaultAsync(m => m.CommissionId == id);
             if (commission == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             return View(commission);

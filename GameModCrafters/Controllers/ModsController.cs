@@ -171,7 +171,7 @@ namespace GameModCrafters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags)
         {
-            var counter = await _context.Counters.SingleOrDefaultAsync(c => c.Name == "Mod");
+            var counter = await _context.Counters.SingleOrDefaultAsync(c => c.CounterName == "Mod");
             if (counter == null)
             {
                 _logger.LogInformation("Counter with name 'Mod' was not found.");
