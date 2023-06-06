@@ -91,13 +91,6 @@ namespace GameModCrafters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterPage([Bind("Email, Username, Password1,Password2")] RegisterViewModel register)
         {
-
-
-           
-
-
-                //---------
-
             if (ModelState.IsValid)
                 {
                 bool isEmailExists = _context.Users.Any(u => u.Email == register.Email);
@@ -151,7 +144,7 @@ namespace GameModCrafters.Controllers
         async Task<IActionResult> RecordLast()
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == userId || x.Username == userId);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == userId);
             if (user != null)
             {
                 user.LastLogin = DateTime.UtcNow;
@@ -167,11 +160,65 @@ namespace GameModCrafters.Controllers
         }
         [HttpGet]
         [Authorize]
-        public IActionResult PersonPage()
+        public async Task<IActionResult> PersonPage()
         {
-            // 個人專區，需要驗證才能訪問
             return View();
         }
+        
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> PersonPage(string Name)
+        {
+            var usernameClaim = HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            bool isUsernameExists = _context.Users.Any(m => m.Username == Name);
+            if (isUsernameExists)
+            {
+                string nameError = "名字已經有人使用";
+                ViewData["NameError"] = nameError;
+                return View();
+            }
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == usernameClaim);
+            if (user != null)
+            {
+
+                var claimsIdentity = new ClaimsIdentity(HttpContext.User.Identity);
+                var nameClaim = claimsIdentity.FindFirst(ClaimTypes.Name);
+                if (nameClaim != null)
+                {
+                    claimsIdentity.RemoveClaim(nameClaim);
+                }
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, Name));
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+            }
+            return View();
+        }
+        //public async Task<IActionResult> PersonPage(PersonViewModel personVM)
+        //{
+        //    // 個人專區，需要驗證才能訪問
+        //    var usernameClaim = HttpContext.User.FindFirstValue(ClaimTypes.Name);
+        //    bool isUsernameExists = _context.Users.Any(m => m.Username == personVM.Username);
+        //    if (isUsernameExists)
+        //    {
+        //        ModelState.AddModelError("Username", "名字已經有人使用");
+        //        return View(personVM);
+        //    }
+        //    var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == usernameClaim);
+        //    if (user != null)
+        //    {
+
+        //        var claimsIdentity = new ClaimsIdentity(HttpContext.User.Identity);
+        //        var nameClaim = claimsIdentity.FindFirst(ClaimTypes.Name);
+        //        if (nameClaim != null)
+        //        {
+        //            claimsIdentity.RemoveClaim(nameClaim);
+        //        }
+        //        claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, personVM.Username));
+        //        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+        //        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+        //    }
+        //    return View();
+        //}
 
         [HttpGet]
         public IActionResult Forbidden()

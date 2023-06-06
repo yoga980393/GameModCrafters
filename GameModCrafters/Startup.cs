@@ -61,13 +61,13 @@ namespace GameModCrafters
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseAuthentication(); //驗證
+           
 
              
             app.UseSession(); // 啟用Session
 
             app.UseRouting();
-
+            app.UseAuthentication(); //驗證
             app.UseAuthorization(); //授權
 
             app.UseEndpoints(endpoints =>
