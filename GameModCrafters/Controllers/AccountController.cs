@@ -28,13 +28,14 @@ namespace GameModCrafters.Controllers
             _hashService = hashService;
             _context = context;
         }
+
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult LoginPage()
+        public IActionResult LoginPage(string returnUrl = null)
         {
-            // 登入頁面
-            return View();
+            return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -62,7 +63,15 @@ namespace GameModCrafters.Controllers
                     new ClaimsPrincipal(claimsIdentity)
                     );
                     HttpContext.Session.SetString("Email", user.Email);
-                    return RedirectToAction("Index", "Home"); // 成功
+
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    {
+                        return Redirect(model.ReturnUrl); // 重定向到 returnUrl
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home"); // 否則重定向到主頁
+                    }
                 }
 
                 ModelState.AddModelError("Text", "帳號或密碼錯誤");

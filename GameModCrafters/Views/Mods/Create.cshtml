@@ -8,7 +8,6 @@
 <div class="container">
     <form asp-action="Create" asp-controller="Mods" method="post">
         <input asp-for="AuthorId" type="hidden" value="@nameIdentifier" />
-        <input class="form-check-input" asp-for="IsDone" /> @Html.DisplayNameFor(model => model.IsDone)
 
         <div class="mb-3">
             <label asp-for="ModName" class="form-label" for="titleInput">Mod名稱</label>
@@ -93,8 +92,8 @@
                 </div>
 
                 <div class="mt-5 submitBtn">
-                    <button type="submit" class="btn btn-primary">儲存草稿</button>
-                    <button type="submit" class="btn btn-primary">確認送出</button>
+                    <button type="submit" class="btn btn-primary" name="IsDone" value="false">儲存草稿</button>
+                    <button type="submit" class="btn btn-primary" name="IsDone" value="true">確認送出</button>
                 </div>
             </div>
 
@@ -461,6 +460,10 @@
             let inputText = $(this).val();
             $("#previewName").text(inputText);
         });
+
+        $(() => {
+            $("#previewName").text($("#titleInput").val());
+        })
 
         $("#GameId").on("change", function () {
             let selectedText = $(this).find("option:selected").text();

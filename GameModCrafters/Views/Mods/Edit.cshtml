@@ -1,84 +1,502 @@
-﻿@model GameModCrafters.Models.Mod
+﻿@model Mod
 
 @{
     ViewData["Title"] = "Edit";
+    var nameIdentifier = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 }
 
-<h1>Edit</h1>
+<div class="container">
+    <form asp-action="Edit" asp-controller="Mods" method="post">
+        <input asp-for="AuthorId" type="hidden"/>
+        <input asp-for="ModId" type="hidden" />
+        <input asp-for="CreateTime" type="hidden" />
 
-<h4>Mod</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ModId" />
-            <div class="form-group">
-                <label asp-for="GameId" class="control-label"></label>
-                <select asp-for="GameId" class="form-control" asp-items="ViewBag.GameId"></select>
-                <span asp-validation-for="GameId" class="text-danger"></span>
+        <div class="mb-3">
+            <label asp-for="ModName" class="form-label" for="titleInput">Mod名稱</label>
+            <input asp-for="ModName" type="text" class="form-control" id="titleInput" autocomplete="off">
+            <span asp-validation-for="ModName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="GameId" class="form-label">遊戲</label>
+            <select asp-for="GameId" class="form-control" asp-items="ViewBag.GameId">
+                <option value="">請選擇一個遊戲</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">添加tag</label>
+            <div class="tagList">
+                <!-- 此處將填充tag -->
+                <button class="btn tagBtn" type="button">
+                    <i class="fas fa-plus"></i>
+                </button>
             </div>
-            <div class="form-group">
-                <label asp-for="AuthorId" class="control-label"></label>
-                <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
-                <span asp-validation-for="AuthorId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 myEditor">
+            <label class="form-label">內文</label>
+
+            <div class="btn-group myGroup" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check editorSwitch" name="btnradio" id="btnradio1" autocomplete="off"
+                       checked>
+                <label class="btn btn-outline-dark custom-btn" for="btnradio1">mod簡介</label>
+
+                <input type="radio" class="btn-check editorSwitch" name="btnradio" id="btnradio2"
+                       autocomplete="off">
+                <label class="btn btn-outline-dark custom-btn" for="btnradio2">安裝說明</label>
             </div>
-            <div class="form-group">
-                <label asp-for="ModName" class="control-label"></label>
-                <input asp-for="ModName" class="form-control" />
-                <span asp-validation-for="ModName" class="text-danger"></span>
+
+            <div id="editor1"></div>
+            <div id="editor2"></div>
+
+            <input asp-for="Description" type="hidden">
+            <input asp-for="InstallationInstructions" type="hidden">
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="mb-3">
+                    <label class="form-label">價格</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
+                               checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            免費
+                        </label>
+                    </div>
+                    <div class="form-check myCheck">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            付費
+                        </label>
+                        <input class="form-control" type="text" id="priceInput" disabled>
+                        <div>NTD</div>
+                    </div>
+
+                    <input asp-for="Price" type="hidden">
+                </div>
+
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="gameFile" class="form-label">上傳遊戲檔案</label>
+                            <input class="form-control" type="file" id="gameFile" name="gameFile" accept=".zip">
+                        </div>
+
+                        <div class="col-6">
+                            <label for="coverImage" class="form-label">上傳封面圖片</label>
+                            <input class="form-control" type="file" id="coverImage" name="coverImage"
+                                   accept="image/*">
+                        </div>
+                        <input asp-for="Thumbnail" type="hidden">
+                    </div>
+                </div>
+
+                <div class="mt-5 submitBtn">
+                    <button type="submit" class="btn btn-primary" name="IsDone" value="false">儲存草稿</button>
+                    <button type="submit" class="btn btn-primary" name="IsDone" value="true">確認送出</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+
+            <div class="col-6">
+                <div class="mb-3 mod">
+                    <label class="form-label">預覽</label>
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="pic" id="croppedImagePreview">
+                                <img src="https://picsum.photos/300/200/?random=${item}" id="previewImage">
+                            </div>
+                            <div class="text">
+                                <div class="name_price">
+                                    <h3 class="name" id="previewName"></h3>
+                                    <h3 class="price" id="previewPrice">free</h3>
+                                </div>
+                                <div class="detail">
+                                    <h2 class="tag" id="previewTag">
+                                        <span class="badge bg-secondary" id="previewGame">遊戲</span>
+                                    </h2>
+                                    <h3 class="author"><span>作者：</span>作者名字</h3>
+                                    <h3 class="createTime"><span>上傳日期：</span></h3>
+                                    <h3 class="UpdateTime"><span>更新日期：</span></h3>
+                                    <p class="describe">mod介紹</p>
+                                </div>
+                            </div>
+                            <div class="data">
+                                <h3><span>容量：</span>0</h3>
+                                <h3><span>點贊：</span>0</h3>
+                                <h3><span>收藏：</span>0</h3>
+                                <h3><span>下載：</span>0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="InstallationInstructions" class="control-label"></label>
-                <input asp-for="InstallationInstructions" class="form-control" />
-                <span asp-validation-for="InstallationInstructions" class="text-danger"></span>
+        </div>
+    </form>
+
+    <div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cropperModalLabel">剪裁封面圖片</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="cropperImage" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="cropImageBtn">確認剪裁</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="DownloadLink" class="control-label"></label>
-                <input asp-for="DownloadLink" class="form-control" />
-                <span asp-validation-for="DownloadLink" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Thumbnail" class="control-label"></label>
-                <input asp-for="Thumbnail" class="form-control" />
-                <span asp-validation-for="Thumbnail" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreateTime" class="control-label"></label>
-                <input asp-for="CreateTime" class="form-control" />
-                <span asp-validation-for="CreateTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdateTime" class="control-label"></label>
-                <input asp-for="UpdateTime" class="form-control" />
-                <span asp-validation-for="UpdateTime" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsDone" /> @Html.DisplayNameFor(model => model.IsDone)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section css{
+    <link rel="stylesheet" href="~/css/CreateMod.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
+}
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section js {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let myEditor1, myEditor2;
+
+        ClassicEditor
+            .create(document.querySelector('#editor1'), {
+                // ...other configurations,
+                extraPlugins: [Base64UploadAdapterPlugin]
+            })
+            .then(editor => {
+                myEditor1 = editor;
+                editor.ui.view.element.classList.add('editor');
+                editor.ui.view.element.classList.add('active');
+
+                editor.model.document.on('change:data', () => {
+                    const html = myEditor1.getData();
+                    const imgTagWithoutBase64 = html.replace(/(<img[^>]+src=")data:image\/[^;]+;base64,[^"]+("[^>]*>)/g, '');
+                    document.querySelector('.describe').innerHTML = imgTagWithoutBase64;
+                });
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        ClassicEditor
+            .create(document.querySelector('#editor2'), {
+                // ...other configurations,
+                extraPlugins: [Base64UploadAdapterPlugin]
+            })
+            .then(editor => {
+                myEditor2 = editor
+                editor.ui.view.element.classList.add('editor');
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+
+        function Base64UploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
+                return new Base64UploadAdapter(loader);
+            };
+        }
+
+        class Base64UploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file
+                    .then(file => new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            resolve({ default: reader.result });
+                        };
+                        reader.onerror = error => {
+                            reject(error);
+                        };
+                        reader.readAsDataURL(file);
+                    }));
+            }
+
+            abort() { }
+        }
+
+        $('form').on('submit', function (e) {
+            // 在表單提交時，手動更新隱藏的 input 欄位的值
+            $('#Description').val(myEditor1.getData());
+            $('#InstallationInstructions').val(myEditor2.getData());
+        });
+
+        $(".editorSwitch").on("click", function () {
+            var pageIndex = $(".editorSwitch").index(this);
+            $(".editor.active").removeClass("active");
+            $(".editor").eq(pageIndex).addClass("active");
+        });
+
+        $(document).ready(function () {
+            myEditor1.setData($("#Description").val());
+            myEditor2.setData($('#InstallationInstructions').val());
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            let price = parseFloat($("#Price").val());  // get price from hidden field
+            console.log($("#Price").val());
+            if (price > 0) {
+                $("#flexRadioDefault2").prop("checked", true);
+                $("#priceInput").prop("disabled", false);
+                $("#priceInput").val(price);
+                updatePreviewPrice()
+                // you need to set value for #priceInput and #currencyInput according to the price
+                // ...
+            } else {
+                $("#flexRadioDefault1").prop("checked", true);
+                $("#Price").val(0)
+            }
+
+            $("input[type=radio][name=flexRadioDefault]").on("change", function () {
+                if ($("#flexRadioDefault2").is(":checked")) {
+                    $("#priceInput").prop("disabled", false);
+                    $("#currencyInput").prop("disabled", false);
+                } else {
+                    $("#priceInput").prop("disabled", true);
+                    $("#currencyInput").prop("disabled", true);
+                    $("#Price").val(0);
+                }
+            });
+
+            // Update price when #flexRadioDefault2, #priceInput, or #currencyInput changes
+            $("#flexRadioDefault2, #priceInput").on("change", () => {
+                let inputPrice = parseFloat($("#priceInput").val());  // get price input
+                $("#Price").val(inputPrice);
+                console.log(price);
+            });
+        });
+    </script>
+
+    <script>
+        var allTags = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["Tags"]));
+
+        function generateDropdownItems(tags) {
+            var itemsHTML = '';
+            var selectedTags = $(".tagList .dropdown-toggle").map(function () {
+                return $(this).text();
+            }).get();
+
+            for (var i = 0; i < tags.length; i++) {
+                itemsHTML += `<li><a class="dropdown-item" href="#">${tags[i]}</a></li>`;
+            }
+
+            return itemsHTML;
+        }
+
+        var tagId = 0;
+
+        $(".tagBtn").on("click", function () {
+            var currentTagId = tagId;
+            var tagList = $(".tagList");
+            var tagInput = $("<div class = 'dropdown'></div>").html(`
+                                <button class="delete-tag-btn" type="button">
+                                    <i class="fas fa-times"></i>
+                                </button>\
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"\
+                                    data-bs-toggle="dropdown" aria-expanded="false">\
+                                    選擇一個tag\
+                                </button>\
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">\
+                                    ${generateDropdownItems(allTags)}
+                                </ul>\
+                                        <input type="hidden" name="SelectedTags" />
+                            `)
+
+            var previewTag = $(`<span class="badge bg-secondary" id="tag-${currentTagId}">未選擇</span>`);
+            $("#previewTag").append(previewTag);
+
+            tagInput.on('click', '.dropdown-item', function (event) {
+                event.preventDefault();
+
+                var selectedItemText = $(this).text();
+                tagInput.find('.dropdown-toggle').text(selectedItemText);
+                tagInput.find('input[name="SelectedTags"]').val(selectedItemText); // update hidden input value
+                updateDropdownMenus();
+
+                previewTag.text(selectedItemText || "未選擇");
+            });
+
+            tagInput.on("click", ".delete-tag-btn", function () {
+                tagInput.find('.dropdown-toggle').text('選擇一個tag');
+                updateDropdownMenus();
+                previewTag.remove();
+                tagInput.remove();
+            });
+
+            tagList.append(tagInput);
+            tagId++;
+            updateDropdownMenus();
+        });
+
+
+
+        function updateDropdownMenus() {
+            // 獲取所有已選擇的標籤
+            var selectedTags = $(".tagList .dropdown-toggle").map(function () {
+                return $(this).text();
+            }).get();
+
+            // 更新所有下拉選單
+            $(".tagList .dropdown-menu").each(function () {
+                var menu = $(this);
+                menu.find(".dropdown-item").each(function () {
+                    var item = $(this);
+                    var itemText = item.text();
+
+                    // 如果選項已被選擇，則將其隱藏；否則顯示
+                    if (selectedTags.includes(itemText)) {
+                        item.hide();
+                    } else {
+                        item.show();
+                    }
+                });
+            });
+        }
+
+        $(document).ready(function () {
+            var selectedTags = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["SelectedTags"]));
+            console.log(selectedTags);
+            if (selectedTags) {
+                selectedTags.forEach(function (tag, index) {
+                    $(".tagBtn").trigger('click');  // 模拟点击事件以创建一个新的标签输入框
+                    var newTagInput = $(".tagList .dropdown").last();  // 获取新创建的标签输入框
+
+                    // 设置新创建的标签的状态为选中状态，并更新隐藏的输入框的值
+                    newTagInput.find('.dropdown-toggle').text(tag);
+                    newTagInput.find('input[name="SelectedTags"]').val(tag);
+
+                    // 更新预览区域的标签显示
+                    var previewTag = $(`<span class="badge bg-secondary" id="tag-${index}">未選擇</span>`);
+                    $("#previewTag").append(previewTag);
+                    previewTag.text(tag || "未選擇");
+
+                    // 移除前一个 "未选中" 标签
+                    previewTag.prev().remove();
+                });
+            }
+
+            // 更新所有下拉菜单的显示状态
+            updateDropdownMenus();
+        });
+    </script>
+
+    <script>
+        // 上傳按鈕事件
+        $("#uploadCoverBtn").on("click", function () {
+            $("#coverImage").click();
+        });
+
+        // 創建圖片剪裁器實例
+        let cropper;
+        $("#coverImage").on("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#cropperImage").attr("src", e.target.result).on("load", function () {
+                        if (cropper) {
+                            cropper.destroy();
+                        }
+                        cropper = new Cropper($("#cropperImage")[0], {
+                            aspectRatio: 3 / 2,
+                            cropBoxResizable: true,
+                            cropBoxMovable: true,
+                            autoCropArea: 1,
+                            viewMode: 2,
+                            background: false,
+                            minContainerWidth: 760, // 設置容器的最小寬度
+                            minContainerHeight: 400, // 設置容器的最小高度
+                        });
+                    });
+                };
+                reader.readAsDataURL(file);
+
+                // 顯示剪裁對話框
+                $("#cropperModal").modal("show");
+            }
+        });
+
+        // 剪裁按鈕事件
+        $("#cropImageBtn").on("click", function () {
+            cropper.getCroppedCanvas().toBlob(function (blob) {
+                var formData = new FormData();
+                formData.append("file", blob, "cropped.jpg"); // 設定你想要的檔案名稱1
+
+                fetch('/Mods/UploadFile', { // 改成你的Controller和方法的路徑
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        $("#previewImage").attr("src", data.fileUrl);
+                        $("#Thumbnail").val(data.fileUrl)
+                        $("#cropperModal").modal("hide");
+                        cropper.destroy();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    </script>
+
+    <script>
+        $("#titleInput").on("input", function () {
+            let inputText = $(this).val();
+            $("#previewName").text(inputText);
+        });
+
+        $(() => {
+            $("#previewName").text($("#titleInput").val());
+        })
+
+        $("#GameId").on("change", function () {
+            let selectedText = $(this).find("option:selected").text();
+            $("#previewGame").text(selectedText);
+        });
+
+        function updatePreviewPrice() {
+            if ($("#flexRadioDefault1").is(":checked")) {
+                $("#previewPrice").text("free");
+            } else {
+                var price = $("#priceInput").val();
+                $("#previewPrice").text(price + " NTD");
+            }
+        }
+
+        $("input[type='radio'][name='flexRadioDefault']").on("change", updatePreviewPrice);
+        $("#priceInput").on("input", updatePreviewPrice);
+
+        function formatDate(date) {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        const today = new Date();
+        const formattedDate = formatDate(today);
+        $('.createTime').append(formattedDate);
+        $('.UpdateTime').append(formattedDate);
+
+    </script>
 }
