@@ -174,7 +174,7 @@ namespace GameModCrafters.Controllers
             if (isUsernameExists)
             {
                 string nameError = "名字已經有人使用";
-                ViewData["NameError"] = nameError;
+                TempData["NameError"] = nameError;
                 return View();
             }
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == usernameClaim);
@@ -226,5 +226,31 @@ namespace GameModCrafters.Controllers
             // 拒絕訪問頁面
             return View();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> IsUsernameInUse(string username)
+        {
+            var userWithNewUsername = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (userWithNewUsername == null)
+            {
+                // 從授權資訊取得當前用戶的 Email
+                var currentUserEmail = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                // 使用這個 Email 找到當前用戶
+                var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == currentUserEmail);
+
+                currentUser.Username = username;
+
+                // 儲存變更到資料庫
+                await _context.SaveChangesAsync();
+
+                return Json("更改成功");
+            }
+            else
+            {
+                return Json($"名字已有人使用");
+            }
+        }
+
     }
 }

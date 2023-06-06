@@ -2,8 +2,7 @@
 
 @model PersonViewModel
 @{
-    
-   
+
 }
 <div class="container-fluid position_height">
     <div class="container-fluid ImgWrap">
@@ -77,22 +76,16 @@
                 <div class="modal-body person">
                     <button type="button" class="btn btn-secondary btn-sm " id="EditName_btn">編輯名字</button>
                     <form class="row g-3 nameform d-none" asp-action="PersonPage" asp-controller="Account" method="post">
-                        <!-- d-none-->
                         <div class="col-sm-5">
                             <label for="inputUsername" class="visually-hidden">Username</label>
-                            <input  type="text" class="form-control" id="inputUsername" placeholder="Username">
-                            @*<div id="UsernameHelp" class="form-text">名字已經有人使用</div>2*@
-                            @if (!string.IsNullOrEmpty(ViewData["NameError"] as string))
-                            {
-                                <div class="text-danger">
-                                    @ViewData["NameError"]
-                                </div>
-                            }
+                            <input type="text" class="form-control" id="inputUsername" placeholder="username">
+                            <span id="usernameError" class="text-danger"></span>
                         </div>
                         <div class="col-sm">
                             <button type="button" class="btn btn-primary btn-sm " id="confirm_Name_btn">確認</button>
                         </div>
                     </form>
+
 
                     <button type="button" class="btn btn-secondary btn-sm " id="Edit_Profile">上傳照片</button>
 
@@ -758,25 +751,38 @@
     </div>
 </div>
 <script>
-    $("#confirm_Name_btn").on("click", function () {
-        var nameValue = $("#inputUsername").val(); // 取得名字的值
-        var formData = new FormData();
-        formData.append("Name", nameValue); // 將名字的值加入 FormData
-        fetch('PersonPage', { // 改成你的Controller和方法的路徑
-            method: 'POST',
-            body: formData
-        })
-        .then(function (response) {
-            if (response.ok) {
-                // 處理成功回應的程式碼
-            } else {
-                // 處理錯誤回應的程式碼
-            }
-        })
-        .catch(function (error) {
-            // 處理錯誤的程式碼
+    //$("#confirm_Name_btn").on("click", function () {
+    //    var nameValue = $("#inputUsername").val(); // 取得名字的值
+    //    var formData = new FormData();
+    //    formData.append("Name", nameValue); // 將名字的值加入 FormData
+    //    fetch('PersonPage', { // 改成你的Controller和方法的路徑
+    //        method: 'POST',
+    //        body: formData
+    //    })
+    //    .then(function (response) {
+    //        if (response.ok) {
+    //            // 處理成功回應的程式碼
+    //        } else {
+    //            // 處理錯誤回應的程式碼
+    //        }
+    //    })
+    //    .catch(function (error) {
+    //        // 處理錯誤的程式碼
+    //    });
+    //});
+
+        $("#confirm_Name_btn").click(function () {
+            var username = $("#inputUsername").val();
+            $.post('/Account/IsUsernameInUse', { username: username }, function (data) {
+                if (data == "更改成功") {
+                    // 顯示成功訊息
+                    $("#usernameError").text(data).removeClass("text-danger").addClass("text-success");
+                } else {
+                    // 顯示錯誤訊息
+                    $("#usernameError").text(data).removeClass("text-success").addClass("text-danger");
+                }
+            });
         });
-    });
 
   
 </script>
