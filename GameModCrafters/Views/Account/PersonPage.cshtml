@@ -1,4 +1,10 @@
-﻿
+﻿@using Microsoft.AspNetCore.Http;
+
+@model PersonViewModel
+@{
+    
+   
+}
 <div class="container-fluid position_height">
     <div class="container-fluid ImgWrap">
         <img src="https://picsum.photos/1260/900/?random=10" class="img-fluid Img_cover" id="Cover_pic" alt="...">
@@ -12,7 +18,7 @@
                     <img src="https://picsum.photos/200/200/?random=7" id="personal_pic">
                 </div>
                 <div class="Cover_text">
-                    <h1 class="name" id="Username">名字</h1>
+                    <h1 class="name" id="Username">@User.Identity.Name</h1>
                 </div>
 
             </div>
@@ -57,48 +63,99 @@
         </div>
     </div>
 </div>
-<!-- 個人照片 -->
-<div class="modal modal-xl" id="Edit_Profile_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog ">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">編輯個人檔案</h1>
-                <button type="button" class="btn-close fork_btn" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+<div id="personPageContainer">
+    <!-- 編輯個人檔案的模態框內容 -->
+    <div class="modal modal-xl" id="Edit_Profile_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">編輯個人檔案</h1>
+                    <button type="button" class="btn-close fork_btn" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body person">
+                    <button type="button" class="btn btn-secondary btn-sm " id="EditName_btn">編輯名字</button>
+                    <form class="row g-3 nameform d-none" action="/Account/PersonPage" method="post">
+                        <!-- d-none-->
+                        <div class="col-sm-5">
+                            <label for="inputUsername" class="visually-hidden">Username</label>
+                            <input asp-for="Username" type="text" class="form-control" id="inputUsername" placeholder="Username">
+                            @*<div id="UsernameHelp" class="form-text">名字已經有人使用</div>*@
+                            @if (!string.IsNullOrEmpty(ViewData["NameError"] as string))
+                            {
+                                <div class="text-danger">
+                                    @ViewData["NameError"]
+                                </div>
+                            }
+                        </div>
+                        <div class="col-sm">
+                            <button type="button" class="btn btn-primary btn-sm " id="confirm_Name_btn">確認</button>
+                        </div>
+                    </form>
+
+                    <button type="button" class="btn btn-secondary btn-sm " id="Edit_Profile">上傳照片</button>
+
+
+
+                </div>
+                <!-- <div class="modal-body">
+                    <button type="button" class="btn btn-secondary btn-sm " id="Edit_Name_btn">編輯名字</button>
+                </div> -->
+                <div class="modal_img">
+                    <img src="" id="preview_person_pic" alt="">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary personClose" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="croppersonButton">確定</button>
+                </div>
             </div>
-            <div class="modal-body person">
-                <button type="button" class="btn btn-secondary btn-sm " id="EditName_btn">編輯名字</button>
-                <form class="row g-3 nameform d-none">
-                    <!-- d-none-->
-                    <div class="col-sm-5">
-                        <label for="inputUsername" class="visually-hidden">Username</label>
-                        <input type="text" class="form-control" id="inputUsername" placeholder="Username">
-                        <div id="UsernameHelp" class="form-text">名字已經有人使用</div>
-                    </div>
-                    <div class="col-sm">
-                        <button type="button" class="btn btn-primary btn-sm " id="confirm_Name_btn">確認</button>
-                    </div>
-                </form>
+        </div>
+    </div><div class="modal modal-xl" id="Edit_Profile_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">編輯個人檔案</h1>
+                    <button type="button" class="btn-close fork_btn" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body person">
+                    <button type="button" class="btn btn-secondary btn-sm " id="EditName_btn">編輯名字</button>
+                    <form class="row g-3 nameform d-none" action="/Account/PersonPage" method="post">
+                        <!-- d-none-->
+                        <div class="col-sm-5">
+                            <label for="inputUsername" class="visually-hidden">Username</label>
+                            <input asp-for="Username" type="text" class="form-control" id="inputUsername" placeholder="Username">
+                            @*<div id="UsernameHelp" class="form-text">名字已經有人使用</div>*@
+                            @Html.ValidationMessageFor(m=>m.Username,"",new{@class = "text-danger"})
+                        </div>
+                        <div class="col-sm">
+                            <button type="submit" class="btn btn-primary btn-sm " id="confirm_Name_btn">確認</button>
+                        </div>
+                    </form>
 
-                <button type="button" class="btn btn-secondary btn-sm " id="Edit_Profile">上傳照片</button>
+                    <button type="button" class="btn btn-secondary btn-sm " id="Edit_Profile">上傳照片</button>
 
 
 
-            </div>
-            <!-- <div class="modal-body">
-                <button type="button" class="btn btn-secondary btn-sm " id="Edit_Name_btn">編輯名字</button>
-            </div> -->
-            <div class="modal_img">
-                <img src="" id="preview_person_pic" alt="">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary personClose" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="croppersonButton">確定</button>
+                </div>
+                <!-- <div class="modal-body">
+                    <button type="button" class="btn btn-secondary btn-sm " id="Edit_Name_btn">編輯名字</button>
+                </div> -->
+                <div class="modal_img">
+                    <img src="" id="preview_person_pic" alt="">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary personClose" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="croppersonButton">確定</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<!-- 個人照片 -->
+
 <!-- ----------Modal -->
 <div class="container my-4 mod Released_mods">
     <h2>發布的mod</h2>
@@ -742,6 +799,21 @@
     </div>
 </div>
 <script>
+    $("#confirm_Name_btn").on("click", function () {
+        var nameValue = $("#inputUsername").val(); // 取得名字的值
+        var formData = new FormData();
+        formData.append("Name", nameValue); // 將名字的值加入 FormData
+        fetch('PersonPage', { // 改成你的Controller和方法的路徑
+            method: 'POST',
+            body: formData
+        })
+       
+    });
+
+  
+</script>
+
+<script>
     window.onload = function () {
 
         // uploadCoverImg()
@@ -785,6 +857,7 @@
 
         })
     }
+
     let cropperperson
     function handlePersonImg() {
         let editbtn = document.getElementById('Edit_Profile')
