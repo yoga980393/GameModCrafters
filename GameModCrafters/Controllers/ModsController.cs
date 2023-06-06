@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GameModCrafters.Controllers
@@ -156,8 +157,21 @@ namespace GameModCrafters.Controllers
 
         // GET: Mods/Create
         [Authorize]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            string loggedInUserEmail = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var unfinishedMod = await _context.Mods
+                .FirstOrDefaultAsync(m => m.AuthorId == loggedInUserEmail && m.IsDone == false);
+
+
+            if (unfinishedMod != null)
+            {
+                // 如果有未完成的 Mod，則在 ViewBag 中添加一個標記
+                ViewBag.HasUnfinishedMod = true;
+                ViewBag.UnfinishedModId = unfinishedMod.ModId;
+            }
+
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email");
             ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameName");
 
@@ -281,6 +295,27 @@ namespace GameModCrafters.Controllers
                 {
                     mod.UpdateTime = DateTime.Now;
                     _context.Update(mod);
+
+                    // 首先，找出所有需要删除的 ModTags 并删除
+                    var modTagsToDelete = _context.ModTags.Where(mt => mt.ModId == mod.ModId);
+                    _context.ModTags.RemoveRange(modTagsToDelete);
+
+                    // 然后，为模块添加新的 ModTags
+                    foreach (var tagName in SelectedTags)
+                    {
+                        if (tagName == "選擇一個tag") continue;
+
+                        // 根據 tag 名稱找到對應的 tag
+                        var tag = await _context.Tags.SingleOrDefaultAsync(t => t.TagName == tagName);
+                        if (tag != null)
+                        {
+                            // 將新的 ModTag 加入到 ModTags 表中
+                            var modTag = new ModTag { ModId = mod.ModId, TagId = tag.TagId };
+                            _context.Add(modTag);
+                        }
+                    }
+
+                    // Save the changes to the database
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -300,6 +335,7 @@ namespace GameModCrafters.Controllers
             ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", mod.GameId);
             return View(mod);
         }
+
 
         // GET: Mods/Delete/5
         public async Task<IActionResult> Delete(string id)

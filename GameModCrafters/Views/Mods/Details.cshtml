@@ -30,7 +30,10 @@
                     <button class="btn btn-primary">
                         <a asp-controller="Mods" asp-action="Edit" asp-route-id="@Model.ModId" style="color: white; text-decoration: none;">修改Mod資訊</a>
                     </button>
-                    <button class="btn btn-danger">刪除Mod</button>
+
+                    <form asp-action="Delete" asp-controller="Mods" asp-route-id="@Model.ModId" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('確定要刪除此Mod嗎？')">刪除Mod</button>
+                    </form>
                 </div>
             }
             
