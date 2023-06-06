@@ -57,6 +57,7 @@ namespace GameModCrafters.Controllers
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId");
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email");
             ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId");
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email");
             return View();
         }
 
@@ -65,7 +66,7 @@ namespace GameModCrafters.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
+        public async Task<IActionResult> Create([Bind("DelegatorId,CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
             if (!ModelState.IsValid)
             {
@@ -81,16 +82,22 @@ namespace GameModCrafters.Controllers
                 }
             }
 
+            var counter = await _context.Counters.SingleOrDefaultAsync(c => c.Name == "Commission");
+            if (counter == null)
+            {
+                _logger.LogInformation("Counter with name 'Mod' was not found.");
+                // Handle the case when there is no counter named 'Mod'
+                // For example, create a new counter with name 'Mod' and value 0
+            }
+            string newCommissionId = $"c{counter.Value + 1:D4}";  // Format as 'c0001'
+            counter.Value++;  // Increment counter
+            _context.Counters.Update(counter);
+            await _context.SaveChangesAsync();
+            commission.CommissionId = newCommissionId;
 
             if (ModelState.IsValid)
             {
-                var counter = await _context.Counters.FindAsync(1);
-                string newCommissionId = $"C{counter.Value + 1:D4}";  // Format as 'D0001'
-                counter.Value++;  // Increment counter
-                _context.Counters.Update(counter);
-                await _context.SaveChangesAsync();
-                commission.CommissionId = newCommissionId;
-                
+
                 commission.CreateTime = DateTime.Now;
                 commission.UpdateTime = DateTime.Now;
                 var SelectGameId = from gi in _context.Games
