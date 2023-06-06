@@ -46,6 +46,8 @@
 
     <script>
 
+        let myEditor;
+
         ClassicEditor
             .create(document.querySelector('#editor'), {
                 // ...other configurations,
@@ -65,6 +67,10 @@
                 return new Base64UploadAdapter(loader);
             };
         }
+
+        $(document).ready(function () {
+            myEditor.setData($("#CommissionDescription").val());
+        });
 
         class Base64UploadAdapter {
             constructor(loader) {
