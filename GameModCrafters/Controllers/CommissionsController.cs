@@ -72,7 +72,7 @@ namespace GameModCrafters.Controllers
         {
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
-            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", commission.GameId);
+            ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
 
             if (!ModelState.IsValid)
             {
@@ -143,7 +143,7 @@ namespace GameModCrafters.Controllers
             }
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
-            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", commission.GameId);
+            ViewData["GameName"] = new SelectList(_context.Games, "GameId", "GameName", commission.GameId);
             return View(commission);
         }
 
@@ -181,7 +181,7 @@ namespace GameModCrafters.Controllers
             }
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
-            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", commission.GameId);
+            ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
             return View(commission);
         }
 

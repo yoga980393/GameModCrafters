@@ -8,13 +8,16 @@
     <h1>委託發布</h1>
     <div class="row">
         <form method="post">
+            <select asp-for="CommissionStatusId" class="form-control" asp-items="ViewBag.CommissionStatusId"></select>
+            <select asp-for="DelegatorId" class="form-control" asp-items="ViewBag.DelegatorId"></select>
+            <input type="hidden" class="form-control" asp-for="CommissionId">
             <div class="mb-3">
                 <label asp-for="CommissionTitle" class="form-label">委託標題:</label>
                 <input type="text" class="form-control" asp-for="CommissionTitle">
             </div>
             <div class="mb-3">
                 <label asp-for="GameId" class="form-label">遊戲名稱:</label>
-                <input type="search" class="form-control" asp-for="GameId">
+                <select asp-for="GameId" class="form-control" asp-items="ViewBag.GameName"></select>
             </div>
             <div class="mb-3">
                 <label asp-for="CommissionDescription" class="form-label">委託詳情:</label>
