@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GameModCrafters.Migrations
 {
-    public partial class InitialDB : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,6 +17,20 @@ namespace GameModCrafters.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CommissionStatuses", x => x.CommissionStatusId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Counters",
+                columns: table => new
+                {
+                    CounterId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    CounterName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Counters", x => x.CounterId);
                 });
 
             migrationBuilder.CreateTable(
@@ -70,7 +84,7 @@ namespace GameModCrafters.Migrations
                 columns: table => new
                 {
                     CommissionId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    DelegatorId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    DelegatorId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     GameId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     CommissionTitle = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     CommissionDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -89,20 +103,17 @@ namespace GameModCrafters.Migrations
                         name: "FK_Commissions_CommissionStatuses_CommissionStatusId",
                         column: x => x.CommissionStatusId,
                         principalTable: "CommissionStatuses",
-                        principalColumn: "CommissionStatusId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "CommissionStatusId");
                     table.ForeignKey(
                         name: "FK_Commissions_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
-                        principalColumn: "GameId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "GameId");
                     table.ForeignKey(
                         name: "FK_Commissions_Users_DelegatorId",
                         column: x => x.DelegatorId,
                         principalTable: "Users",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -124,8 +135,7 @@ namespace GameModCrafters.Migrations
                         name: "FK_ContactUsMessages_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -135,7 +145,7 @@ namespace GameModCrafters.Migrations
                     ModId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     GameId = table.Column<string>(type: "nvarchar(255)", nullable: true),
                     AuthorId = table.Column<string>(type: "nvarchar(255)", nullable: false),
-                    ModName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ModName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InstallationInstructions = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DownloadLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -152,14 +162,12 @@ namespace GameModCrafters.Migrations
                         name: "FK_Mods_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
-                        principalColumn: "GameId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "GameId");
                     table.ForeignKey(
                         name: "FK_Mods_Users_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "Users",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -202,14 +210,12 @@ namespace GameModCrafters.Migrations
                         name: "FK_CommissionTrackings_Commissions_CommissionId",
                         column: x => x.CommissionId,
                         principalTable: "Commissions",
-                        principalColumn: "CommissionId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "CommissionId");
                     table.ForeignKey(
                         name: "FK_CommissionTrackings_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -230,8 +236,7 @@ namespace GameModCrafters.Migrations
                         name: "FK_Transactions_Commissions_CommissionId",
                         column: x => x.CommissionId,
                         principalTable: "Commissions",
-                        principalColumn: "CommissionId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "CommissionId");
                     table.ForeignKey(
                         name: "FK_Transactions_Users_PayeeId",
                         column: x => x.PayeeId,
@@ -260,14 +265,12 @@ namespace GameModCrafters.Migrations
                         name: "FK_Downloadeds_Mods_ModId",
                         column: x => x.ModId,
                         principalTable: "Mods",
-                        principalColumn: "ModId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "ModId");
                     table.ForeignKey(
                         name: "FK_Downloadeds_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -285,14 +288,12 @@ namespace GameModCrafters.Migrations
                         name: "FK_Favorites_Mods_ModId",
                         column: x => x.ModId,
                         principalTable: "Mods",
-                        principalColumn: "ModId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "ModId");
                     table.ForeignKey(
                         name: "FK_Favorites_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -310,14 +311,12 @@ namespace GameModCrafters.Migrations
                         name: "FK_Logs_Mods_ModId",
                         column: x => x.ModId,
                         principalTable: "Mods",
-                        principalColumn: "ModId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "ModId");
                     table.ForeignKey(
                         name: "FK_Logs_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -337,14 +336,12 @@ namespace GameModCrafters.Migrations
                         name: "FK_ModComments_Mods_ModId",
                         column: x => x.ModId,
                         principalTable: "Mods",
-                        principalColumn: "ModId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "ModId");
                     table.ForeignKey(
                         name: "FK_ModComments_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -363,14 +360,12 @@ namespace GameModCrafters.Migrations
                         name: "FK_ModLikes_Mods_ModId",
                         column: x => x.ModId,
                         principalTable: "Mods",
-                        principalColumn: "ModId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "ModId");
                     table.ForeignKey(
                         name: "FK_ModLikes_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -387,14 +382,52 @@ namespace GameModCrafters.Migrations
                         name: "FK_ModTags_Mods_ModId",
                         column: x => x.ModId,
                         principalTable: "Mods",
-                        principalColumn: "ModId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "ModId");
                     table.ForeignKey(
                         name: "FK_ModTags_Tags_TagId",
                         column: x => x.TagId,
                         principalTable: "Tags",
-                        principalColumn: "TagId",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "TagId");
+                });
+
+            migrationBuilder.InsertData(
+                table: "CommissionStatuses",
+                columns: new[] { "CommissionStatusId", "Status" },
+                values: new object[,]
+                {
+                    { "s01", "待接受" },
+                    { "s02", "進行中" },
+                    { "s03", "已完成" },
+                    { "s04", "已取消" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Counters",
+                columns: new[] { "CounterId", "CounterName", "Value" },
+                values: new object[,]
+                {
+                    { 1, "Mod", 0 },
+                    { 2, "Commission", 0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Games",
+                columns: new[] { "GameId", "CreateTime", "Description", "GameName", "Thumbnail" },
+                values: new object[,]
+                {
+                    { "g001", new DateTime(2023, 5, 27, 17, 21, 0, 0, DateTimeKind.Unspecified), "mcTest", "Minecraft", "mcImg" },
+                    { "g002", new DateTime(2023, 5, 28, 10, 30, 0, 0, DateTimeKind.Unspecified), "fnTest", "Fortnite", "fnImg" },
+                    { "g003", new DateTime(2023, 5, 29, 14, 15, 0, 0, DateTimeKind.Unspecified), "owTest", "Overwatch", "owImg" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Email", "Avatar", "BackgroundImage", "Baned", "IsAdmin", "LastLogin", "Password", "RegistrationDate", "Username" },
+                values: new object[,]
+                {
+                    { "kevinxi@gmail.com", null, null, false, false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "c824feab835d82155c58d309594283703916ce3d57e14d219d160253c8e0bf2c55ef41e528119077053a67ac7b44dc61781d8d4b1ea447d472c964e49739ca21", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "大明" },
+                    { "marylee@gmail.com", null, null, false, false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "86a873d8f1ac8e07b059dc8f9175df802f6949d1d76533f9baf2e482a4e07f41f47e3665e31497351dd68dcceade5855e1c00af490e58d4ee34bd0c8227b921f", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "中明" },
+                    { "johnwei@gmail.com", null, null, false, false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "012a24e0b0602f251736b29b8f07304b0e89d6c2ce379e64835973cd11e1ff3d0c8bbb4683bca46a8c7e19dc77a3a0038abf17bc9f2bfd87134306b34eb81c09", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "wTestw" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -505,6 +538,9 @@ namespace GameModCrafters.Migrations
 
             migrationBuilder.DropTable(
                 name: "ContactUsMessages");
+
+            migrationBuilder.DropTable(
+                name: "Counters");
 
             migrationBuilder.DropTable(
                 name: "Downloadeds");

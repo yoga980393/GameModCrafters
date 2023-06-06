@@ -46,7 +46,6 @@ namespace GameModCrafters.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DelegatorId")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -175,7 +174,7 @@ namespace GameModCrafters.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("CounterName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Value")
@@ -189,13 +188,13 @@ namespace GameModCrafters.Migrations
                         new
                         {
                             CounterId = 1,
-                            Name = "Mod",
+                            CounterName = "Mod",
                             Value = 0
                         },
                         new
                         {
                             CounterId = 2,
-                            Name = "Commission",
+                            CounterName = "Commission",
                             Value = 0
                         });
                 });
@@ -272,6 +271,32 @@ namespace GameModCrafters.Migrations
                     b.HasKey("GameId");
 
                     b.ToTable("Games");
+
+                    b.HasData(
+                        new
+                        {
+                            GameId = "g001",
+                            CreateTime = new DateTime(2023, 5, 27, 17, 21, 0, 0, DateTimeKind.Unspecified),
+                            Description = "mcTest",
+                            GameName = "Minecraft",
+                            Thumbnail = "mcImg"
+                        },
+                        new
+                        {
+                            GameId = "g002",
+                            CreateTime = new DateTime(2023, 5, 28, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            Description = "fnTest",
+                            GameName = "Fortnite",
+                            Thumbnail = "fnImg"
+                        },
+                        new
+                        {
+                            GameId = "g003",
+                            CreateTime = new DateTime(2023, 5, 29, 14, 15, 0, 0, DateTimeKind.Unspecified),
+                            Description = "owTest",
+                            GameName = "Overwatch",
+                            Thumbnail = "owImg"
+                        });
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Log", b =>
@@ -584,8 +609,7 @@ namespace GameModCrafters.Migrations
                     b.HasOne("GameModCrafters.Models.User", "Delegator")
                         .WithMany("Commission")
                         .HasForeignKey("DelegatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("GameModCrafters.Models.Game", "Game")
                         .WithMany("Commission")
