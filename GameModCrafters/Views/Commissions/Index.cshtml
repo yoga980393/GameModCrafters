@@ -5,349 +5,49 @@
 }
 
 
-< <div class="container entrust Release_Area_Wrap paging">
-    <div class="title">
-        <h3>委託區:</h3>
-
-    </div>
-    <div class="container text-center mod-list">
-        <div class="row align-items-start">
-            <div class="col-6 title">
-                Title
-            </div>
-            <div class="col SendernName">
-                發文人
-            </div>
-            <div class="col SenderDate">
-                發文日
-            </div>
-            <div class="col LastReply">
-                最後回覆
-            </div>
-        </div>
-        <div class="row align-items-start">
-            <div class="col-6 title">
-                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            </div>
-            <div class="col SendernName">
-                jack
-            </div>
-            <div class="col SenderDate">
-                One of three columns
-            </div>
-            <div class="col LastReply">
-                One of three columns
-            </div>
-        </div>
-        <div class="row align-items-start">
-            <div class="col-6 title">
-                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            </div>
-            <div class="col SendernName">
-                One of three columns
-            </div>
-            <div class="col SenderDate">
-                One of three columns
-            </div>
-            <div class="col LastReply">
-                One of three columns
-            </div>
-        </div>
-        <div class="row align-items-start">
-            <div class="col-6 title">
-                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            </div>
-            <div class="col SendernName">
-                One of three columns
-            </div>
-            <div class="col SenderDate">
-                One of three columns
-            </div>
-            <div class="col LastReply">
-                One of three columns
-            </div>
-        </div>
-        <div class="row align-items-start">
-            <div class="col-6 title">
-                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            </div>
-            <div class="col SendernName">
-                One of three columns
-            </div>
-            <div class="col SenderDate">
-                One of three columns
-            </div>
-            <div class="col LastReply">
-                One of three columns
-            </div>
-        </div>
-        <div class="row align-items-start">
-            <div class="col-6 title">
-                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            </div>
-            <div class="col SendernName">
-                One of three columns
-            </div>
-            <div class="col SenderDate">
-                One of three columns
-            </div>
-            <div class="col LastReply">
-                One of three columns
-            </div>
-        </div>
-        <div class="row align-items-start">
-            <div class="col-6 title">
-                xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            </div>
-            <div class="col SendernName">
-                One of three columns
-            </div>
-            <div class="col SenderDate">
-                One of three columns
-            </div>
-            <div class="col LastReply">
-                One of three columns
-            </div>
-        </div>
-    </div>
-
-
-</div>
-
-@section css {
-    <style>
-        /* entrust------------------------------ */
-
-        .Release_Area_Wrap {
-            background-color: #bdbcbc;
-            /* background-image: linear-gradient(to bottom, #d7e9f7, #c6dced); */
-            border-top: 1px solid #a4b6c3;
-            border-bottom: 1px solid #a4b6c3;
-            margin: 10px auto;
-            padding: 10px 0;
-            /* display: flex;
-            justify-content: center;
-            align-items: center; */
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CommissionId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CommissionStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CommissionTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Budget)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CommissionId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CommissionStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CommissionTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Budget)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.GameId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.GameId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.GameId">Delete</a>
+                </td>
+            </tr>
         }
-
-        .entrust_link a {
-            padding: 0 5px;
-        }
-
-        .entrust .row {
-            /* background-color: #ccc; */
-            padding: 20px;
-        }
-
-
-
-        .row:nth-child(even) {
-            background: linear-gradient(to right, #f6f6f6, #e9e9e9);
-        }
-
-        .row:nth-child(odd) {
-            background: linear-gradient(to right, #e9e9e9, #f6f6f6);
-        }
-
-        .row .title {
-            display: flex;
-            justify-content: center;
-        }
-
-        .Release_Area_Wrap {
-            padding: 20px;
-        }
-
-        /* --------------forum---- */
-       .forum {
-            /* border: 1px solid black; */
-            color: white;
-            padding: 20px;
-        }
-
-            .forum i,
-            .forum h5 {
-                display: inline;
-            }
-
-            .forum .Border {
-                border-bottom: 3px solid white;
-                margin: 20px 0;
-            }
-
-        .forum_link {
-            display: flex;
-            gap: 20px;
-        }
-
-        .Bahamut {
-            display: flex;
-            /* justify-content: flex-end; */
-        }
-
-        .bahamut_img {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100px;
-            height: 100px;
-            background-color: white;
-            border-radius: 20%;
-            /* margin: auto; */
-        }
-
-        .NGA_img {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100px;
-            height: 100px;
-            background-color: white;
-            border-radius: 20%;
-        }
-
-            .NGA_img h5 {
-                color: white;
-                background-color: brown;
-                border-radius: 10px;
-                padding: 10px 20px;
-            }
-
-        /* -------------footer */
-        .footer {
-            background-color: black;
-            width: 100%;
-            text-align: center;
-            color: white;
-            padding: 40px;
-        }
-
-            .footer .title h3 {
-                display: block;
-                margin: auto;
-            }
-
-        .wrap {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            font-size: 24px;
-            border-bottom: #ccc solid 1px;
-            padding: 10px;
-        }
-
-        .icon_img a {
-            padding: 0 10px;
-            color: white;
-        }
-
-        .wrap_bottom {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px 10px;
-        }
-
-        .menu {
-            display: flex;
-        }
-
-            .menu a {
-                color: white;
-                padding: 0 5px;
-            }
-
-                .menu a:first-child {
-                    border-right: #ccc solid 1px;
-                }
-        /* -------------footer */
-
-        .create {
-            display: flex;
-        }
-
-
-
-        .filter-form {
-            background-color: #f0f0f0;
-            padding: 20px;
-            border-radius: 8px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            min-width: 40%;
-            gap: 10px;
-        }
-
-            .filter-form button {
-                margin-left: 10px;
-            }
-
-            .filter-form .form-group {
-                flex: 1 0 auto;
-            }
-
-            .filter-form .form-control {
-                width: 100%;
-                padding: 5px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-size: 14px;
-                color: #666;
-                background-color: #fff;
-            }
-
-                .filter-form .form-control:focus {
-                    border-color: #bbb;
-                    outline: none;
-                }*/
-
-    </style>
-    
-}
-
-@section js {
-
-
-   @* <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
-
-    <script>
-        ClassicEditor
-            .create(document.querySelector('#editor'), {
-                // ...other configurations,
-                extraPlugins: [Base64UploadAdapterPlugin]
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
-        function Base64UploadAdapterPlugin(editor) {
-            editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
-                return new Base64UploadAdapter(loader);
-            };
-        }
-
-        class Base64UploadAdapter {
-            constructor(loader) {
-                this.loader = loader;
-            }
-
-            upload() {
-                return this.loader.file
-                    .then(file => new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                            resolve({ default: reader.result });
-                        };
-                        reader.onerror = error => {
-                            reject(error);
-                        };
-                        reader.readAsDataURL(file);
-                    }));
-            }
-
-            abort() { }
-        }
-
-    </script>*@
-}
+    </tbody>
+</table>
