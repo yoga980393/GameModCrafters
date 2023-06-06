@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Models;
 using GameModCrafters.Encryption;
+using System;
 
 namespace GameModCrafters.Data
 {
@@ -98,6 +99,34 @@ namespace GameModCrafters.Data
                         new CommissionStatus { CommissionStatusId = "s03", Status = "已完成" },
                         new CommissionStatus { CommissionStatusId = "s04", Status = "已取消" }
                );
+
+            modelBuilder.Entity<Game>()
+                .HasData(
+                    new Game
+                    {
+                        GameId = "g001",
+                        GameName = "Minecraft",
+                        Description = "mcTest",
+                        Thumbnail = "mcImg",
+                        CreateTime = new DateTime(2023, 5, 27, 17, 21, 0)
+                    },
+                    new Game
+                    {
+                        GameId = "g002",
+                        GameName = "Fortnite",
+                        Description = "fnTest",
+                        Thumbnail = "fnImg",
+                        CreateTime = new DateTime(2023, 5, 28, 10, 30, 0)
+                    },
+                    new Game
+                    {
+                        GameId = "g003",
+                        GameName = "Overwatch",
+                        Description = "owTest",
+                        Thumbnail = "owImg",
+                        CreateTime = new DateTime(2023, 5, 29, 14, 15, 0)
+                    }
+                );
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {

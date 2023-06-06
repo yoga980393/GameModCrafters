@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameModCrafters.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230602044421_AddCounterName")]
-    partial class AddCounterName
+    [Migration("20230606025952_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -48,7 +48,6 @@ namespace GameModCrafters.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DelegatorId")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -177,7 +176,7 @@ namespace GameModCrafters.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("CounterName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Value")
@@ -191,13 +190,13 @@ namespace GameModCrafters.Migrations
                         new
                         {
                             CounterId = 1,
-                            Name = "Mod",
+                            CounterName = "Mod",
                             Value = 0
                         },
                         new
                         {
                             CounterId = 2,
-                            Name = "Commission",
+                            CounterName = "Commission",
                             Value = 0
                         });
                 });
@@ -274,6 +273,32 @@ namespace GameModCrafters.Migrations
                     b.HasKey("GameId");
 
                     b.ToTable("Games");
+
+                    b.HasData(
+                        new
+                        {
+                            GameId = "g001",
+                            CreateTime = new DateTime(2023, 5, 27, 17, 21, 0, 0, DateTimeKind.Unspecified),
+                            Description = "mcTest",
+                            GameName = "Minecraft",
+                            Thumbnail = "mcImg"
+                        },
+                        new
+                        {
+                            GameId = "g002",
+                            CreateTime = new DateTime(2023, 5, 28, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            Description = "fnTest",
+                            GameName = "Fortnite",
+                            Thumbnail = "fnImg"
+                        },
+                        new
+                        {
+                            GameId = "g003",
+                            CreateTime = new DateTime(2023, 5, 29, 14, 15, 0, 0, DateTimeKind.Unspecified),
+                            Description = "owTest",
+                            GameName = "Overwatch",
+                            Thumbnail = "owImg"
+                        });
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Log", b =>
@@ -542,6 +567,38 @@ namespace GameModCrafters.Migrations
                     b.HasKey("Email");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Email = "kevinxi@gmail.com",
+                            Baned = false,
+                            IsAdmin = false,
+                            LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Password = "c824feab835d82155c58d309594283703916ce3d57e14d219d160253c8e0bf2c55ef41e528119077053a67ac7b44dc61781d8d4b1ea447d472c964e49739ca21",
+                            RegistrationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Username = "大明"
+                        },
+                        new
+                        {
+                            Email = "marylee@gmail.com",
+                            Baned = false,
+                            IsAdmin = false,
+                            LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Password = "86a873d8f1ac8e07b059dc8f9175df802f6949d1d76533f9baf2e482a4e07f41f47e3665e31497351dd68dcceade5855e1c00af490e58d4ee34bd0c8227b921f",
+                            RegistrationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Username = "中明"
+                        },
+                        new
+                        {
+                            Email = "johnwei@gmail.com",
+                            Baned = false,
+                            IsAdmin = false,
+                            LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Password = "012a24e0b0602f251736b29b8f07304b0e89d6c2ce379e64835973cd11e1ff3d0c8bbb4683bca46a8c7e19dc77a3a0038abf17bc9f2bfd87134306b34eb81c09",
+                            RegistrationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Username = "wTestw"
+                        });
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Commission", b =>
@@ -554,8 +611,7 @@ namespace GameModCrafters.Migrations
                     b.HasOne("GameModCrafters.Models.User", "Delegator")
                         .WithMany("Commission")
                         .HasForeignKey("DelegatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("GameModCrafters.Models.Game", "Game")
                         .WithMany("Commission")
