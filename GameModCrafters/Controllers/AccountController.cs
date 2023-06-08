@@ -16,6 +16,7 @@ using Microsoft.Win32;
 using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Encryption;
 using System.Xml.Linq;
+using System.IO;
 
 namespace GameModCrafters.Controllers
 {
@@ -170,57 +171,42 @@ namespace GameModCrafters.Controllers
         [Authorize]
         public async Task<IActionResult> PersonPage(string Name)
         {
-            var usernameClaim = HttpContext.User.FindFirstValue(ClaimTypes.Name);
-            bool isUsernameExists = _context.Users.Any(m => m.Username == Name);
-            if (isUsernameExists)
-            {
-                string nameError = "名字已經有人使用";
-                TempData["NameError"] = nameError;
-                return View();
-            }
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == usernameClaim);
-            if (user != null)
-            {
-
-                var claimsIdentity = new ClaimsIdentity(HttpContext.User.Identity);
-                var nameClaim = claimsIdentity.FindFirst(ClaimTypes.Name);
-                if (nameClaim != null)
-                {
-                    claimsIdentity.RemoveClaim(nameClaim);
-                }
-                claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, Name));
-                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-            }
             return View();
         }
-        //public async Task<IActionResult> PersonPage(PersonViewModel personVM)
-        //{
-        //    // 個人專區，需要驗證才能訪問
-        //    var usernameClaim = HttpContext.User.FindFirstValue(ClaimTypes.Name);
-        //    bool isUsernameExists = _context.Users.Any(m => m.Username == personVM.Username);
-        //    if (isUsernameExists)
-        //    {
-        //        ModelState.AddModelError("Username", "名字已經有人使用");
-        //        return View(personVM);
-        //    }
-        //    var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == usernameClaim);
-        //    if (user != null)
-        //    {
 
-        //        var claimsIdentity = new ClaimsIdentity(HttpContext.User.Identity);
-        //        var nameClaim = claimsIdentity.FindFirst(ClaimTypes.Name);
-        //        if (nameClaim != null)
-        //        {
-        //            claimsIdentity.RemoveClaim(nameClaim);
-        //        }
-        //        claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, personVM.Username));
-        //        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-        //        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-        //    }
-        //    return View();
-        //}
+        [HttpPost]
+       
+        public async Task<IActionResult> CropperImage(IFormFile croppedPersonImage)
+        {
+            if (croppedPersonImage == null || croppedPersonImage.Length == 0)
+            {
+                return BadRequest("Invalid file.");
+            }
+            var fileName = Path.GetFileNameWithoutExtension(croppedPersonImage.FileName);
+            var extension = Path.GetExtension(croppedPersonImage.FileName);
+            var date = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var random = Guid.NewGuid().ToString().Substring(0, 4); // 生成一個4位數的隨機字串
+            var newFileName = $"{fileName}_{date}_{random}{extension}";
 
+            var filePath = Path.Combine("wwwroot/AvatarImages", newFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await croppedPersonImage.CopyToAsync(fileStream);
+            }
+
+            var fileUrl = Url.Content("~/AvatarImages/" + newFileName);
+            var useremail = ClaimTypes.NameIdentifier; // 假設使用者名稱存儲在 User.Identity.Name 中
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == useremail);
+            if (user != null)
+            {
+                user.Avatar = fileUrl;
+                await _context.SaveChangesAsync();
+            }
+            //var fileUrl = croppedPersonImage.ToString();
+            return Ok(new { fileUrl });
+           
+        }
         [HttpGet]
         public IActionResult Forbidden()
         {

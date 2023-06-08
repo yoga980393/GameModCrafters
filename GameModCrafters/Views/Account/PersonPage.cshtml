@@ -881,105 +881,47 @@
         })
         // 當按鈕被點擊時，剪裁圖片並在控制台中輸出剪裁後的圖片數據
         cropButton.addEventListener('click', function () {
-            let croppedCanvas = cropperperson.getCroppedCanvas();
-            // console.log(croppedCanvas.toDataURL());
+            //let croppedCanvas = cropperperson.getCroppedCanvas();
+            //let dataUrl = croppedCanvas.toDataURL();
 
-            personal_pic.src = croppedCanvas.toDataURL();
-            cropperperson.destroy(); // 清除緩存
+        cropperperson.getCroppedCanvas().toBlob(function (blob) {
+            // 建立一個 FormData 對象，用於將圖片數據傳遞給控制器
+            let formData = new FormData();
+            formData.append('croppedPersonImage', blob, "Personcropped.jpg");
+
+            // 上傳圖片
+            fetch('/Account/CropperImage', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Network response was not ok.');
+                    }
+                })
+                .then(data => {
+                    // 根據需要進行處理回傳的數據
+                    console.log(data);
+                    personal_pic.src = data.fileUrl;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }, 'image/jpeg');
+
+        cropperperson.destroy(); // 清除緩存
+
+
+            //personal_pic.src = croppedCanvas.toDataURL();
+            
             // observer.disconnect();
-        })
-    }
-
-
-    function uploadCoverImg() {
-        let editbtn = document.getElementById('Edit_pic');
-        let preview_cover_pic = document.getElementById('preview_cover_pic');
-
-        editbtn.addEventListener('click', function () {
-
-            console.log("preview_cover_pic1:", preview_cover_pic.src)
-            let input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.click();
-            input.addEventListener('change', function () {
-                let reader = new FileReader();
-                // preview_cover_pic.src = ''; // 清空預覽圖
-                console.log("preview_cover_pic2:", preview_cover_pic.src)
-                reader.readAsDataURL(input.files[0]);
-                reader.addEventListener('load', function () {
-                    preview_cover_pic.src = reader.result;
-                    console.log(input.value);
-                });
-            });
+       
         });
-        // console.log("preview_cover_pic:",preview_cover_pic.src)
-
-        // // 在 input 值未更改的情况下手动更新预览图片
-        // editbtn.addEventListener('mouseover', function () {
-        //     if (preview_cover_pic.src != null) {
-        //         preview_cover_pic.src = '';
-        //         preview_cover_pic.src = preview_cover_pic.src;
-        //     }
-        // });
     }
 
-    function CropCoverImg() {
-        let cropButton = document.getElementById('cropcoverButton');
-        let Cover_pic = document.getElementById('Cover_pic');
-
-
-        // 等待图片加载完成后再初始化cropper
-        document.getElementById('preview_cover_pic').addEventListener('load', function () {
-            var cropper = new Cropper(this, {
-                aspectRatio: 14 / 6,
-                cropBoxResizable: true,
-                cropBoxMovable: true,
-                autoCropArea: 1,
-                viewMode: 2
-            });
-            //把圓框調回來方形
-            // setTimeout(() => {
-            //     let cropBoxes = document.querySelectorAll('.cropper-crop-box, .cropper-view-box');
-            //     console.log(cropBoxes);
-            //     cropBoxes.forEach((box) => {
-            //         box.style.borderRadius = 'none';
-            //     });
-            // }, 500);
-            let observer = new MutationObserver(function (mutations) {
-                mutations.forEach(function (mutation) {
-                    let cropBoxes = document.querySelectorAll('.cropper-crop-box, .cropper-view-box');
-                    cropBoxes.forEach((box) => {
-                        box.style.borderRadius = '';
-                    });
-                });
-            });
-
-            let options = {
-                childList: true,
-                attributes: true,
-                subtree: true,
-            };
-
-            observer.observe(document.body, options);
-            let CoverClose = document.querySelector('.CoverClose');
-            CoverClose.addEventListener('click', function () {
-                observer.disconnect(); //停止MutationObserver实例的观察功能的方法
-            })
-
-
-            // 當按鈕被點擊時，剪裁圖片並在控制台中輸出剪裁後的圖片數據
-            cropButton.addEventListener('click', function () {
-                let croppedCanvas = cropper.getCroppedCanvas();
-                // console.log(croppedCanvas.toDataURL());
-                // let cropimg = document.createElement('img');
-                Cover_pic.src = croppedCanvas.toDataURL();
-                cropper.destroy(); // 清除緩存
-                // observer.disconnect(); //停止MutationObserver实例的观察功能的方法
-            })
-        })
-
-    }
+   
 
     let croppercover; // 定義全局變量 croppercover
     function handleCoverImg() {
