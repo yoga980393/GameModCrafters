@@ -175,7 +175,6 @@ namespace GameModCrafters.Controllers
         }
 
         [HttpPost]
-       
         public async Task<IActionResult> CropperImage(IFormFile croppedPersonImage)
         {
             if (croppedPersonImage == null || croppedPersonImage.Length == 0)
