@@ -2,11 +2,19 @@
 
 @model PersonViewModel
 @{
-
+    var userCover = Model.BackgroundImage;
+    var userAtavar = Model.Avatar;
 }
 <div class="container-fluid position_height">
     <div class="container-fluid ImgWrap">
-        <img src="https://picsum.photos/1260/900/?random=10" class="img-fluid Img_cover" id="Cover_pic" alt="...">
+        @if(string.IsNullOrEmpty(userCover)){
+            <img src="https://picsum.photos/1260/900/?random=10" class="img-fluid Img_cover" id="Cover_pic" alt="...">
+        }
+        else
+        {
+            <img src="@userCover" class="img-fluid Img_cover" id="Cover_pic" alt="...">
+        }
+        
 
 
     </div>
@@ -14,7 +22,15 @@
         <div class="Cover">
             <div class="pic_name">
                 <div class="personal_pic">
-                    <img src="https://picsum.photos/200/200/?random=7" id="personal_pic">
+                    @if (string.IsNullOrEmpty(userAtavar))
+                    {
+                        <img src="https://picsum.photos/200/200/?random=7" id="personal_pic">
+                    }
+                    else
+                    {
+                        <img src="@userAtavar" id="personal_pic">
+                    }
+                    
                 </div>
                 <div class="Cover_text">
                     <h1 class="name" id="Username">@User.Identity.Name</h1>
@@ -771,6 +787,11 @@
 </script>
 
 <script>
+    function IsNullImage(){
+            let Cover_pic = document.getElementById("#Cover_pic")
+            let personal_pic = document.getElementById("#personal_pic")
+    }
+
     window.onload = function () {
 
         // uploadCoverImg()
@@ -889,9 +910,9 @@
             console.log("111")
             let formData = new FormData();
             formData.append('croppedPersonImage', blob, "Personcropped.jpg");
-
+            //formData.append('imageType', 'person'); // 传递imageType参数
             // 上傳圖片
-            fetch('/Account/CropperImage', {
+            fetch('/Account/CropperAvatarImage', {
                 method: 'POST',
                 body: formData
             })
@@ -962,9 +983,39 @@
         let cropButton = document.getElementById('cropcoverButton');
         let Cover_pic = document.getElementById('Cover_pic');
         cropButton.addEventListener('click', function () {
-            let croppedCanvas = croppercover.getCroppedCanvas();
-            Cover_pic.src = croppedCanvas.toDataURL();
-            croppercover.destroy(); // 清除緩存
+            //let croppedCanvas = croppercover.getCroppedCanvas();
+            //Cover_pic.src = croppedCanvas.toDataURL();
+            //croppercover.destroy(); // 清除緩存
+
+            croppercover.getCroppedCanvas().toBlob(function (blob) {
+            // 建立一個 FormData 對象，用於將圖片數據傳遞給控制器
+            console.log("111")
+            let formData = new FormData();
+            formData.append('croppedCoverImage', blob, "Covercropped.jpg");
+            //formData.append('imageType', 'person'); // 传递imageType参数
+            // 上傳圖片
+                fetch('/Account/CropperBackgroundImage', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Network response was not ok.');
+                    }
+                })
+                .then(data => {
+                    // 根據需要進行處理回傳的數據
+                    console.log(data);
+                        Cover_pic.src = data.fileUrl;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }, 'image/jpeg');
+
+            cropperperson.destroy(); // 清除緩存
         });
     }
 

@@ -54,7 +54,7 @@ namespace GameModCrafters.Controllers
                     //通過以上帳密比對成立後, 以下開始建立授權
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.NameIdentifier,user.Email ),//email
+                        new Claim(ClaimTypes.Email,user.Email ),//email
                         new Claim(ClaimTypes.Name,user.Username ),//增加使用者   model.Text.ToString()
                         //new Claim(ClaimTypes.Role, "Administrator") // 如果要有「群組、角色、權限」，可以加入這一段  
 
@@ -162,9 +162,21 @@ namespace GameModCrafters.Controllers
         }
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> PersonPage()
+        public async Task<IActionResult> PersonPage(PersonViewModel personVM)
         {
-            return View();
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.Users.FirstOrDefaultAsync(x=>x.Email==usermail);
+            var userAvatar = user.Avatar;
+            var userCover = user.BackgroundImage;
+            personVM.Avatar = userAvatar;
+            personVM.BackgroundImage = userCover;
+            //ViewData["UserAvatar"] = userAvatar;
+            //ViewData["UserCover"] = userCover;
+            return View(personVM);
         }
         
         [HttpPost]
@@ -175,7 +187,7 @@ namespace GameModCrafters.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CropperImage(IFormFile croppedPersonImage)
+        public async Task<IActionResult> CropperAvatarImage(IFormFile croppedPersonImage)
         {
             if (croppedPersonImage == null || croppedPersonImage.Length == 0)
             {
@@ -188,15 +200,26 @@ namespace GameModCrafters.Controllers
             var newFileName = $"{fileName}_{date}_{random}{extension}";
 
             var filePath = Path.Combine("wwwroot/AvatarImages", newFileName);
+            var useremail = User.FindFirstValue(ClaimTypes.Email) ; 
+            var user = await _context.Users.FirstOrDefaultAsync(x=>x.Email==useremail);
 
+            var oldFilePath = user.Avatar;
+            if (!string.IsNullOrEmpty(oldFilePath))
+            {
+                var oldFileName = Path.GetFileName(oldFilePath);
+                oldFilePath = Path.Combine("wwwroot/AvatarImages", oldFileName);
+                if (System.IO.File.Exists(oldFilePath))
+                {
+                    System.IO.File.Delete(oldFilePath);
+                }
+            }
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 await croppedPersonImage.CopyToAsync(fileStream);
             }
 
             var fileUrl = Url.Content("~/AvatarImages/" + newFileName);
-            var useremail = ClaimTypes.NameIdentifier; // 假設使用者名稱存儲在 User.Identity.Name 中
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == useremail);
+           
             if (user != null)
             {
                 user.Avatar = fileUrl;
@@ -204,8 +227,51 @@ namespace GameModCrafters.Controllers
             }
             //var fileUrl = croppedPersonImage.ToString();
             return Ok(new { fileUrl });
-           
+
         }
+        [HttpPost]
+        public async Task<IActionResult> CropperBackgroundImage(IFormFile croppedCoverImage)
+        {
+            if (croppedCoverImage == null || croppedCoverImage.Length == 0)
+            {
+                return BadRequest("Invalid file.");
+            }
+            var fileName = Path.GetFileNameWithoutExtension(croppedCoverImage.FileName);
+            var extension = Path.GetExtension(croppedCoverImage.FileName);
+            var date = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var random = Guid.NewGuid().ToString().Substring(0, 4); // 生成一個4位數的隨機字串
+            var newFileName = $"{fileName}_{date}_{random}{extension}";
+
+            var filePath = Path.Combine("wwwroot/BackgroundImages", newFileName);
+            var useremail = User.FindFirstValue(ClaimTypes.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == useremail);
+            var oldFilePath = user.BackgroundImage;
+            if (!string.IsNullOrEmpty(oldFilePath))
+            {
+                var oldFileName = Path.GetFileName(oldFilePath);
+                oldFilePath = Path.Combine("wwwroot/BackgroundImages", oldFileName);
+                if (System.IO.File.Exists(oldFilePath))
+                {
+                    System.IO.File.Delete(oldFilePath);
+                }
+            }
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await croppedCoverImage.CopyToAsync(fileStream);
+            }
+
+            var fileUrl = Url.Content("~/BackgroundImages/" + newFileName);
+            
+            if (user != null)
+            {
+                user.BackgroundImage = fileUrl;
+                await _context.SaveChangesAsync();
+            }
+            //var fileUrl = croppedPersonImage.ToString();
+            return Ok(new { fileUrl });
+
+        }
+
         [HttpGet]
         public IActionResult Forbidden()
         {
