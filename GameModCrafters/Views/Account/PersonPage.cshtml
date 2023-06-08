@@ -886,6 +886,7 @@
 
         cropperperson.getCroppedCanvas().toBlob(function (blob) {
             // 建立一個 FormData 對象，用於將圖片數據傳遞給控制器
+            console.log("111")
             let formData = new FormData();
             formData.append('croppedPersonImage', blob, "Personcropped.jpg");
 

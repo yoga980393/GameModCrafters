@@ -22,6 +22,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\ModImages\" />
     <Folder Include="wwwroot\AvartarImages\" />
+    <Folder Include="wwwroot\AvatarImages\" />
   </ItemGroup>
 
 </Project>
