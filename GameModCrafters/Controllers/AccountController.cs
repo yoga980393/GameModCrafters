@@ -61,7 +61,7 @@ namespace GameModCrafters.Controllers
                 {
                    if(user.EmailConfirmed==false)
                     {
-                        ModelState.AddModelError("Text", "帳號或密碼錯誤");
+                        ModelState.AddModelError("Text", "email驗證錯誤");
                         return View(model); // 失敗
                     }
                     //通過以上帳密比對成立後, 以下開始建立授權
@@ -200,7 +200,7 @@ namespace GameModCrafters.Controllers
                     Password = _hashService.SHA512Hash(password),
                     RegistrationDate = DateTime.UtcNow, // 取得當前的 UTC 時間
                     EmailConfirmed = false, // 初始狀態設為未確認
-                    ConfirmationCode = confirmationCode // 將確認碼儲存到使用者物件中
+                    ConfirmationCode = confirmationCode // 將確認碼儲存到使用者物件中111
                 };
 
                 _context.Users.Add(user);
