@@ -17,18 +17,18 @@
 
             <div class="mb-3">
                 <label for="exampleInputUsername" class="form-label">使用者名稱</label>
-                <input asp-for="Username" name="Username" type="Username" class="form-control" id="exampleInputUsername" aria-describedby="emailHelp">
+                <input asp-for="Username" name="Username" class="form-control" id="exampleInputUsername" aria-describedby="emailHelp">
                 <div id="username-error" class="text-danger"></div>
                 @Html.ValidationMessageFor(m=>m.Username,"",new{@class = "text-danger"})
 
             </div>
-
+            @*
             <div class="mb-3">
                 <label for="exampleInputEmail" class="form-label">電子郵件</label>
                 <input asp-for="Email" type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp">
                 <div id="emailHelp" class="form-text" style="color:gray">我們絕不會與其他任何人分享您的電子郵件。</div>
                 @Html.ValidationMessageFor(m=>m.Email,"",new{@class = "text-danger"})
-            </div>
+            </div>*@
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">密碼</label>
                 <input asp-for="Password1"  type="password" class="form-control" id="exampleInputPassword1"
@@ -49,12 +49,14 @@
             </div>
 
             <div class="d-grid col-12 mx-auto">
-                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" disabled="true">註冊</button>
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" disabled="">註冊</button>
             </div>
 
         }
     </div>
 </div>
+
+    
 <script>
     function ClickMeNotRobot() {
         let checkbox = document.getElementById('exampleCheck1')
@@ -88,40 +90,7 @@
     });
    
 </script>
-@*<script>
-    $(document).ready(function () {
-        $('#submitBtn').click(function () {
-            var password1 = $('#exampleInputPassword1').val();
-            var password2 = $('#exampleInputPassword2').val();
 
-            if (password1 !== password2) {
-                // 密碼與確認密碼不相符，執行錯誤處理邏輯
-                console.log("密碼與確認密碼不相符");
-                return;
-            }
-
-            var formData = {
-                email: $('#exampleInputEmail').val(),
-                username: $('#exampleInputUsername').val(),
-                password1: $('#exampleInputPassword1').val()
-            };
-
-            $.ajax({
-                url: '/Register/RegisterPage',
-                method: 'POST',
-                data: formData,
-                success: function (response) {
-                    // 處理成功回應
-                    console.log(response);
-                },
-                error: function (error) {
-                    // 處理錯誤回應
-                    console.log(error);
-                }
-            });
-        });
-    });
-</script>*@
 
 
 @section js{

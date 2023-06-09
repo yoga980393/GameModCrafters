@@ -17,6 +17,9 @@ using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Encryption;
 using System.Xml.Linq;
 using System.IO;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.ComponentModel.DataAnnotations;
 
 namespace GameModCrafters.Controllers
 {
@@ -25,10 +28,16 @@ namespace GameModCrafters.Controllers
         private readonly IHashService _hashService;
      
         private readonly ApplicationDbContext _context;
-        public AccountController(ApplicationDbContext context,IHashService hashService)
+
+        private readonly ISendGridClient _sendGridClient;
+
+     
+        public AccountController(ApplicationDbContext context,IHashService hashService, ISendGridClient sendGridClient)
         {
             _hashService = hashService;
             _context = context;
+            _sendGridClient = sendGridClient;
+           
         }
 
         [HttpGet]
@@ -50,7 +59,11 @@ namespace GameModCrafters.Controllers
 
                 if (user != null)
                 {
-                   
+                   if(user.EmailConfirmed==false)
+                    {
+                        ModelState.AddModelError("Text", "帳號或密碼錯誤");
+                        return View(model); // 失敗
+                    }
                     //通過以上帳密比對成立後, 以下開始建立授權
                     var claims = new List<Claim>
                     {
@@ -91,58 +104,169 @@ namespace GameModCrafters.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterPage([Bind("Email, Username, Password1,Password2")] RegisterViewModel register)
+        public async Task<IActionResult> RegisterPage(RegisterViewModel register)
         {
             if (ModelState.IsValid)
-                {
-                bool isEmailExists = _context.Users.Any(u => u.Email == register.Email);
+            {
+                
+
+
+                //bool isEmailExists = _context.Users.Any(u => u.Email == register.Email);
                 bool isUsernameExists = _context.Users.Any(m => m.Username == register.Username);
                 if (isUsernameExists)
                 {
                     ModelState.AddModelError("Username", "該 Username 已被使用。");
+                  
                 }
 
-                if (isEmailExists)
-                {
-                    ModelState.AddModelError("Email", "該 Email 已被使用。");
-                }
+                //if (isEmailExists)
+                //{
+                //    ModelState.AddModelError("Email", "該 Email 已被使用。");
+                //}
 
-                if (isUsernameExists || isEmailExists)
-                {
-                    return View(register);
-                }
-
-                
-
-
+                //if (isUsernameExists || isEmailExists)
+                //{
+                //    return View(register);
+                //}
                 bool isPasswordValid = IsPasswordValid(register.Password1);
                 if (!isPasswordValid)
                 {
                     ModelState.AddModelError("Password1", "密碼至少包含 8-20 個字符，並且包含至少一個大寫字母和一個數字");
+                }
+
+                if (isUsernameExists || !isPasswordValid)
+                {
                     return View(register);
                 }
 
-                var user = new User
-                {
-                    Email = register.Email,
-                    Username = register.Username,
-                    Password = _hashService.SHA512Hash(register.Password1),
-                    RegistrationDate = DateTime.UtcNow, // 取得當前的 UTC 時間
-                    
-                };
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("LoginPage");//成功
+
+
+                //bool isPasswordValid = IsPasswordValid(register.Password1);
+                //if (!isPasswordValid)
+                //{
+                //    ModelState.AddModelError("Password1", "密碼至少包含 8-20 個字符，並且包含至少一個大寫字母和一個數字");
+                //    return View(register);
+                //}
+
+                // 將使用者名稱和密碼存儲到暫時的變數中
+                TempData["Username"] = register.Username;
+                TempData["Password"] = register.Password1;
+                return RedirectToAction("RegisterEmailPage"); // 重定向到填寫電子郵件的頁面
+                //var user = new User
+                //{
+                //    Email = register.Email,
+                //    Username = register.Username,
+                //    Password = _hashService.SHA512Hash(register.Password1),
+                //    RegistrationDate = DateTime.UtcNow, // 取得當前的 UTC 時間
+
+                //};
+                //_context.Users.Add(user);
+                //await _context.SaveChangesAsync();
+                // return RedirectToAction("LoginPage");//成功
             }
 
             return View(register); // 失敗
         }
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult RegisterEmailPage()
+        {
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterEmailPage(string email)
+        {
+            if (ModelState.IsValid)
+            {
+                bool isEmailExists = _context.Users.Any(u => u.Email == email);
+                if (isEmailExists)
+                {
+                    ModelState.AddModelError("Email", "該 Email 已被使用。");
+                    return View("RegisterEmailPage");
+                }
+                TempData["Email"] = email;
+                // 從暫時的變數中獲取使用者名稱和密碼
+                var username = TempData["Username"].ToString();
+                var password = TempData["Password"].ToString();
+                // 生成確認碼
+                var confirmationCode = Guid.NewGuid().ToString();
+                // 創建使用者
+                var user = new User
+                {
+                    Email = email,
+                    Username = username,
+                    Password = _hashService.SHA512Hash(password),
+                    RegistrationDate = DateTime.UtcNow, // 取得當前的 UTC 時間
+                    EmailConfirmed = false, // 初始狀態設為未確認
+                    ConfirmationCode = confirmationCode // 將確認碼儲存到使用者物件中
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                // 傳送確認郵件
+              
+               
+                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { email = user.Email, confirmationCode }, Request.Scheme);
+                await SendConfirmationEmail(user.Email, confirmationLink);
+               
+                return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
+            }
+
+            return View("RegisterEmailPage"); // 失敗
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult> WaitConfirmEmail()
+        {
+            return View();
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string email, string confirmationCode)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(confirmationCode))
+            {
+                // 未提供有效的電子郵件地址或確認碼
+                return BadRequest();
+            }
+
+            // 根據電子郵件地址找到對應的使用者
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email && x.ConfirmationCode == confirmationCode);
+            if (user == null)
+            {
+                // 使用者不存在
+                return NotFound();
+            }
+
+            // 郵件地址確認成功
+            user.EmailConfirmed = true;
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            // 郵件地址確認成功，返回成功頁面
+            return View("ConfirmEmail");
+        }
+        
+        private async Task SendConfirmationEmail(string email, string confirmationLink)
+        {
+            var from = new EmailAddress("buildschool99@gmail.com", "第七小組遊戲mod");
+            var to = new EmailAddress(email);
+            var subject = "確認您的電子郵件地址";
+
+            var htmlContent = $"<html><body><p>請點擊以下連結以確認您的電子郵件地址：</p><p><a href='{confirmationLink}'>{confirmationLink}</a></p></body></html>";
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);
+            await _sendGridClient.SendEmailAsync(msg);
+        }
+
         private bool IsPasswordValid(string password)
         {
             
             // 以下是一個示例：要求密碼至少包含 8 個字符，並且包含至少一個大寫字母和一個數字
             return password.Length <= 20 && password.Length >= 8 && password.Any(char.IsUpper) && password.Any(char.IsDigit);
         }
+       
         async Task<IActionResult> RecordLast()
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);

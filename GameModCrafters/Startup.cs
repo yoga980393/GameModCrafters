@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using GameModCrafters.Encryption;
+using SendGrid;
 
 namespace GameModCrafters
 {
@@ -30,7 +31,9 @@ namespace GameModCrafters
         {
             services.AddControllersWithViews();
             services.AddSession(); // 添加Session服務
-            services.AddSingleton<IHashService, HashService>();
+            services.AddSingleton<IHashService, HashService>();//加密
+            // 設定 SendGrid 服務
+            services.AddTransient<ISendGridClient>(x => new SendGridClient(Configuration["SendGrid:ApiKey"]));
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)//加入Cookie驗證, 同時設定選項
             .AddCookie(options =>
             {
