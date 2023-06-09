@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\ModImages\" />
-    <Folder Include="wwwroot\AvatarImages\" />
     <Folder Include="wwwroot\BackgroundImages\" />
   </ItemGroup>
 

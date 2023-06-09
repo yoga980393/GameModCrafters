@@ -24,10 +24,12 @@
                 <div class="personal_pic">
                     @if (string.IsNullOrEmpty(userAtavar))
                     {
-                        <img src="https://picsum.photos/200/200/?random=7" id="personal_pic">
+                        @*https://picsum.photos/200/200/?random=7*@
+                        <img src="@Url.Content("~/AvatarImages/Avatar_preview.jpg")" id="personal_pic">
                     }
                     else
                     {
+                    
                         <img src="@userAtavar" id="personal_pic">
                     }
                     
@@ -787,10 +789,7 @@
 </script>
 
 <script>
-    function IsNullImage(){
-            let Cover_pic = document.getElementById("#Cover_pic")
-            let personal_pic = document.getElementById("#personal_pic")
-    }
+   
 
     window.onload = function () {
 
