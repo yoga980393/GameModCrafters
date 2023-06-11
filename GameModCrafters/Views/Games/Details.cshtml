@@ -1,42 +1,416 @@
-﻿@model GameModCrafters.Models.Game
+﻿@model PagedModsModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Index";
 }
 
-<h1>Details</h1>
+<div class="Game_Cover">
+    <div class="ImgWrap">
+        <img src="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_0.jpg" class="img-fluid Img_cover" alt="">
+    </div>
 
-<div>
-    <h4>Game</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GameName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GameName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Thumbnail)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Thumbnail)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreateTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreateTime)
-        </dd>
-    </dl>
+    <div class="GameName">
+        <h1>@ViewBag.Game.GameName</h1>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.GameId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="bg_color">
+    <div class="container-fluid more_mods">
+        <div class="label_tag">
+            <nav>
+                <button class="release_area bttn active">
+                    <h5>MOD區</h5>
+                </button>
+
+                <button class="commissioned_area bttn">
+                    <h5>委託區</h5>
+                </button>
+            </nav>
+        </div>
+
+        <div class="More_mod_mark paging_title active">
+            <div class="titleorALL">
+                <div class="text">
+                    <h3>更多MOD：</h3>
+                </div>
+            </div>
+
+            <div class="ModGameClassification">
+                <form id="filterForm" method="get" class="filter-form">
+                    <div class="form-group">
+                        <label for="timeFilter">時間：</label>
+                        <select id="timeFilter" name="timeFilter" class="form-control">
+                            <option value="">全部</option>
+                            <option value="1">一天內</option>
+                            <option value="7">一周內</option>
+                            <option value="30">一個月內</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sortFilter">排序：</label>
+                        <select id="sortFilter" name="sortFilter" class="form-control">
+                            <option value="uploadTime">上傳時間</option>
+                            <option value="updateTime">更新時間</option>
+                            <option value="downloadCount">下載量</option>
+                            <option value="name">名字</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderFilter">正反序：</label>
+                        <select id="orderFilter" name="orderFilter" class="form-control">
+                            <option value="desc">反序</option>
+                            <option value="asc">正序</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pageSize">每次顯示的數量：</label>
+                        <select id="pageSize" name="pageSize" class="form-control">
+                            <option value="8">8</option>
+                            <option value="16">16</option>
+                            <option value="24">24</option>
+                            <option value="32">32</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Search">搜索：</label>
+                        <input type="text" name="searchString" placeholder="Search" id="Search" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">應用過濾</button>
+                    </div>
+                </form>
+
+                <a class="upload-button" asp-controller="Mods" asp-action="Create" asp-route-gameId="@Model.GameId">
+                    <h4>上傳新Mod</h4>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="entrust_mark paging_title">
+            <div class="titleorALL">
+                <div class="text">
+                    <h3>遊戲名稱</h3>
+                </div>
+            </div>
+            <div class="entrustClassification">
+
+                <button>
+                    <h4>免費</h4>
+                </button>
+                <button>
+                    <h4>付費</h4>
+                </button>
+                <button>
+                    <h4>熱門(30天)</h4>
+                </button>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="more_mods_wrap ShowGameMod paging active">
+        <div class="container my-4 mod">
+            <div class="row">
+                @foreach (var mod in Model.Mods)
+                {
+                    <div class="col-12 col-md-3 mt-3">
+                        <div class="card">
+                            <div class="pic">
+                                <a href="@Url.Action("Details", new { id = mod.ModId })">
+                                    <img src=@(mod.Thumbnail == null ? "https://picsum.photos/300/200/?random=10" : mod.Thumbnail)>
+                                </a>
+                            </div>
+                            <div class="text">
+                                <div class="name_price">
+                                    <h3 class="name">@mod.ModName</h3>
+                                    <h3 class="price">@(mod.Price == 0 ? "Free" : mod.Price + " NTD")</h3>
+                                </div>
+                                <div class="detail">
+                                    <h2 class="tag" id="tag-id-@(mod.ModId)"><span class="badge bg-secondary" id="previewGame">@mod.GameName</span></h2>
+                                    <h3 class="author"><span>作者：</span>@mod.AuthorName</h3>
+                                    <h3 class="creatTime"><span>上傳日期：</span>@mod.CreateTime</h3>
+                                    <h3 class="UpdateTime"><span>更新日期：</span>@mod.UpdateTime</h3>
+                                    <p class="describe" id="describe-id-@(mod.ModId)"></p>
+                                </div>
+                            </div>
+                            <div class="data">
+                                <h3><span>容量：</span>@mod.Capacity</h3>
+                                <h3><span>點贊：</span>@mod.LikeCount</h3>
+                                <h3><span>收藏：</span>@mod.FavoriteCount</h3>
+                                <h3><span>下載：</span>@mod.DownloadCount</h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="more-mod-Pagination">
+                <nav aria-label="Page navigation ">
+                    <ul class="pagination">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = Model.CurrentPage - 1 })" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        }
+                        @for (var i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                            </li>
+                        }
+                        @if (Model.CurrentPage < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { page = Model.CurrentPage + 1 })" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container entrust Release_Area_Wrap paging">
+        <div class="title">
+            <h3>委託區:</h3>
+
+        </div>
+        <div class="container text-center mod-list">
+            <div class="row align-items-start">
+                <div class="col-6 title">
+                    Title
+                </div>
+                <div class="col SendernName">
+                    發文人
+                </div>
+                <div class="col SenderDate">
+                    發文日
+                </div>
+                <div class="col LastReply">
+                    最後回覆
+                </div>
+            </div>
+            <div class="row align-items-start">
+                <div class="col-6 title">
+                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                </div>
+                <div class="col SendernName">
+                    jack
+                </div>
+                <div class="col SenderDate">
+                    One of three columns
+                </div>
+                <div class="col LastReply">
+                    One of three columns
+                </div>
+            </div>
+            <div class="row align-items-start">
+                <div class="col-6 title">
+                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                </div>
+                <div class="col SendernName">
+                    One of three columns
+                </div>
+                <div class="col SenderDate">
+                    One of three columns
+                </div>
+                <div class="col LastReply">
+                    One of three columns
+                </div>
+            </div>
+            <div class="row align-items-start">
+                <div class="col-6 title">
+                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                </div>
+                <div class="col SendernName">
+                    One of three columns
+                </div>
+                <div class="col SenderDate">
+                    One of three columns
+                </div>
+                <div class="col LastReply">
+                    One of three columns
+                </div>
+            </div>
+            <div class="row align-items-start">
+                <div class="col-6 title">
+                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                </div>
+                <div class="col SendernName">
+                    One of three columns
+                </div>
+                <div class="col SenderDate">
+                    One of three columns
+                </div>
+                <div class="col LastReply">
+                    One of three columns
+                </div>
+            </div>
+            <div class="row align-items-start">
+                <div class="col-6 title">
+                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                </div>
+                <div class="col SendernName">
+                    One of three columns
+                </div>
+                <div class="col SenderDate">
+                    One of three columns
+                </div>
+                <div class="col LastReply">
+                    One of three columns
+                </div>
+            </div>
+            <div class="row align-items-start">
+                <div class="col-6 title">
+                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                </div>
+                <div class="col SendernName">
+                    One of three columns
+                </div>
+                <div class="col SenderDate">
+                    One of three columns
+                </div>
+                <div class="col LastReply">
+                    One of three columns
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="container forum">
+
+        <h5>討論區連結</h5>
+        <i class="fi fi-ss-redo"></i>
+        <div class="Border"></div>
+        <div class="forum_link">
+            <div class="Bahamut">
+                <div class="bahamut_img">
+                    <a href=""><img src="https://i2.bahamut.com.tw/baha_logo5.svg" alt=""></a>
+                </div>
+            </div>
+            <div class="NGA">
+                <div class="NGA_img">
+                    <a href="">
+                        <h5>NGA</h5>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+@section css{
+    <link rel="stylesheet" href="~/css/GamePage_style.css" />
+}
+
+@section js{
+    <script>
+        window.onload = function () {
+            GetRelease_Area()
+            SelectTag()
+            AddTag()
+            AddDescribe()
+        }
+        function GetRelease_Area() {
+            let release_area = document.querySelectorAll(".label_tag button")
+            release_area.forEach(function (btn, index) {
+                btn.addEventListener('click', function () {
+                    document.getElementsByClassName("paging active")[0].classList.remove('active')
+                    document.getElementsByClassName("paging")[index].classList.add("active")
+                    document.getElementsByClassName("paging_title active")[0].classList.remove('active')
+                    document.getElementsByClassName("paging_title")[index].classList.add("active")
+
+                    document.getElementsByClassName("bttn active")[0].classList.remove('active')
+                    document.getElementsByClassName("bttn")[index].classList.add("active")
+
+                })
+            })
+        }
+
+        const url = "https://raw.githubusercontent.com/devadanffefgfh/ipadair_json/main/ipadAir.json";
+        let ipadObject, NewproductColor;
+        function SelectTag() {
+            let xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                let select = document.getElementById('SelectTag')
+                ipadObject = JSON.parse(this.responseText);
+                let productColor = ipadObject.map(item => item.color)
+                NewproductColor = [...new Set(productColor)]
+
+                NewproductColor.forEach((item, index) => {
+                    let option = document.createElement('option')
+                    option.innerText = item
+                    option.value = index
+                    select.appendChild(option)
+                })
+
+
+            }
+            // NewproductColor = document.getElementById('SelectTag').value;
+            console.log(document.getElementById('SelectTag'))
+            xhr.open('GET', url);
+
+            xhr.send();
+        }
+
+        function AddTag() {
+        @foreach (var mod in Model.Mods)
+        {
+            <text>
+                                    var tagContainer = document.getElementById("tag-id-@(mod.ModId)");
+                var tagNames = @Html.Raw(Json.Serialize(mod.TagNames));
+                tagNames.forEach(function (tagName) {
+                    var spanElement = document.createElement("span");
+                    spanElement.className = "badge bg-secondary";
+                    spanElement.textContent = tagName;
+                    tagContainer.appendChild(spanElement);
+                });
+            </text>
+        }
+                    }
+
+        function AddDescribe() {
+        @foreach (var mod in Model.Mods)
+        {
+            <text>
+                                    var description = '@Html.Raw(mod.Description)';
+                var describe = $("#describe-id-@mod.ModId");
+
+                var $description = $("<div>").html(description);
+                $description.find("img").remove();
+
+                describe.html($description.html());
+            </text>
+        }
+                    }
+    </script>
+
+        //<script>
+              //    $("#filterForm select").change(function () {
+              //        $("#filterForm").submit();
+              //    });
+              //</script>
+
+    <script>
+        $(document).ready(function () {
+            var params = new URLSearchParams(window.location.search);
+
+            $('#timeFilter').val(params.get('timeFilter') || "");
+            $('#sortFilter').val(params.get('sortFilter') || "uploadTime");
+            $('#orderFilter').val(params.get('orderFilter') || "desc");
+            $('#pageSize').val(params.get('pageSize') || "8");
+            $('#Search').val(params.get('searchString') || "");
+        });
+    </script>
+}

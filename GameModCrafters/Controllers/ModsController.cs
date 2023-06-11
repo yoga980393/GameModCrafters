@@ -21,7 +21,6 @@ namespace GameModCrafters.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-        private const int PageSize = 8;
 
         public ModsController(ApplicationDbContext context, ILogger<ModsController> logger)
         {
@@ -157,8 +156,10 @@ namespace GameModCrafters.Controllers
 
         // GET: Mods/Create
         [Authorize]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(string gameId)
         {
+            ViewData["SelectedGameId"] = gameId;
+
             string loggedInUserEmail = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var unfinishedMod = await _context.Mods

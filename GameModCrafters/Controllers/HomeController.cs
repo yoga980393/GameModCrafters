@@ -1,4 +1,5 @@
-﻿using GameModCrafters.Models;
+﻿using GameModCrafters.Data;
+using GameModCrafters.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +15,19 @@ namespace GameModCrafters.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-           
-            return View();
+           var gameList = _context.Games.ToList();
+
+            return View(gameList);
         }
 
         public IActionResult Privacy()
