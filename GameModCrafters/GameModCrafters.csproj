@@ -23,6 +23,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\ModImages\" />
     <Folder Include="wwwroot\BackgroundImages\" />
+    <Folder Include="wwwroot\GameImages\" />
   </ItemGroup>
 
 </Project>

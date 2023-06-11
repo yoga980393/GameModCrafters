@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Create";
-    var nameIdentifier = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 }
 
 @if (ViewBag.HasUnfinishedMod == true)
@@ -28,7 +27,7 @@
 
 <div class="container">
     <form asp-action="Create" asp-controller="Mods" method="post">
-        <input asp-for="AuthorId" type="hidden" value="@nameIdentifier" />
+        <input asp-for="AuthorId" type="hidden" value="@User.FindFirstValue(ClaimTypes.Email)" />
 
         <div class="mb-3">
             <label asp-for="ModName" class="form-label" for="titleInput">Mod名稱</label>
@@ -38,12 +37,8 @@
 
         <div class="mb-3">
             <label asp-for="GameId" class="form-label">遊戲</label>
-            <select asp-for="GameId" class="form-control">
+            <select asp-for="GameId" class="form-control" asp-items="ViewBag.GameId">
                 <option value="">請選擇一個遊戲</option>
-                @foreach (var item in (SelectList)ViewBag.GameId)
-                {
-                    <option value="@item.Value" selected="@(item.Value == ViewData["SelectedGameId"].ToString())">@item.Text</option>
-                }
             </select>
         </div>
 

@@ -70,7 +70,6 @@ namespace GameModCrafters.Controllers
                         new Claim(ClaimTypes.Email,user.Email ),//email
                         new Claim(ClaimTypes.Name,user.Username ),//增加使用者   model.Text.ToString()
                         //new Claim(ClaimTypes.Role, "Administrator") // 如果要有「群組、角色、權限」，可以加入這一段  
-
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await HttpContext.SignInAsync(

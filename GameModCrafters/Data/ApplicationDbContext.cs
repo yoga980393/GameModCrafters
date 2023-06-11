@@ -107,7 +107,7 @@ namespace GameModCrafters.Data
                         GameId = "g001",
                         GameName = "Minecraft",
                         Description = "mcTest",
-                        Thumbnail = "mcImg",
+                        Thumbnail = "/GameImages/mcImg.jpg",
                         CreateTime = new DateTime(2023, 5, 27, 17, 21, 0)
                     },
                     new Game
@@ -115,7 +115,7 @@ namespace GameModCrafters.Data
                         GameId = "g002",
                         GameName = "Fortnite",
                         Description = "fnTest",
-                        Thumbnail = "fnImg",
+                        Thumbnail = "/GameImages/fnImg.jpg",
                         CreateTime = new DateTime(2023, 5, 28, 10, 30, 0)
                     },
                     new Game
@@ -123,7 +123,7 @@ namespace GameModCrafters.Data
                         GameId = "g003",
                         GameName = "Overwatch",
                         Description = "owTest",
-                        Thumbnail = "owImg",
+                        Thumbnail = "/GameImages/owImg.jpg",
                         CreateTime = new DateTime(2023, 5, 29, 14, 15, 0)
                     }
                 );

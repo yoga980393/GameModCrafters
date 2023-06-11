@@ -4,6 +4,7 @@ using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -237,7 +238,8 @@ namespace GameModCrafters.Controllers
                 mod.UpdateTime = DateTime.Now;
                 _context.Add(mod);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                FilterViewModel filterModel = new FilterViewModel();
+                return RedirectToAction("Details", "Games", new { id = mod.GameId, filter = filterModel, page = 1 });
             }
 
             var tags = _context.Tags.Select(t => t.TagName).ToList();
