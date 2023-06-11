@@ -141,7 +141,7 @@ namespace GameModCrafters.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
+            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "Status", commission.CommissionStatusId);
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
             ViewData["GameName"] = new SelectList(_context.Games, "GameId", "GameName", commission.GameId);
             return View(commission);
