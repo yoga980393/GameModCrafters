@@ -149,7 +149,8 @@ namespace GameModCrafters.Controllers
                 Price = mod.Price,
                 AuthorName = mod.Author.Username,
                 AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
-                AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId)
+                AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
+                GameId = mod.GameId
             };
 
             return View(modDetailViewModel);
@@ -161,7 +162,7 @@ namespace GameModCrafters.Controllers
         {
             ViewData["SelectedGameId"] = gameId;
 
-            string loggedInUserEmail = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string loggedInUserEmail = User.FindFirstValue(ClaimTypes.Email);
 
             var unfinishedMod = await _context.Mods
                 .FirstOrDefaultAsync(m => m.AuthorId == loggedInUserEmail && m.IsDone == false);
@@ -332,7 +333,7 @@ namespace GameModCrafters.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Games", new { id = mod.GameId });
             }
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email", mod.AuthorId);
             ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", mod.GameId);
@@ -371,9 +372,11 @@ namespace GameModCrafters.Controllers
             var modTags = _context.ModTags.Where(mt => mt.ModId == id);
             _context.ModTags.RemoveRange(modTags);
 
+            var gameId = mod.GameId;
+
             _context.Mods.Remove(mod);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Games", new { id = gameId });
         }
 
         private bool ModExists(string id)
