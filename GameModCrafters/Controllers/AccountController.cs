@@ -199,7 +199,8 @@ namespace GameModCrafters.Controllers
                     Password = _hashService.SHA512Hash(password),
                     RegistrationDate = DateTime.UtcNow, // 取得當前的 UTC 時間
                     EmailConfirmed = false, // 初始狀態設為未確認
-                    ConfirmationCode = confirmationCode // 將確認碼儲存到使用者物件中111
+                    ConfirmationCode = confirmationCode, // 將確認碼儲存到使用者物件中111
+                    Avatar = "~/AvatarImages/Avatar_preview.jpg"
                 };
 
                 _context.Users.Add(user);
