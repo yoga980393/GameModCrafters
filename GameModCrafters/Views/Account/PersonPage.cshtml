@@ -22,16 +22,10 @@
         <div class="Cover">
             <div class="pic_name">
                 <div class="personal_pic">
-                    @if (string.IsNullOrEmpty(userAtavar))
-                    {
-                        @*https://picsum.photos/200/200/?random=7*@
-                        <img src="@Url.Content("~/AvatarImages/Avatar_preview.jpg")" id="personal_pic">
-                    }
-                    else
-                    {
+                    
                     
                         <img src="@userAtavar" id="personal_pic">
-                    }
+                    
                     
                 </div>
                 <div class="Cover_text">
