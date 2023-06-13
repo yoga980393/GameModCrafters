@@ -8,8 +8,8 @@
     <h1>委託發布</h1>
     <div class="row">
         <form  method="post">
-            <select asp-for="CommissionStatusId" class="form-control" asp-items="ViewBag.CommissionStatusId"></select>
-            <select asp-for="DelegatorId" class="form-control" asp-items="ViewBag.DelegatorId"></select>
+            <select asp-for="CommissionStatusId" class="form-control" asp-items="@ViewBag.CommissionStatusId"></select>
+            <select asp-for="DelegatorId" class="form-control" asp-items="@ViewBag.DelegatorId"></select>
            
             <div class="mb-3">
                 <label asp-for="CommissionTitle" class="form-label">委託標題:</label>
@@ -17,7 +17,7 @@
             </div>
             <div class="mb-3">
                 <label asp-for="GameId" class="form-label">遊戲名稱:</label>
-                <select asp-for="GameId" class="form-control" asp-items="ViewBag.GameName"></select>
+                <select asp-for="GameId" class="form-control" asp-items="@ViewBag.GameName"></select>
             </div>
             <div class="mb-3">
                 <label asp-for="CommissionDescription" class="form-label">委託詳情:</label>
@@ -28,10 +28,14 @@
                 <label asp-for="Budget">預算:</label>
                 <input type="text" class="budgetinput" asp-for="Budget">
             </div>
+            <div class="mb-3">
+                <label asp-for="Trash">是否放入暫存匣:</label>
+                <input type="checkbox" class="Trashinput" asp-for="Trash">
+            </div>
             <div class="btnCantaner">
                 <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />
                 <input type="submit" value="修改" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
-                <input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />
+                @*<input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />*@
                 <input type="submit" value="刪除" asp-controller="Commissions" asp-action="Delete" class="btn btn-primary form-control" />
             </div>
         </form>

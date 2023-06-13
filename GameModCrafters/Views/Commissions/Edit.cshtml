@@ -31,10 +31,10 @@
             </div>
             <div class="mb-3">
                 <label asp-for="Trash">是否放入暫存匣:</label>
-                <input type="checkbox" class="budgetinput" asp-for="Trash">
+                <input type="checkbox" class="Trashinput" asp-for="Trash">
             </div>
             <div class="btnCantaner">
-                <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />
+               @* <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />*@
                 <input type="submit" value="修改" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
                 @*<input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />*@
                 <input type="submit" value="刪除" asp-controller="Commissions" asp-action="Delete" asp-route-id="@Model.CommissionId" onclick="return confirm('確定要刪除此委託嗎？')" class="btn btn-primary form-control" />

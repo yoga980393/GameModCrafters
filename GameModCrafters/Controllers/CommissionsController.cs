@@ -97,7 +97,7 @@ namespace GameModCrafters.Controllers
         {
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "Status");
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email");
-            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId");
+            ViewData["GameName"] = new SelectList(_context.Games, "GameId", "GameName");
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email");
             
             return View();
@@ -110,9 +110,9 @@ namespace GameModCrafters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DelegatorId,CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
-            //ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
-            //ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
-            //ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
+            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
+            ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
+            ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
 
             if (!ModelState.IsValid)
             {
@@ -203,6 +203,8 @@ namespace GameModCrafters.Controllers
             {
                 try
                 {
+                    
+                    commission.UpdateTime = DateTime.Now;
                     _context.Update(commission);
                     await _context.SaveChangesAsync();
                 }
