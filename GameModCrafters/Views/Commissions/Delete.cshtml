@@ -10,7 +10,7 @@
         <form method="post">
             <select asp-for="CommissionStatusId" class="form-control" asp-items="ViewBag.CommissionStatusId"></select>
             <select asp-for="DelegatorId" class="form-control" asp-items="ViewBag.DelegatorId"></select>
-
+            <input type="hidden" class="form-control" asp-for="CommissionId">
             <div class="mb-3">
                 <label asp-for="CommissionTitle" class="form-label">委託標題:</label>
                 <input type="text" class="form-control" asp-for="CommissionTitle">

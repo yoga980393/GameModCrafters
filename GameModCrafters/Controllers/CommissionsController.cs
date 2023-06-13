@@ -211,7 +211,7 @@ namespace GameModCrafters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var commission = await _context.Commissions.FindAsync(id);
+            var commission =  _context.Commissions.FirstOrDefault(c => c.CommissionId == id);
             _context.Commissions.Remove(commission);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
