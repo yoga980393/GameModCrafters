@@ -31,7 +31,7 @@ namespace GameModCrafters.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Commissions/Details/5
+        ////GET: Commissions/Details/5
         //public async Task<IActionResult> Details(string id)
         //{
         //    if (id == null)
@@ -52,6 +52,46 @@ namespace GameModCrafters.Controllers
         //    return View(commission);
         //}
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Details(string id, [Bind("CommissionId,DelegatorId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
+        //{
+        //    if (id != commission.CommissionId)
+        //    {
+        //        return RedirectToAction(nameof(Index));
+        //    }
+
+            
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            commission.Trash = true;
+        //            _context.Update(commission);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!CommissionExists(commission.CommissionId))
+        //            {
+        //                return RedirectToAction(nameof(Index));
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
+        //    ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
+        //    ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
+        //    return View();
+        //}
+
+
+
         // GET: Commissions/Create
         public IActionResult Create()
         {
@@ -70,9 +110,9 @@ namespace GameModCrafters.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DelegatorId,CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
-            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
-            ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
-            ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
+            //ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
+            //ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
+            //ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
 
             if (!ModelState.IsValid)
             {
@@ -92,8 +132,8 @@ namespace GameModCrafters.Controllers
             if (counter == null)
             {
                 _logger.LogInformation("Counter with name 'Mod' was not found.");
-                // Handle the case when there is no counter named 'Mod'
-                // For example, create a new counter with name 'Mod' and value 0
+                // Handle the case when there is no counter named 'Commission'
+                // For example, create a new counter with name 'Commission' and value 0
             }
             string newCommissionId = $"c{counter.Value + 1:D4}";  // Format as 'c0001'
             counter.Value++;  // Increment counter
