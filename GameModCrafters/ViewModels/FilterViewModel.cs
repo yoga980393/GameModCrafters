@@ -7,5 +7,6 @@
         public string SortFilter { get; set; }
         public string OrderFilter { get; set; }
         public int PageSize { get; set; }
+        public string TagFilter { get; set; }
     }
 }

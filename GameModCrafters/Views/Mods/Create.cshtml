@@ -26,8 +26,9 @@
 }
 
 <div class="container">
-    <form asp-action="Create" asp-controller="Mods" method="post">
+    <form asp-action="Create" asp-controller="Mods" method="post" enctype="multipart/form-data">
         <input asp-for="AuthorId" type="hidden" value="@User.FindFirstValue(ClaimTypes.Email)" />
+        <input asp-for="DownloadLink" type="hidden"/>
 
         <div class="mb-3">
             <label asp-for="ModName" class="form-label" for="titleInput">Mod名稱</label>

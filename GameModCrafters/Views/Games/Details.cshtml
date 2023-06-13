@@ -72,6 +72,16 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="tagFilter">标签：</label>
+                        <select id="tagFilter" name="tagFilter" class="form-control">
+                            <option value="">全部</option>
+                            @foreach (var tag in ViewBag.Tags)
+                            {
+                                <option value="@tag.TagId">@tag.TagName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="Search">搜索：</label>
                         <input type="text" name="searchString" placeholder="Search" id="Search" class="form-control">
                     </div>
@@ -411,6 +421,7 @@
             $('#orderFilter').val(params.get('orderFilter') || "desc");
             $('#pageSize').val(params.get('pageSize') || "8");
             $('#Search').val(params.get('searchString') || "");
+            $('#tagFilter').val(params.get('tagFilter') || "");
         });
     </script>
 }
