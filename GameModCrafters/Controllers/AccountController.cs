@@ -46,7 +46,7 @@ namespace GameModCrafters.Controllers
         {
             if(returnUrl == "/Account/ConfirmEmail")
             {
-                return View("/Home/Index");
+                return View("/");
             }
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
