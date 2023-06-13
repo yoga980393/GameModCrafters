@@ -190,7 +190,7 @@ namespace GameModCrafters.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags)
+        public async Task<IActionResult> Create([Bind("GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags, IFormFile gameFile)
         {
             var counter = await _context.Counters.SingleOrDefaultAsync(c => c.CounterName == "Mod");
             if (counter == null)
@@ -231,6 +231,26 @@ namespace GameModCrafters.Controllers
                         _logger.LogInformation($"Errors: {errors}");
                     }
                 }
+            }
+
+            // Handle file upload
+            if (gameFile != null && gameFile.Length > 0)
+            {
+                // Create a unique filename
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + gameFile.FileName;
+
+                // Combine the filename with the path to your wwwroot/GameArchive folder
+                var relativeFilePath = Path.Combine("GameArchive", uniqueFileName);
+                var absoluteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativeFilePath);
+
+                // Use a FileStream to copy the file data to the specified filepath
+                using (var stream = new FileStream(absoluteFilePath, FileMode.Create))
+                {
+                    await gameFile.CopyToAsync(stream);
+                }
+
+                // Save the relative filepath to the mod
+                mod.DownloadLink = "/" + relativeFilePath.Replace("\\", "/");  // adjust slashes to web format
             }
 
             if (ModelState.IsValid)

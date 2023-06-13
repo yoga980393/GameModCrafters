@@ -42,6 +42,7 @@ namespace GameModCrafters.Controllers
             }
 
             ViewBag.Game = game;
+            ViewBag.Tags = await _context.Tags.ToListAsync();
 
             var now = DateTime.Now;
             DateTime startDate;
@@ -64,6 +65,7 @@ namespace GameModCrafters.Controllers
 
             var mods = _context.Mods
                 .Where(m => m.ModId != null && (string.IsNullOrEmpty(filter.SearchString) || m.ModName.Contains(filter.SearchString)))
+                .Where(m => string.IsNullOrEmpty(filter.TagFilter) || m.ModTags.Any(mt => mt.TagId == filter.TagFilter))
                 .Where(m => m.CreateTime >= startDate)
                 .Where(m => m.GameId == id)
                 .Where(m => m.IsDone)
