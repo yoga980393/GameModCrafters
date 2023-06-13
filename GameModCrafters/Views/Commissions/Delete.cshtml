@@ -32,7 +32,7 @@
                 <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />
                 <input type="submit" value="修改" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
                 <input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />
-                <input type="submit" value="刪除" asp-controller="Commissions" asp-action="Delete" class="btn btn-primary form-control" />
+                <input type="submit" value="刪除" asp-controller="Commissions" asp-action="Delete" asp-route="@Model.CommissionId" class="btn btn-primary form-control" />
             </div>
         </form>
     </div>
