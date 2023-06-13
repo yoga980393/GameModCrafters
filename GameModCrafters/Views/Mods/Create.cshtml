@@ -178,11 +178,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
 }
 
 @section js {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="/js/ckeditor.js"></script>
 
     <script>
         let myEditor1, myEditor2;
@@ -190,7 +191,7 @@
         ClassicEditor
             .create(document.querySelector('#editor1'), {
                 // ...other configurations,
-                extraPlugins: [Base64UploadAdapterPlugin]
+                extraPlugins: [ServerUploadAdapterPlugin]
             })
             .then(editor => {
                 myEditor1 = editor;
@@ -199,8 +200,18 @@
 
                 editor.model.document.on('change:data', () => {
                     const html = myEditor1.getData();
-                    const imgTagWithoutBase64 = html.replace(/(<img[^>]+src=")data:image\/[^;]+;base64,[^"]+("[^>]*>)/g, '');
-                    document.querySelector('.describe').innerHTML = imgTagWithoutBase64;
+
+                    // 创建一个新的 HTML 元素
+                    let tempDiv = document.createElement('div');
+                    // 将 CKEditor 的内容赋值给这个元素
+                    tempDiv.innerHTML = html;
+                    // 移除所有 img 标签
+                    Array.from(tempDiv.getElementsByTagName('img')).forEach(img => img.parentNode.removeChild(img));
+                    // 提取出纯文本
+                    let text = tempDiv.innerText;
+
+                    // 将纯文本赋值给 .describe 元素
+                    document.querySelector('.describe').innerHTML = text;
                 });
             })
             .catch(error => {
@@ -210,7 +221,7 @@
         ClassicEditor
             .create(document.querySelector('#editor2'), {
                 // ...other configurations,
-                extraPlugins: [Base64UploadAdapterPlugin]
+                extraPlugins: [ServerUploadAdapterPlugin]
             })
             .then(editor => {
                 myEditor2 = editor
@@ -265,6 +276,45 @@
             myEditor1.setData($("#Description").val());
             myEditor2.setData($('#InstallationInstructions').val());
         });
+
+        //改用上傳檔案顯示圖片
+        class ServerUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file
+                    .then(file => new Promise((resolve, reject) => {
+                        const data = new FormData();
+                        data.append('upload', file);
+
+                        fetch('/Mods/Upload', {
+                            method: 'POST',
+                            body: data
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.uploaded) {
+                                    resolve({ default: data.url });
+                                } else {
+                                    reject(`Upload failed: ${data.error.message}`);
+                                }
+                            })
+                            .catch(reject);
+                    }));
+            }
+
+            abort() {
+                // Handle the abort.
+            }
+        }
+
+        function ServerUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
+                return new ServerUploadAdapter(loader);
+            };
+        }
     </script>
 
     <script>
