@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Data;
 using GameModCrafters.Models;
+using GameModCrafters.ViewModels;
 
 namespace GameModCrafters.Controllers
 {
@@ -26,7 +27,7 @@ namespace GameModCrafters.Controllers
         }
 
         // GET: Games/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string id, FilterViewModel filter, int page = 1)
         {
             if (id == null)
             {
@@ -40,7 +41,93 @@ namespace GameModCrafters.Controllers
                 return NotFound();
             }
 
-            return View(game);
+            ViewBag.Game = game;
+            ViewBag.Tags = await _context.Tags.ToListAsync();
+
+            var now = DateTime.Now;
+            DateTime startDate;
+
+            switch (filter.TimeFilter)
+            {
+                case 1:  // 一天内
+                    startDate = now.AddDays(-1);
+                    break;
+                case 2:  // 一周内
+                    startDate = now.AddDays(-7);
+                    break;
+                case 3:  // 一个月内
+                    startDate = now.AddMonths(-1);
+                    break;
+                default:  // 全部（不设置开始日期）
+                    startDate = DateTime.MinValue;
+                    break;
+            }
+
+            var mods = _context.Mods
+                .Where(m => m.ModId != null && (string.IsNullOrEmpty(filter.SearchString) || m.ModName.Contains(filter.SearchString)))
+                .Where(m => string.IsNullOrEmpty(filter.TagFilter) || m.ModTags.Any(mt => mt.TagId == filter.TagFilter))
+                .Where(m => m.CreateTime >= startDate)
+                .Where(m => m.GameId == id)
+                .Where(m => m.IsDone)
+                .Include(m => m.Author)
+                .Include(m => m.Game)
+                .Include(m => m.ModLikes)
+                .Include(m => m.Favorite)
+                .Include(m => m.Downloaded)
+                .Include(m => m.ModTags)
+                    .ThenInclude(mt => mt.Tag)
+                .Select(m => new ModViewModel
+                {
+                    ModId = m.ModId,
+                    Thumbnail = m.Thumbnail,
+                    ModName = m.ModName,
+                    Price = m.Price,
+                    GameName = m.Game.GameName,
+                    AuthorName = m.Author.Username,
+                    CreateTime = m.CreateTime,
+                    UpdateTime = m.UpdateTime,
+                    Description = m.Description,
+                    Capacity = 0,
+                    LikeCount = m.ModLikes.Count,
+                    FavoriteCount = m.Favorite.Count,
+                    DownloadCount = m.Downloaded.Count,
+                    TagNames = m.ModTags.Select(mt => mt.Tag.TagName).ToList()
+                });
+
+
+            switch (filter.SortFilter)
+            {
+                case "uploadTime":
+                    mods = (filter.OrderFilter == "desc") ? mods.OrderByDescending(m => m.CreateTime) : mods.OrderBy(m => m.CreateTime);
+                    break;
+                case "updateTime":
+                    mods = (filter.OrderFilter == "desc") ? mods.OrderByDescending(m => m.UpdateTime) : mods.OrderBy(m => m.UpdateTime);
+                    break;
+                case "downloadCount":
+                    mods = (filter.OrderFilter == "desc") ? mods.OrderByDescending(m => m.DownloadCount) : mods.OrderBy(m => m.DownloadCount);
+                    break;
+                case "name":
+                    mods = (filter.OrderFilter == "desc") ? mods.OrderByDescending(m => m.ModName) : mods.OrderBy(m => m.ModName);
+                    break;
+                default:
+                    mods = mods.OrderByDescending(m => m.CreateTime);
+                    break;
+            }
+
+            if (filter.PageSize <= 0)
+            {
+                filter.PageSize = 8; // fallback to default value if invalid input
+            }
+
+            var pagedModel = new PagedModsModel
+            {
+                Mods = await mods.Skip((page - 1) * filter.PageSize).Take(filter.PageSize).ToListAsync(),
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(await mods.CountAsync() / (double)filter.PageSize),
+                GameId = id
+            };
+
+            return View(pagedModel);
         }
 
         // GET: Games/Create

@@ -4,6 +4,7 @@ using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,6 @@ namespace GameModCrafters.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-        private const int PageSize = 8;
 
         public ModsController(ApplicationDbContext context, ILogger<ModsController> logger)
         {
@@ -149,7 +149,8 @@ namespace GameModCrafters.Controllers
                 Price = mod.Price,
                 AuthorName = mod.Author.Username,
                 AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
-                AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId)
+                AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
+                GameId = mod.GameId
             };
 
             return View(modDetailViewModel);
@@ -157,9 +158,11 @@ namespace GameModCrafters.Controllers
 
         // GET: Mods/Create
         [Authorize]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(string gameId)
         {
-            string loggedInUserEmail = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["SelectedGameId"] = gameId;
+
+            string loggedInUserEmail = User.FindFirstValue(ClaimTypes.Email);
 
             var unfinishedMod = await _context.Mods
                 .FirstOrDefaultAsync(m => m.AuthorId == loggedInUserEmail && m.IsDone == false);
@@ -187,7 +190,7 @@ namespace GameModCrafters.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags)
+        public async Task<IActionResult> Create([Bind("GameId,AuthorId,ModName,Description,InstallationInstructions,DownloadLink,Price,Thumbnail,CreateTime,UpdateTime,IsDone")] Mod mod, string[] SelectedTags, IFormFile gameFile)
         {
             var counter = await _context.Counters.SingleOrDefaultAsync(c => c.CounterName == "Mod");
             if (counter == null)
@@ -230,13 +233,34 @@ namespace GameModCrafters.Controllers
                 }
             }
 
+            // Handle file upload
+            if (gameFile != null && gameFile.Length > 0)
+            {
+                // Create a unique filename
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + gameFile.FileName;
+
+                // Combine the filename with the path to your wwwroot/GameArchive folder
+                var relativeFilePath = Path.Combine("GameArchive", uniqueFileName);
+                var absoluteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativeFilePath);
+
+                // Use a FileStream to copy the file data to the specified filepath
+                using (var stream = new FileStream(absoluteFilePath, FileMode.Create))
+                {
+                    await gameFile.CopyToAsync(stream);
+                }
+
+                // Save the relative filepath to the mod
+                mod.DownloadLink = "/" + relativeFilePath.Replace("\\", "/");  // adjust slashes to web format
+            }
+
             if (ModelState.IsValid)
             {
                 mod.CreateTime = DateTime.Now;
                 mod.UpdateTime = DateTime.Now;
                 _context.Add(mod);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                FilterViewModel filterModel = new FilterViewModel();
+                return RedirectToAction("Details", "Games", new { id = mod.GameId, filter = filterModel, page = 1 });
             }
 
             var tags = _context.Tags.Select(t => t.TagName).ToList();
@@ -329,7 +353,7 @@ namespace GameModCrafters.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Games", new { id = mod.GameId });
             }
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email", mod.AuthorId);
             ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", mod.GameId);
@@ -368,9 +392,11 @@ namespace GameModCrafters.Controllers
             var modTags = _context.ModTags.Where(mt => mt.ModId == id);
             _context.ModTags.RemoveRange(modTags);
 
+            var gameId = mod.GameId;
+
             _context.Mods.Remove(mod);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Games", new { id = gameId });
         }
 
         private bool ModExists(string id)

@@ -279,7 +279,7 @@ namespace GameModCrafters.Migrations
                             CreateTime = new DateTime(2023, 5, 27, 17, 21, 0, 0, DateTimeKind.Unspecified),
                             Description = "mcTest",
                             GameName = "Minecraft",
-                            Thumbnail = "mcImg"
+                            Thumbnail = "/GameImages/mcImg.jpg"
                         },
                         new
                         {
@@ -287,7 +287,7 @@ namespace GameModCrafters.Migrations
                             CreateTime = new DateTime(2023, 5, 28, 10, 30, 0, 0, DateTimeKind.Unspecified),
                             Description = "fnTest",
                             GameName = "Fortnite",
-                            Thumbnail = "fnImg"
+                            Thumbnail = "/GameImages/fnImg.jpg"
                         },
                         new
                         {
@@ -295,7 +295,7 @@ namespace GameModCrafters.Migrations
                             CreateTime = new DateTime(2023, 5, 29, 14, 15, 0, 0, DateTimeKind.Unspecified),
                             Description = "owTest",
                             GameName = "Overwatch",
-                            Thumbnail = "owImg"
+                            Thumbnail = "/GameImages/owImg.jpg"
                         });
                 });
 
@@ -590,6 +590,13 @@ namespace GameModCrafters.Migrations
                     b.Property<bool>("Baned")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ConfirmationCode")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
 
@@ -618,6 +625,7 @@ namespace GameModCrafters.Migrations
                         {
                             Email = "kevinxi@gmail.com",
                             Baned = false,
+                            EmailConfirmed = false,
                             IsAdmin = false,
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "c824feab835d82155c58d309594283703916ce3d57e14d219d160253c8e0bf2c55ef41e528119077053a67ac7b44dc61781d8d4b1ea447d472c964e49739ca21",
@@ -628,6 +636,7 @@ namespace GameModCrafters.Migrations
                         {
                             Email = "marylee@gmail.com",
                             Baned = false,
+                            EmailConfirmed = false,
                             IsAdmin = false,
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "86a873d8f1ac8e07b059dc8f9175df802f6949d1d76533f9baf2e482a4e07f41f47e3665e31497351dd68dcceade5855e1c00af490e58d4ee34bd0c8227b921f",
@@ -638,6 +647,7 @@ namespace GameModCrafters.Migrations
                         {
                             Email = "johnwei@gmail.com",
                             Baned = false,
+                            EmailConfirmed = false,
                             IsAdmin = false,
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "012a24e0b0602f251736b29b8f07304b0e89d6c2ce379e64835973cd11e1ff3d0c8bbb4683bca46a8c7e19dc77a3a0038abf17bc9f2bfd87134306b34eb81c09",

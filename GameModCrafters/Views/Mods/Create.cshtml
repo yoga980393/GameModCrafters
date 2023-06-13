@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Create";
-    var nameIdentifier = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 }
 
 @if (ViewBag.HasUnfinishedMod == true)
@@ -11,15 +10,15 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Unfinished Mod</h5>
+                    <h5 class="modal-title">發現一個草稿</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    You have an unfinished Mod. Do you want to continue editing it?
+                    你有一個未完成的草稿，要去完成它嗎？
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a href="@Url.Action("Edit", new { id = ViewBag.UnfinishedModId })" class="btn btn-primary">Continue Editing</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <a href="@Url.Action("Edit", new { id = ViewBag.UnfinishedModId })" class="btn btn-primary">完成草稿</a>
                 </div>
             </div>
         </div>
@@ -27,8 +26,9 @@
 }
 
 <div class="container">
-    <form asp-action="Create" asp-controller="Mods" method="post">
-        <input asp-for="AuthorId" type="hidden" value="@nameIdentifier" />
+    <form asp-action="Create" asp-controller="Mods" method="post" enctype="multipart/form-data">
+        <input asp-for="AuthorId" type="hidden" value="@User.FindFirstValue(ClaimTypes.Email)" />
+        <input asp-for="DownloadLink" type="hidden"/>
 
         <div class="mb-3">
             <label asp-for="ModName" class="form-label" for="titleInput">Mod名稱</label>
@@ -135,7 +135,7 @@
                                     <h2 class="tag" id="previewTag">
                                         <span class="badge bg-secondary" id="previewGame">遊戲</span>
                                     </h2>
-                                    <h3 class="author"><span>作者：</span>作者名字</h3>
+                                    <h3 class="author"><span>作者：</span>@User.Identity.Name</h3>
                                     <h3 class="createTime"><span>上傳日期：</span></h3>
                                     <h3 class="UpdateTime"><span>更新日期：</span></h3>
                                     <p class="describe">mod介紹</p>
@@ -458,7 +458,7 @@
                 var formData = new FormData();
                 formData.append("file", blob, "cropped.jpg"); // 設定你想要的檔案名稱1
 
-                fetch('/Mods/UploadFile', { // 改成你的Controller和方法的路徑11
+                fetch('/Mods/UploadFile', { // 改成你的Controller和方法的路徑111
                     method: 'POST',
                     body: formData
                 })
