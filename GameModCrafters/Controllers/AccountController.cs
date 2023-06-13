@@ -44,9 +44,9 @@ namespace GameModCrafters.Controllers
         [AllowAnonymous]
         public IActionResult LoginPage(string returnUrl = null)
         {
-            if(returnUrl == "/Account/ConfirmEmail")
+            if (returnUrl == "/Account/ConfirmEmail")
             {
-                return View("/");
+                returnUrl = "/Home/Index"; // 將 returnUrl 設定為首頁的路徑
             }
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
@@ -82,7 +82,7 @@ namespace GameModCrafters.Controllers
                     );
                     HttpContext.Session.SetString("Email", user.Email);
 
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)&& model.ReturnUrl!= "/Account/ConfirmEmail")
                     {
                         return Redirect(model.ReturnUrl); // 重定向到 returnUrl
                     }
@@ -254,7 +254,7 @@ namespace GameModCrafters.Controllers
         
         private async Task SendConfirmationEmail(string email, string confirmationLink)
         {
-            var from = new EmailAddress("buildschool99@gmail.com", "第七小組遊戲mod");
+            var from = new EmailAddress("wggisddejp@gmail.com", "第七小組遊戲mod");
             var to = new EmailAddress(email);
             var subject = "確認您的電子郵件地址";
 
