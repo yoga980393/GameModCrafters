@@ -82,6 +82,10 @@
                         <div class="col-6">
                             <label for="gameFile" class="form-label">上傳遊戲檔案</label>
                             <input class="form-control" type="file" id="gameFile" name="gameFile" accept=".zip">
+                            @if (!string.IsNullOrEmpty(Model.DownloadLink))
+                            {
+                                <p>當前的檔案： <a href="@Model.DownloadLink">下載</a></p>
+                            }
                         </div>
 
                         <div class="col-6">

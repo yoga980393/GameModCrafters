@@ -295,7 +295,7 @@ namespace GameModCrafters.Controllers
             var tags = _context.Tags.Select(t => t.TagName).ToList();
             ViewData["Tags"] = tags;
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email", mod.AuthorId);
-            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", mod.GameId);
+            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameName");
             ViewData["SelectedTags"] = selectedTags;
             return View(mod);
         }
@@ -427,6 +427,29 @@ namespace GameModCrafters.Controllers
 
             var fileUrl = Url.Content("~/ModImages/" + newFileName);
             return Ok(new { fileUrl });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Upload(IFormFile upload)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(upload.FileName);
+            var extension = Path.GetExtension(upload.FileName);
+            var date = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var random = Guid.NewGuid().ToString().Substring(0, 4); // 生成一個4位數的隨機字串
+            var newFileName = $"{fileName}_{date}_{random}{extension}";
+
+            var path = Path.Combine("wwwroot/ModDescriptionImages", newFileName);
+
+            using (var stream = System.IO.File.Create(path))
+            {
+                await upload.CopyToAsync(stream);
+            }
+
+            return Json(new
+            {
+                uploaded = true,
+                url = Url.Content("~/ModDescriptionImages/" + newFileName) // Update the path here
+            });
         }
     }
 }

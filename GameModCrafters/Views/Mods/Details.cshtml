@@ -108,7 +108,8 @@
                 $(".introduction").eq(pageIndex).addClass("active").show();
             });
 
-            $("#Description").html("@Html.Raw(Model.Description)");
+            $("#Description").html('@Html.Raw(Model.Description)');
+
             $("#InstallationInstructions").html("@Html.Raw(Model.InstallationInstructions)");
 
             AddTag();
