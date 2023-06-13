@@ -73,6 +73,7 @@ namespace GameModCrafters.Controllers
                     {
                         new Claim(ClaimTypes.Email,user.Email ),//email
                         new Claim(ClaimTypes.Name,user.Username ),//增加使用者   model.Text.ToString()
+                        //new Claim ("AvatarUrl",user.Avatar ),
                         //new Claim(ClaimTypes.Role, "Administrator") // 如果要有「群組、角色、權限」，可以加入這一段  
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -204,16 +205,16 @@ namespace GameModCrafters.Controllers
                     RegistrationDate = DateTime.UtcNow, // 取得當前的 UTC 時間
                     EmailConfirmed = false, // 初始狀態設為未確認
                     ConfirmationCode = confirmationCode, // 將確認碼儲存到使用者物件中111
-                    Avatar = "/AvatarImages/Avatar_preview.jpg"
+                    Avatar = "/PreviewImage/Avatar_preview.jpg"
                 };
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
+         
+            // 傳送確認郵件
 
-                // 傳送確認郵件
-              
-               
-                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { email = user.Email, confirmationCode }, Request.Scheme);
+
+            var confirmationLink = Url.Action("ConfirmEmail", "Account", new { email = user.Email, confirmationCode }, Request.Scheme);
                 await SendConfirmationEmail(user.Email, confirmationLink);
                
                 return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
@@ -307,12 +308,6 @@ namespace GameModCrafters.Controllers
             return View(personVM);
         }
         
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> PersonPage(string Name)
-        {
-            return View();
-        }
 
         [HttpPost]
         public async Task<IActionResult> CropperAvatarImage(IFormFile croppedPersonImage)
@@ -419,19 +414,20 @@ namespace GameModCrafters.Controllers
             if (userWithNewUsername == null)
             {
                 // 從授權資訊取得當前用戶的 Email
-                var currentUserEmail = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+                var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
+                
                 // 使用這個 Email 找到當前用戶
                 var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == currentUserEmail);
 
                 currentUser.Username = username;
-
+                
                 // 儲存變更到資料庫
                 await _context.SaveChangesAsync();
                 var claimsIdentity = new ClaimsIdentity();
                 claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, username));
                 User.AddIdentity(claimsIdentity);
                 return Json("更改成功");
+              
             }
             else
             {
