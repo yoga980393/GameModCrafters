@@ -434,6 +434,9 @@ namespace GameModCrafters.Controllers
                 return Json($"名字已有人使用");
             }
         }
-
+        public async Task<IActionResult> RestPassword()
+        {
+            return View();
+        }
     }
 }
