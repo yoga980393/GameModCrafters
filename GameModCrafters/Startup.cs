@@ -30,6 +30,8 @@ namespace GameModCrafters
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddDistributedMemoryCache();
             services.AddSession(); // 添加Session服務
             services.AddSingleton<IHashService, HashService>();//加密
             // 設定 SendGrid 服務

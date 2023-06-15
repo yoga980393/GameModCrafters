@@ -83,7 +83,7 @@ namespace GameModCrafters.Controllers
                     );
                     HttpContext.Session.SetString("Email", user.Email);
 
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)&& model.ReturnUrl!= "/Account/ConfirmEmail")
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)&& model.ReturnUrl!= "/Account/ConfirmEmail" && model.ReturnUrl != "/Account/WaitConfirmEmail")
                     {
                         return Redirect(model.ReturnUrl); // 重定向到 returnUrl
                     }
@@ -112,9 +112,6 @@ namespace GameModCrafters.Controllers
         {
             if (ModelState.IsValid)
             {
-                
-
-
                 //bool isEmailExists = _context.Users.Any(u => u.Email == register.Email);
                 bool isUsernameExists = _context.Users.Any(m => m.Username == register.Username);
                 if (isUsernameExists)
@@ -122,7 +119,6 @@ namespace GameModCrafters.Controllers
                     ModelState.AddModelError("Username", "該 Username 已被使用。");
                   
                 }
-
                 //if (isEmailExists)
                 //{
                 //    ModelState.AddModelError("Email", "該 Email 已被使用。");
@@ -142,9 +138,6 @@ namespace GameModCrafters.Controllers
                 {
                     return View(register);
                 }
-
-
-
                 //bool isPasswordValid = IsPasswordValid(register.Password1);
                 //if (!isPasswordValid)
                 //{
@@ -214,9 +207,9 @@ namespace GameModCrafters.Controllers
             // 傳送確認郵件
 
 
-            var confirmationLink = Url.Action("ConfirmEmail", "Account", new { email = user.Email, confirmationCode }, Request.Scheme);
+                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { email = user.Email, confirmationCode }, Request.Scheme);
+                //bool sendemailTF= await SendConfirmationEmail(user.Email, confirmationLink);
                 await SendConfirmationEmail(user.Email, confirmationLink);
-               
                 return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
             }
 
@@ -225,6 +218,7 @@ namespace GameModCrafters.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> WaitConfirmEmail()
         {
+
             return View();
         }
         [AllowAnonymous]
@@ -263,6 +257,17 @@ namespace GameModCrafters.Controllers
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);
             await _sendGridClient.SendEmailAsync(msg);
+            //var response = await _sendGridClient.SendEmailAsync(msg);
+            //if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    // 电子邮件发送成功
+            //    return true;
+            //}
+            //else
+            //{
+            //    return false;
+            //}
+
         }
 
         private bool IsPasswordValid(string password)
@@ -434,9 +439,112 @@ namespace GameModCrafters.Controllers
                 return Json($"名字已有人使用");
             }
         }
-        public async Task<IActionResult> RestPassword()
+        [HttpGet]
+        public async Task<IActionResult> RestPassword(string email, string confirmationCode)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(confirmationCode))
+            {
+                // 未提供有效的電子郵件地址或確認碼
+                return BadRequest();
+            }
+
+            // 根據電子郵件地址找到對應的使用者
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email && x.ConfirmationCode == confirmationCode);
+            if (user == null)
+            {
+                // 使用者不存在
+                return NotFound();
+            }
+            HttpContext.Session.SetString("Email", email);
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestPassword(ForgetPasswordViewModel newuserpwVM)
+        {
+            if(ModelState.IsValid)
+            {
+                string email = HttpContext.Session.GetString("Email");
+
+                // 根據電子郵件地址找到對應的使用者
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email );
+                if (user == null)
+                {
+                    // 使用者不存在
+                    return NotFound();
+                }
+                bool isPasswordValid = IsPasswordValid(newuserpwVM.Password1);
+                if (!isPasswordValid)
+                {
+                    ModelState.AddModelError("Password1", "密碼至少包含 8-20 個字符，並且包含至少一個大寫字母和一個數字");
+                    return View(newuserpwVM);
+                }
+                if (user.EmailConfirmed==false)
+                {
+                    return NotFound();
+                }
+                if(user.Password== _hashService.SHA512Hash(newuserpwVM.Password1))
+                {
+                    ModelState.AddModelError("Password1", "密碼不可以和之前重複");
+                    return View(newuserpwVM);
+                }
+                user.Password = _hashService.SHA512Hash(newuserpwVM.Password1);
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+
+                //更改成功跳回登入頁面
+                return View("LoginPage");
+            }
+            else
+            {
+                return View(newuserpwVM);
+            }
+          
+        }
+        [HttpGet]
+        public async Task<IActionResult> ForgotPasswordEmailPage()
         {
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgotPasswordEmailPage(string email)
+        {
+            if(ModelState.IsValid)
+            {
+                if (string.IsNullOrEmpty(email))
+                {
+                    // 未提供有效的電子郵件地址
+                    return View("ForgotPasswordEmailPage");
+                }
+               
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+                if (user != null)
+                {
+                    // 確認碼
+                    var confirmationCode = user.ConfirmationCode;
+                    var useremail = user.Email;
+                    var confirmationLink = Url.Action("RestPassword", "Account", new { email = useremail, confirmationCode }, Request.Scheme);
+                    await SendRestEmail(useremail, confirmationLink);
+                    return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
+                }
+                else
+                {
+                   ModelState.AddModelError("Email", "不存在這個email");
+                   return View("ForgotPasswordEmailPage");
+                }
+            }
+            return View("ForgotPasswordEmailPage");
+        }
+        private async Task SendRestEmail(string email, string confirmationLink)
+        {
+            var from = new EmailAddress("wggisddejp@gmail.com", "第七小組遊戲mod");
+            var to = new EmailAddress(email);
+            var subject = "確認您的電子郵件地址";
+
+            var htmlContent = $"<html><body><p>請點擊以下連結重置密碼：</p><p><a href='{confirmationLink}'>{confirmationLink}</a></p></body></html>";
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);
+            await _sendGridClient.SendEmailAsync(msg);
         }
     }
 }
