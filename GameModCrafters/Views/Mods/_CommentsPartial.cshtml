@@ -1,0 +1,13 @@
+﻿@model ModDetailViewModel
+@foreach (var comment in Model.Comments)
+{
+    <div class="message">
+        <div>
+            @comment.UserName @(Model.AuthorName == comment.UserName ? @Html.Raw("<span class='author-tag'>作者</span>") : ""): @comment.CommentContent
+        </div>
+        @if (User.Identity.Name == comment.UserName)
+        {
+            <button class="delete-button btn btn-danger" style="display: none;" data-comment-id="@comment.CommentId">刪除</button>
+        }
+    </div>
+}

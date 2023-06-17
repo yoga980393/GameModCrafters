@@ -134,6 +134,18 @@ namespace GameModCrafters.Controllers
                 return NotFound();
             }
 
+            var comments = _context.ModComments
+                .Where(c => c.ModId == id)
+                .Include(c => c.User)
+                .OrderBy(c => c.CommentDate) 
+                .Select(c => new ModCommentViewModel
+                {
+                    CommentId = c.CommentId,
+                    UserName = c.User.Username,
+                    CommentContent = c.CommentContent
+                })
+                .ToList();
+
             var modDetailViewModel = new ModDetailViewModel
             {
                 ModId = mod.ModId,
@@ -150,7 +162,8 @@ namespace GameModCrafters.Controllers
                 AuthorName = mod.Author.Username,
                 AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
                 AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
-                GameId = mod.GameId
+                GameId = mod.GameId,
+                Comments = comments
             };
 
             return View(modDetailViewModel);
@@ -450,6 +463,130 @@ namespace GameModCrafters.Controllers
                 uploaded = true,
                 url = Url.Content("~/ModDescriptionImages/" + newFileName) // Update the path here
             });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateComment(string modId, string userId, string content)
+        {
+            var newComment = new ModComment
+            {
+                CommentId = Guid.NewGuid().ToString(),
+                ModId = modId,
+                UserId = userId,
+                CommentContent = content,
+                CommentDate = DateTime.Now
+            };
+
+            _context.Add(newComment);
+            await _context.SaveChangesAsync();
+
+            if (modId == null)
+            {
+                return NotFound();
+            }
+
+            var mod = await _context.Mods
+                .Include(m => m.Author)
+                .Include(m => m.Game)
+                .Include(m => m.ModTags).ThenInclude(mt => mt.Tag)
+                .FirstOrDefaultAsync(m => m.ModId == modId);
+
+            if (mod == null)
+            {
+                return NotFound();
+            }
+
+            var comments = _context.ModComments
+                .Where(c => c.ModId == modId)
+                .Include(c => c.User)
+                .OrderBy(c => c.CommentDate)
+                .Select(c => new ModCommentViewModel
+                {
+                    CommentId = c.CommentId,
+                    UserName = c.User.Username,
+                    CommentContent = c.CommentContent
+                })
+                .ToList();
+
+            var modDetailViewModel = new ModDetailViewModel
+            {
+                ModId = mod.ModId,
+                ModName = mod.ModName,
+                Tags = mod.ModTags?.Select(mt => mt.Tag?.TagName ?? "無資料").ToList() ?? new List<string> { "無資料" },
+                CreateTime = mod.CreateTime,
+                UpdateTime = mod.UpdateTime,
+                Description = mod.Description,
+                InstallationInstructions = mod.InstallationInstructions,
+                LikeCount = mod.ModLikes?.Count() ?? 0,
+                FavoriteCount = mod.Favorite?.Count() ?? 0,
+                DownloadCount = mod.Downloaded?.Count() ?? 0,
+                Price = mod.Price,
+                AuthorName = mod.Author.Username,
+                AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
+                AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
+                GameId = mod.GameId,
+                Comments = comments
+            };
+
+            // 返回帶有新留言的 Partial View
+            return PartialView("_CommentsPartial", modDetailViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteComment(string modId, string commentId)
+        {
+            var comment = await _context.ModComments.FindAsync(commentId);
+            if (comment != null)
+            {
+                _context.ModComments.Remove(comment);
+                await _context.SaveChangesAsync();
+            }
+
+            // 重新載入模型並返回 Partial View
+            var mod = await _context.Mods
+                .Include(m => m.Author)
+                .Include(m => m.Game)
+                .Include(m => m.ModTags).ThenInclude(mt => mt.Tag)
+                .FirstOrDefaultAsync(m => m.ModId == modId);
+
+            if (mod == null)
+            {
+                return NotFound();
+            }
+
+            var comments = _context.ModComments
+                .Where(c => c.ModId == modId)
+                .Include(c => c.User)
+                .OrderBy(c => c.CommentDate)
+                .Select(c => new ModCommentViewModel
+                {
+                    CommentId = c.CommentId,
+                    UserName = c.User.Username,
+                    CommentContent = c.CommentContent
+                })
+                .ToList();
+
+            var modDetailViewModel = new ModDetailViewModel
+            {
+                ModId = mod.ModId,
+                ModName = mod.ModName,
+                Tags = mod.ModTags?.Select(mt => mt.Tag?.TagName ?? "無資料").ToList() ?? new List<string> { "無資料" },
+                CreateTime = mod.CreateTime,
+                UpdateTime = mod.UpdateTime,
+                Description = mod.Description,
+                InstallationInstructions = mod.InstallationInstructions,
+                LikeCount = mod.ModLikes?.Count() ?? 0,
+                FavoriteCount = mod.Favorite?.Count() ?? 0,
+                DownloadCount = mod.Downloaded?.Count() ?? 0,
+                Price = mod.Price,
+                AuthorName = mod.Author.Username,
+                AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
+                AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
+                GameId = mod.GameId,
+                Comments = comments
+            };
+
+            return PartialView("_CommentsPartial", modDetailViewModel);
         }
     }
 }

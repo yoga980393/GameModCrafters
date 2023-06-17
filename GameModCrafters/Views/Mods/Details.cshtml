@@ -44,7 +44,7 @@
                 <div id="tag"></div>
                 <hr>
                 <div class="date_like">
-                    <h4>上船日期：@Model.CreateTime 更新日期：@Model.UpdateTime</h4>
+                    <h4>上傳日期：@Model.CreateTime 更新日期：@Model.UpdateTime</h4>
                     <div class="like">
                         <button type="button" class="btn btn-light">
                             <i class="fas fa-thumbs-up"
@@ -58,22 +58,17 @@
                 <div class="introduction active" id="Description"></div>
                 <div class="introduction" id="InstallationInstructions"></div>
                 <div class="introduction">
-                    <div class="message">
-                        userName:留言內容
+                    <div id="comments-section">
+                        @await Html.PartialAsync("_CommentsPartial", Model)
                     </div>
-                    <div class="message">
-                        userName:留言內容
-                    </div>
-                    <div class="message">
-                        userName:留言內容
-                    </div>
-                    <div class="message">
-                        userName:留言內容
-                    </div>
-                    <div class="input-container">
-                        <input type="text" class="input" placeholder="輸入你的留言" />
-                        <button class="submit">提交</button>
-                    </div>
+                    <form id="comment-form">
+                        <div class="input-container">
+                            <input type="hidden" id="modId" value="@Model.ModId" />
+                            <input type="hidden" id="userId" value="@User.FindFirstValue(ClaimTypes.Email)" />
+                            <input type="text" id="content" class="input" placeholder="輸入你的留言" />
+                            <button type="submit" class="submit">提交</button>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="tag-buttons">
@@ -125,5 +120,65 @@
                 tagContainer.append(spanElement); 
             });
         }
+    </script>
+
+    <script>
+        function CommentSubmit(){
+            $("#comment-form").on("submit", function (e) {
+                e.preventDefault();
+                var modId = $("#modId").val();
+                var userId = $("#userId").val();
+                var content = $("#content").val();
+                $.ajax({
+                    url: '/Mods/CreateComment',
+                    type: 'POST',
+                    data: {
+                        modId: modId,
+                        userId: userId,
+                        content: content
+                    },
+                    success: function (result) {
+                        $("#content").val('');
+                        $("#comments-section").html(result);
+                        DeleteButton();
+                    }
+                });
+            });
+        }
+
+        function DeleteButton() {
+            $('.message').off('mouseenter mouseleave');
+            $('.delete-button').off('click');
+
+            $('.message').hover(function () {
+                $(this).find('.delete-button').show();
+            }, function () {
+                $(this).find('.delete-button').hide();
+            });
+
+            $('.delete-button').click(function () {
+                var modId = $("#modId").val();
+                var commentId = $(this).data('comment-id');
+                $.ajax({
+                    url: '/Mods/DeleteComment',
+                    type: 'POST',
+                    data: {
+                        modId: modId,
+                        commentId: commentId
+                    },
+                    success: function (result) {
+                        $("#comments-section").html(result);
+                        DeleteButton();
+                    }
+                });
+            });
+        }
+
+        $(document).ready(function () {
+            CommentSubmit();
+            DeleteButton();
+        });
+
+        
     </script>
 }
