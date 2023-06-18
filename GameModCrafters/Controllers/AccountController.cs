@@ -20,6 +20,7 @@ using System.IO;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.ComponentModel.DataAnnotations;
+using GameModCrafters.Services;
 
 namespace GameModCrafters.Controllers
 {
@@ -31,13 +32,15 @@ namespace GameModCrafters.Controllers
 
         private readonly ISendGridClient _sendGridClient;
 
+        private readonly ModService _modService;
+
      
-        public AccountController(ApplicationDbContext context,IHashService hashService, ISendGridClient sendGridClient)
+        public AccountController(ApplicationDbContext context,IHashService hashService, ISendGridClient sendGridClient, ModService modService)
         {
             _hashService = hashService;
             _context = context;
             _sendGridClient = sendGridClient;
-           
+           _modService = modService;
         }
 
         [HttpGet]
@@ -294,9 +297,10 @@ namespace GameModCrafters.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return LocalRedirect("/");
         }
+
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> PersonPage(PersonViewModel personVM)
+        public async Task<IActionResult> PersonPage(PersonViewModel personVM, int page = 1)
         {
             var usermail = User.FindFirstValue(ClaimTypes.Email);
             if (usermail == null)
@@ -308,6 +312,22 @@ namespace GameModCrafters.Controllers
             var userCover = user.BackgroundImage;
             personVM.Avatar = userAvatar;
             personVM.BackgroundImage = userCover;
+
+            var publishedMods = await _modService.GetPublishedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);
+            personVM.PublishedMods = publishedMods.Mods;
+            personVM.PublishedCurrentPage = page;
+            personVM.PublishedTotalPages = publishedMods.TotalPages;
+
+            var favoritedMods = await _modService.GetFavoritedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);
+            personVM.FavoritedMods = favoritedMods.Mods;
+            personVM.FavoritedCurrentPage = page;
+            personVM.FavoritedTotalPages = favoritedMods.TotalPages;
+
+            var downloadedMods = await _modService.GetDownloadedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);
+            personVM.DownloadedMods = downloadedMods.Mods;
+            personVM.DownloadedCurrentPage = page;
+            personVM.DownloadedTotalPages = downloadedMods.TotalPages;
+
             //ViewData["UserAvatar"] = userAvatar;
             //ViewData["UserCover"] = userCover;
             return View(personVM);
@@ -545,6 +565,66 @@ namespace GameModCrafters.Controllers
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);
             await _sendGridClient.SendEmailAsync(msg);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PublishedModsPartial(int page = 1)
+        {
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+
+            var mods = await _modService.GetPublishedMods(usermail, page, 8);
+            var personVM = new PersonViewModel
+            {
+                PublishedCurrentPage = page,
+                PublishedMods = mods.Mods,
+                PublishedTotalPages = mods.TotalPages
+            };
+
+            return PartialView("_PublishedModsPartial", personVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FavoritedModsPartial(int page = 1)
+        {
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+
+            var mods = await _modService.GetFavoritedMods(usermail, page, 8);
+            var personVM = new PersonViewModel
+            {
+                FavoritedCurrentPage = page,
+                FavoritedMods = mods.Mods,
+                FavoritedTotalPages = mods.TotalPages
+            };
+
+            return PartialView("_FavoritedModsPartial", personVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadedModsPartial(int page = 1)
+        {
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+
+            var mods = await _modService.GetDownloadedMods(usermail, page, 8);
+            var personVM = new PersonViewModel
+            {
+                DownloadedCurrentPage = page,
+                DownloadedMods = mods.Mods,
+                DownloadedTotalPages = mods.TotalPages
+            };
+
+            return PartialView("_DownloadedModsPartial", personVM);
         }
     }
 }

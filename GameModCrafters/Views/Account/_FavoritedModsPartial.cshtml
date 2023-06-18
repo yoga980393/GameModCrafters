@@ -1,0 +1,72 @@
+﻿@model PersonViewModel
+
+<h2>收藏的mod</h2>
+<div class="row">
+    @if (Model.FavoritedMods.Count == 0)
+    {
+        <div class="emptyCrad">
+            暫無項目
+        </div>
+    }
+    else
+    {
+        foreach (var mod in Model.FavoritedMods)
+        {
+            <div class="col-12 col-md-3 mt-3">
+                <div class="card">
+                    <div class="pic">
+                        <a href="@Url.Action("Details", "Mods", new { id = mod.ModId })">
+                            <img src=@(mod.Thumbnail == null ? "https://picsum.photos/300/200/?random=10" : mod.Thumbnail)>
+                        </a>
+                    </div>
+                    <div class="text">
+                        <div class="name_price">
+                            <h3 class="name">@mod.ModName</h3>
+                            <h3 class="price">@(mod.Price == 0 ? "Free" : mod.Price + " NTD")</h3>
+                        </div>
+                        <div class="detail">
+                            <h2 class="tag" id="tag-id-@(mod.ModId)"><span class="badge bg-secondary" id="previewGame">@mod.GameName</span></h2>
+                            <h3 class="author"><span>作者：</span>@mod.AuthorName</h3>
+                            <h3 class="creatTime"><span>上傳日期：</span>@mod.CreateTime</h3>
+                            <h3 class="UpdateTime"><span>更新日期：</span>@mod.UpdateTime</h3>
+                            <p class="describe" id="describe-id-@(mod.ModId)"></p>
+                        </div>
+                    </div>
+                    <div class="data">
+                        <h3><span>容量：</span>@mod.Capacity</h3>
+                        <h3><span>點贊：</span>@mod.LikeCount</h3>
+                        <h3><span>收藏：</span>@mod.FavoriteCount</h3>
+                        <h3><span>下載：</span>@mod.DownloadCount</h3>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+</div>
+@if (Model.FavoritedMods.Count != 0)
+{
+    <div class="more-mod-Pagination">
+        <nav aria-label="Page navigation ">
+            <ul class="pagination">
+                <li class="page-item @(Model.FavoritedCurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link page-link-favorited" href="@Url.Action("FavoritedModsPartial", "Account", new { page = Model.FavoritedCurrentPage - 1 })" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                @for (var i = 1; i <= Model.FavoritedTotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.FavoritedCurrentPage ? "active" : "")">
+                        <a class="page-link page-link-favorited" href="@Url.Action("FavoritedModsPartial", "Account", new { page = i })">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.FavoritedCurrentPage == Model.FavoritedTotalPages ? "disabled" : "")">
+                    <a class="page-link page-link-favorited" href="@Url.Action("FavoritedModsPartial", "Account", new { page = Model.FavoritedCurrentPage + 1 })" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}
+
