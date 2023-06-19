@@ -35,7 +35,7 @@ namespace GameModCrafters.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //Password以SHA512加密
+            //Password以SHA512加密11111
             modelBuilder.Entity<User>().HasData(
                 new User {  Username = "大明", Email = "kevinxi@gmail.com", Password = _hashService.SHA512Hash("A12345") },
                 new User { Username = "中明", Email = "marylee@gmail.com", Password = _hashService.SHA512Hash("B12345") },

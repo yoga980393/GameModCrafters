@@ -44,36 +44,32 @@
                 <div id="tag"></div>
                 <hr>
                 <div class="date_like">
-                    <h4>上船日期：@Model.CreateTime 更新日期：@Model.UpdateTime</h4>
+                    <h4>上傳日期：@Model.CreateTime 更新日期：@Model.UpdateTime</h4>
                     <div class="like">
-                        <button type="button" class="btn btn-light">
-                            <i class="fas fa-thumbs-up"
-                               style="color: pink"></i> @Model.LikeCount
+                        <button type="button" class="btn btn-light @(Model.UserHasLiked ? "liked" : "")" id="like-btn">
+                            <i class="fas fa-thumbs-up"></i>
+                            <span id="likeCount">@Model.LikeCount</span>
                         </button>
-                        <button type="button" class="btn btn-light">
-                            <i class="fas fa-star" style="color: pink"></i> @Model.FavoriteCount
+                        <button type="button" class="btn btn-light @(Model.UserHasFavorite ? "liked" : "")" id="favorite-btn">
+                            <i class="fas fa-star"></i>
+                            <span id="favoriteCount">@Model.FavoriteCount</span>
                         </button>
                     </div>
                 </div>
                 <div class="introduction active" id="Description"></div>
                 <div class="introduction" id="InstallationInstructions"></div>
                 <div class="introduction">
-                    <div class="message">
-                        userName:留言內容
+                    <div id="comments-section">
+                        @await Html.PartialAsync("_CommentsPartial", Model)
                     </div>
-                    <div class="message">
-                        userName:留言內容
-                    </div>
-                    <div class="message">
-                        userName:留言內容
-                    </div>
-                    <div class="message">
-                        userName:留言內容
-                    </div>
-                    <div class="input-container">
-                        <input type="text" class="input" placeholder="輸入你的留言" />
-                        <button class="submit">提交</button>
-                    </div>
+                    <form id="comment-form">
+                        <div class="input-container">
+                            <input type="hidden" id="modId" value="@Model.ModId" />
+                            <input type="hidden" id="userId" value="@User.FindFirstValue(ClaimTypes.Email)" />
+                            <input type="text" id="content" class="input" placeholder="輸入你的留言" />
+                            <button type="submit" class="submit">提交</button>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="tag-buttons">
@@ -94,6 +90,68 @@
 
 @section js{
     <script>
+        function LikeBtn(){
+            $("#like-btn").click(function () {
+                var $this = $(this);
+                $.ajax({
+                    url: '@Url.Action("Like", "Mods")',
+                    type: 'POST',
+                    data: {
+                        modId: '@Model.ModId'
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            // 點讚或取消點讚成功
+                            $('#likeCount').text(result.newLikeCount);
+
+                            // 更新按鈕的狀態
+                            if ($this.hasClass('liked')) {
+                                $this.removeClass('liked');
+                            } else {
+                                $this.addClass('liked');
+                            }
+                        }
+                        else {
+                            // 處理錯誤
+                            console.log(result.errorMessage);
+                        }
+                    }
+                });
+            });
+        }
+
+        function FavoriteBtn() {
+            $("#favorite-btn").click(function () {
+                var $this = $(this);
+                $.ajax({
+                    url: '@Url.Action("Favorite", "Mods")',
+                    type: 'POST',
+                    data: {
+                        modId: '@Model.ModId'
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            // 點讚或取消點讚成功
+                            $('#favoriteCount').text(result.newFavoriteCount);
+
+                            // 更新按鈕的狀態
+                            if ($this.hasClass('liked')) {
+                                $this.removeClass('liked');
+                            } else {
+                                $this.addClass('liked');
+                            }
+                        }
+                        else {
+                            // 處理錯誤
+                            console.log(result.errorMessage);
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+
+    <script>
         $(document).ready(function () {
             $(".tag-buttons button").on("click", function () {
                 var pageIndex = $(this).index();
@@ -108,7 +166,8 @@
                 $(".introduction").eq(pageIndex).addClass("active").show();
             });
 
-            $("#Description").html("@Html.Raw(Model.Description)");
+            $("#Description").html('@Html.Raw(Model.Description)');
+
             $("#InstallationInstructions").html("@Html.Raw(Model.InstallationInstructions)");
 
             AddTag();
@@ -124,5 +183,65 @@
                 tagContainer.append(spanElement); 
             });
         }
+    </script>
+
+    <script>
+        function CommentSubmit(){
+            $("#comment-form").on("submit", function (e) {
+                e.preventDefault();
+                var modId = $("#modId").val();
+                var userId = $("#userId").val();
+                var content = $("#content").val();
+                $.ajax({
+                    url: '/Mods/CreateComment',
+                    type: 'POST',
+                    data: {
+                        modId: modId,
+                        userId: userId,
+                        content: content
+                    },
+                    success: function (result) {
+                        $("#content").val('');
+                        $("#comments-section").html(result);
+                        DeleteButton();
+                    }
+                });
+            });
+        }
+
+        function DeleteButton() {
+            $('.message').off('mouseenter mouseleave');
+            $('.delete-button').off('click');
+
+            $('.message').hover(function () {
+                $(this).find('.delete-button').show();
+            }, function () {
+                $(this).find('.delete-button').hide();
+            });
+
+            $('.delete-button').click(function () {
+                var modId = $("#modId").val();
+                var commentId = $(this).data('comment-id');
+                $.ajax({
+                    url: '/Mods/DeleteComment',
+                    type: 'POST',
+                    data: {
+                        modId: modId,
+                        commentId: commentId
+                    },
+                    success: function (result) {
+                        $("#comments-section").html(result);
+                        DeleteButton();
+                    }
+                });
+            });
+        }
+
+        $(document).ready(function () {
+            CommentSubmit();
+            DeleteButton();
+            LikeBtn();
+            FavoriteBtn();
+        });
     </script>
 }

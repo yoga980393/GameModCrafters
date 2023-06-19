@@ -9,5 +9,7 @@ namespace GameModCrafters.ViewModels
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
         public string GameId { get; set; }
+
+        public List<CommissionViewModel> Commissions { get; set; }
     }
 }

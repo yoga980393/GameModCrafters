@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="~/css/footer.css" />
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css'>
     @await RenderSectionAsync("css", required: false)
+    
 </head>
 <body>
+    
     <partial name="_NavBarPartial"></partial>
     
+
     @RenderBody()
      
 
@@ -49,5 +52,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("js", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

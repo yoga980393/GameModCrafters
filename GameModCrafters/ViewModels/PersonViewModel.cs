@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace GameModCrafters.ViewModels
 {
@@ -16,5 +17,17 @@ namespace GameModCrafters.ViewModels
 
         [Display(Name = "背景圖片")]
         public string BackgroundImage { get; set; }
+
+        public List<ModViewModel> PublishedMods { get; set; }
+        public int PublishedCurrentPage { get; set; }
+        public int PublishedTotalPages { get; set; }
+
+        public List<ModViewModel> FavoritedMods { get; set; }
+        public int FavoritedCurrentPage { get; set; }
+        public int FavoritedTotalPages { get; set; }
+
+        public List<ModViewModel> DownloadedMods { get; set; }
+        public int DownloadedCurrentPage { get; set; }
+        public int DownloadedTotalPages { get; set; }
     }
 }

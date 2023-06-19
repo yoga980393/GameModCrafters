@@ -30,7 +30,7 @@
                 @Html.ValidationMessageFor(m=>m.Email,"",new{@class = "text-danger"})
             </div>*@
             <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">密碼</label>
+                <label for="Password1" class="form-label">密碼</label>
                 <input asp-for="Password1"  type="password" class="form-control" id="exampleInputPassword1"
                        aria-labelledby="passwordHelpBlock">
                
@@ -38,14 +38,14 @@
                 @Html.ValidationMessageFor(m=>m.Password1,"",new{@class = "text-danger"})
             </div>
             <div class="mb-3">
-                <label for="exampleInputPassword2" class="form-label">確認密碼</label>
+                <label for="Password2" class="form-label">確認密碼</label>
                 <input asp-for="Password2"  type="password" class="form-control" id="exampleInputPassword2" aria-labelledby="passwordHelpBlock">
 
                 @Html.ValidationMessageFor(m=>m.Password2,"",new{@class = "text-danger"})
             </div>
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">點擊我確認不是機器人</label>
+                <label class="form-check-label" for="exampleCheck1">點擊確認</label>
             </div>
 
             <div class="d-grid col-12 mx-auto">

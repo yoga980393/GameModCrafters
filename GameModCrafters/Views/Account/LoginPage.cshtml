@@ -20,14 +20,14 @@
             <div class="forgot">
                 <i class="fi fi-rr-exclamation"></i>
 
-                <a href="Forgot_Password.html"> 忘記密碼</a>
+                <a asp-controller="Account" asp-action="ForgotPasswordEmailPage"> 忘記密碼</a>
 
             </div>
             <div class="d-grid col-6 mx-auto">
                 <button type="submit" class="btn btn-primary">登入</button>
             </div>
 
-            <input type="hidden" asp-for="ReturnUrl" />
+            <input type="hidden" asp-for="ReturnUrl"/>
         }
            
       

@@ -20,6 +20,7 @@ using System.IO;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.ComponentModel.DataAnnotations;
+using GameModCrafters.Services;
 
 namespace GameModCrafters.Controllers
 {
@@ -31,22 +32,24 @@ namespace GameModCrafters.Controllers
 
         private readonly ISendGridClient _sendGridClient;
 
+        private readonly ModService _modService;
+
      
-        public AccountController(ApplicationDbContext context,IHashService hashService, ISendGridClient sendGridClient)
+        public AccountController(ApplicationDbContext context,IHashService hashService, ISendGridClient sendGridClient, ModService modService)
         {
             _hashService = hashService;
             _context = context;
             _sendGridClient = sendGridClient;
-           
+           _modService = modService;
         }
 
         [HttpGet]
         [AllowAnonymous]
         public IActionResult LoginPage(string returnUrl = null)
         {
-            if(returnUrl == "/Account/ConfirmEmail")
+            if (returnUrl == "/Account/ConfirmEmail")
             {
-                return View("/");
+                returnUrl = "/Home/Index"; // 將 returnUrl 設定為首頁的路徑
             }
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
@@ -73,6 +76,7 @@ namespace GameModCrafters.Controllers
                     {
                         new Claim(ClaimTypes.Email,user.Email ),//email
                         new Claim(ClaimTypes.Name,user.Username ),//增加使用者   model.Text.ToString()
+                        //new Claim ("AvatarUrl",user.Avatar ),
                         //new Claim(ClaimTypes.Role, "Administrator") // 如果要有「群組、角色、權限」，可以加入這一段  
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -82,7 +86,7 @@ namespace GameModCrafters.Controllers
                     );
                     HttpContext.Session.SetString("Email", user.Email);
 
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)&& model.ReturnUrl!= "/Account/ConfirmEmail" && model.ReturnUrl != "/Account/WaitConfirmEmail")
                     {
                         return Redirect(model.ReturnUrl); // 重定向到 returnUrl
                     }
@@ -111,9 +115,6 @@ namespace GameModCrafters.Controllers
         {
             if (ModelState.IsValid)
             {
-                
-
-
                 //bool isEmailExists = _context.Users.Any(u => u.Email == register.Email);
                 bool isUsernameExists = _context.Users.Any(m => m.Username == register.Username);
                 if (isUsernameExists)
@@ -121,7 +122,6 @@ namespace GameModCrafters.Controllers
                     ModelState.AddModelError("Username", "該 Username 已被使用。");
                   
                 }
-
                 //if (isEmailExists)
                 //{
                 //    ModelState.AddModelError("Email", "該 Email 已被使用。");
@@ -141,9 +141,6 @@ namespace GameModCrafters.Controllers
                 {
                     return View(register);
                 }
-
-
-
                 //bool isPasswordValid = IsPasswordValid(register.Password1);
                 //if (!isPasswordValid)
                 //{
@@ -204,18 +201,18 @@ namespace GameModCrafters.Controllers
                     RegistrationDate = DateTime.UtcNow, // 取得當前的 UTC 時間
                     EmailConfirmed = false, // 初始狀態設為未確認
                     ConfirmationCode = confirmationCode, // 將確認碼儲存到使用者物件中111
-                    Avatar = "/AvatarImages/Avatar_preview.jpg"
+                    Avatar = "/PreviewImage/Avatar_preview.jpg"
                 };
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
+         
+            // 傳送確認郵件
 
-                // 傳送確認郵件
-              
-               
+
                 var confirmationLink = Url.Action("ConfirmEmail", "Account", new { email = user.Email, confirmationCode }, Request.Scheme);
+                //bool sendemailTF= await SendConfirmationEmail(user.Email, confirmationLink);
                 await SendConfirmationEmail(user.Email, confirmationLink);
-               
                 return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
             }
 
@@ -224,6 +221,7 @@ namespace GameModCrafters.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> WaitConfirmEmail()
         {
+
             return View();
         }
         [AllowAnonymous]
@@ -254,7 +252,7 @@ namespace GameModCrafters.Controllers
         
         private async Task SendConfirmationEmail(string email, string confirmationLink)
         {
-            var from = new EmailAddress("buildschool99@gmail.com", "第七小組遊戲mod");
+            var from = new EmailAddress("wggisddejp@gmail.com", "第七小組遊戲mod");
             var to = new EmailAddress(email);
             var subject = "確認您的電子郵件地址";
 
@@ -262,6 +260,17 @@ namespace GameModCrafters.Controllers
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);
             await _sendGridClient.SendEmailAsync(msg);
+            //var response = await _sendGridClient.SendEmailAsync(msg);
+            //if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    // 电子邮件发送成功
+            //    return true;
+            //}
+            //else
+            //{
+            //    return false;
+            //}
+
         }
 
         private bool IsPasswordValid(string password)
@@ -288,9 +297,10 @@ namespace GameModCrafters.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return LocalRedirect("/");
         }
+
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> PersonPage(PersonViewModel personVM)
+        public async Task<IActionResult> PersonPage(PersonViewModel personVM, int page = 1)
         {
             var usermail = User.FindFirstValue(ClaimTypes.Email);
             if (usermail == null)
@@ -302,17 +312,27 @@ namespace GameModCrafters.Controllers
             var userCover = user.BackgroundImage;
             personVM.Avatar = userAvatar;
             personVM.BackgroundImage = userCover;
+
+            var publishedMods = await _modService.GetPublishedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);
+            personVM.PublishedMods = publishedMods.Mods;
+            personVM.PublishedCurrentPage = page;
+            personVM.PublishedTotalPages = publishedMods.TotalPages;
+
+            var favoritedMods = await _modService.GetFavoritedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);
+            personVM.FavoritedMods = favoritedMods.Mods;
+            personVM.FavoritedCurrentPage = page;
+            personVM.FavoritedTotalPages = favoritedMods.TotalPages;
+
+            var downloadedMods = await _modService.GetDownloadedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);
+            personVM.DownloadedMods = downloadedMods.Mods;
+            personVM.DownloadedCurrentPage = page;
+            personVM.DownloadedTotalPages = downloadedMods.TotalPages;
+
             //ViewData["UserAvatar"] = userAvatar;
             //ViewData["UserCover"] = userCover;
             return View(personVM);
         }
         
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> PersonPage(string Name)
-        {
-            return View();
-        }
 
         [HttpPost]
         public async Task<IActionResult> CropperAvatarImage(IFormFile croppedPersonImage)
@@ -419,25 +439,192 @@ namespace GameModCrafters.Controllers
             if (userWithNewUsername == null)
             {
                 // 從授權資訊取得當前用戶的 Email
-                var currentUserEmail = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+                var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
+                
                 // 使用這個 Email 找到當前用戶
                 var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == currentUserEmail);
 
                 currentUser.Username = username;
-
+                
                 // 儲存變更到資料庫
                 await _context.SaveChangesAsync();
                 var claimsIdentity = new ClaimsIdentity();
                 claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, username));
                 User.AddIdentity(claimsIdentity);
                 return Json("更改成功");
+              
             }
             else
             {
                 return Json($"名字已有人使用");
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> RestPassword(string email, string confirmationCode)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(confirmationCode))
+            {
+                // 未提供有效的電子郵件地址或確認碼
+                return BadRequest();
+            }
 
+            // 根據電子郵件地址找到對應的使用者
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email && x.ConfirmationCode == confirmationCode);
+            if (user == null)
+            {
+                // 使用者不存在
+                return NotFound();
+            }
+            HttpContext.Session.SetString("Email", email);
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestPassword(ForgetPasswordViewModel newuserpwVM)
+        {
+            if(ModelState.IsValid)
+            {
+                string email = HttpContext.Session.GetString("Email");
+
+                // 根據電子郵件地址找到對應的使用者
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email );
+                if (user == null)
+                {
+                    // 使用者不存在
+                    return NotFound();
+                }
+                bool isPasswordValid = IsPasswordValid(newuserpwVM.Password1);
+                if (!isPasswordValid)
+                {
+                    ModelState.AddModelError("Password1", "密碼至少包含 8-20 個字符，並且包含至少一個大寫字母和一個數字");
+                    return View(newuserpwVM);
+                }
+                if (user.EmailConfirmed==false)
+                {
+                    return NotFound();
+                }
+                if(user.Password== _hashService.SHA512Hash(newuserpwVM.Password1))
+                {
+                    ModelState.AddModelError("Password1", "密碼不可以和之前重複");
+                    return View(newuserpwVM);
+                }
+                user.Password = _hashService.SHA512Hash(newuserpwVM.Password1);
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+
+                //更改成功跳回登入頁面
+                return View("LoginPage");
+            }
+            else
+            {
+                return View(newuserpwVM);
+            }
+          
+        }
+        [HttpGet]
+        public async Task<IActionResult> ForgotPasswordEmailPage()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgotPasswordEmailPage(string email)
+        {
+            if(ModelState.IsValid)
+            {
+                if (string.IsNullOrEmpty(email))
+                {
+                    // 未提供有效的電子郵件地址
+                    return View("ForgotPasswordEmailPage");
+                }
+               
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+                if (user != null)
+                {
+                    // 確認碼
+                    var confirmationCode = user.ConfirmationCode;
+                    var useremail = user.Email;
+                    var confirmationLink = Url.Action("RestPassword", "Account", new { email = useremail, confirmationCode }, Request.Scheme);
+                    await SendRestEmail(useremail, confirmationLink);
+                    return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
+                }
+                else
+                {
+                   ModelState.AddModelError("Email", "不存在這個email");
+                   return View("ForgotPasswordEmailPage");
+                }
+            }
+            return View("ForgotPasswordEmailPage");
+        }
+        private async Task SendRestEmail(string email, string confirmationLink)
+        {
+            var from = new EmailAddress("wggisddejp@gmail.com", "第七小組遊戲mod");
+            var to = new EmailAddress(email);
+            var subject = "確認您的電子郵件地址";
+
+            var htmlContent = $"<html><body><p>請點擊以下連結重置密碼：</p><p><a href='{confirmationLink}'>{confirmationLink}</a></p></body></html>";
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);
+            await _sendGridClient.SendEmailAsync(msg);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PublishedModsPartial(int page = 1)
+        {
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+
+            var mods = await _modService.GetPublishedMods(usermail, page, 8);
+            var personVM = new PersonViewModel
+            {
+                PublishedCurrentPage = page,
+                PublishedMods = mods.Mods,
+                PublishedTotalPages = mods.TotalPages
+            };
+
+            return PartialView("_PublishedModsPartial", personVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FavoritedModsPartial(int page = 1)
+        {
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+
+            var mods = await _modService.GetFavoritedMods(usermail, page, 8);
+            var personVM = new PersonViewModel
+            {
+                FavoritedCurrentPage = page,
+                FavoritedMods = mods.Mods,
+                FavoritedTotalPages = mods.TotalPages
+            };
+
+            return PartialView("_FavoritedModsPartial", personVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadedModsPartial(int page = 1)
+        {
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+
+            var mods = await _modService.GetDownloadedMods(usermail, page, 8);
+            var personVM = new PersonViewModel
+            {
+                DownloadedCurrentPage = page,
+                DownloadedMods = mods.Mods,
+                DownloadedTotalPages = mods.TotalPages
+            };
+
+            return PartialView("_DownloadedModsPartial", personVM);
+        }
     }
 }

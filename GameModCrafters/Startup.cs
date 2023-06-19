@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using GameModCrafters.Encryption;
 using SendGrid;
+using GameModCrafters.Services;
 
 namespace GameModCrafters
 {
@@ -30,6 +31,8 @@ namespace GameModCrafters
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddDistributedMemoryCache();
             services.AddSession(); // 添加Session服務
             services.AddSingleton<IHashService, HashService>();//加密
             // 設定 SendGrid 服務
@@ -47,6 +50,8 @@ namespace GameModCrafters
             services.AddAuthorization();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             Configuration.GetConnectionString("ApplicationDbContext")));
+
+            services.AddTransient<ModService>();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -126,6 +126,8 @@ namespace GameModCrafters.Controllers
             var mod = await _context.Mods
                 .Include(m => m.Author)
                 .Include(m => m.Game)
+                .Include(m => m.ModLikes)
+                .Include(m => m.Favorite)
                 .Include(m => m.ModTags).ThenInclude(mt => mt.Tag)
                 .FirstOrDefaultAsync(m => m.ModId == id);
 
@@ -133,6 +135,25 @@ namespace GameModCrafters.Controllers
             {
                 return NotFound();
             }
+
+            // 取得用戶ID
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            // 檢查該用戶是否已經點過讚
+            bool userHasLiked = _context.ModLikes.Any(m => m.ModId == id && m.UserId == userId);
+            bool userHasFavorite = _context.Favorites.Any(m => m.ModId == id && m.UserId == userId);
+
+            var comments = _context.ModComments
+                .Where(c => c.ModId == id)
+                .Include(c => c.User)
+                .OrderBy(c => c.CommentDate) 
+                .Select(c => new ModCommentViewModel
+                {
+                    CommentId = c.CommentId,
+                    UserName = c.User.Username,
+                    CommentContent = c.CommentContent
+                })
+                .ToList();
 
             var modDetailViewModel = new ModDetailViewModel
             {
@@ -150,7 +171,10 @@ namespace GameModCrafters.Controllers
                 AuthorName = mod.Author.Username,
                 AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
                 AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
-                GameId = mod.GameId
+                GameId = mod.GameId,
+                Comments = comments,
+                UserHasLiked = userHasLiked,
+                UserHasFavorite = userHasFavorite
             };
 
             return View(modDetailViewModel);
@@ -295,7 +319,7 @@ namespace GameModCrafters.Controllers
             var tags = _context.Tags.Select(t => t.TagName).ToList();
             ViewData["Tags"] = tags;
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email", mod.AuthorId);
-            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId", mod.GameId);
+            ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameName");
             ViewData["SelectedTags"] = selectedTags;
             return View(mod);
         }
@@ -427,6 +451,240 @@ namespace GameModCrafters.Controllers
 
             var fileUrl = Url.Content("~/ModImages/" + newFileName);
             return Ok(new { fileUrl });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Upload(IFormFile upload)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(upload.FileName);
+            var extension = Path.GetExtension(upload.FileName);
+            var date = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var random = Guid.NewGuid().ToString().Substring(0, 4); // 生成一個4位數的隨機字串
+            var newFileName = $"{fileName}_{date}_{random}{extension}";
+
+            var path = Path.Combine("wwwroot/ModDescriptionImages", newFileName);
+
+            using (var stream = System.IO.File.Create(path))
+            {
+                await upload.CopyToAsync(stream);
+            }
+
+            return Json(new
+            {
+                uploaded = true,
+                url = Url.Content("~/ModDescriptionImages/" + newFileName) // Update the path here
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateComment(string modId, string userId, string content)
+        {
+            var newComment = new ModComment
+            {
+                CommentId = Guid.NewGuid().ToString(),
+                ModId = modId,
+                UserId = userId,
+                CommentContent = content,
+                CommentDate = DateTime.Now
+            };
+
+            _context.Add(newComment);
+            await _context.SaveChangesAsync();
+
+            if (modId == null)
+            {
+                return NotFound();
+            }
+
+            var mod = await _context.Mods
+                .Include(m => m.Author)
+                .Include(m => m.Game)
+                .Include(m => m.ModTags).ThenInclude(mt => mt.Tag)
+                .FirstOrDefaultAsync(m => m.ModId == modId);
+
+            if (mod == null)
+            {
+                return NotFound();
+            }
+
+            var comments = _context.ModComments
+                .Where(c => c.ModId == modId)
+                .Include(c => c.User)
+                .OrderBy(c => c.CommentDate)
+                .Select(c => new ModCommentViewModel
+                {
+                    CommentId = c.CommentId,
+                    UserName = c.User.Username,
+                    CommentContent = c.CommentContent
+                })
+                .ToList();
+
+            var modDetailViewModel = new ModDetailViewModel
+            {
+                ModId = mod.ModId,
+                ModName = mod.ModName,
+                Tags = mod.ModTags?.Select(mt => mt.Tag?.TagName ?? "無資料").ToList() ?? new List<string> { "無資料" },
+                CreateTime = mod.CreateTime,
+                UpdateTime = mod.UpdateTime,
+                Description = mod.Description,
+                InstallationInstructions = mod.InstallationInstructions,
+                LikeCount = mod.ModLikes?.Count() ?? 0,
+                FavoriteCount = mod.Favorite?.Count() ?? 0,
+                DownloadCount = mod.Downloaded?.Count() ?? 0,
+                Price = mod.Price,
+                AuthorName = mod.Author.Username,
+                AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
+                AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
+                GameId = mod.GameId,
+                Comments = comments
+            };
+
+            // 返回帶有新留言的 Partial View
+            return PartialView("_CommentsPartial", modDetailViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteComment(string modId, string commentId)
+        {
+            var comment = await _context.ModComments.FindAsync(commentId);
+            if (comment != null)
+            {
+                _context.ModComments.Remove(comment);
+                await _context.SaveChangesAsync();
+            }
+
+            // 重新載入模型並返回 Partial View
+            var mod = await _context.Mods
+                .Include(m => m.Author)
+                .Include(m => m.Game)
+                .Include(m => m.ModTags).ThenInclude(mt => mt.Tag)
+                .FirstOrDefaultAsync(m => m.ModId == modId);
+
+            if (mod == null)
+            {
+                return NotFound();
+            }
+
+            var comments = _context.ModComments
+                .Where(c => c.ModId == modId)
+                .Include(c => c.User)
+                .OrderBy(c => c.CommentDate)
+                .Select(c => new ModCommentViewModel
+                {
+                    CommentId = c.CommentId,
+                    UserName = c.User.Username,
+                    CommentContent = c.CommentContent
+                })
+                .ToList();
+
+            var modDetailViewModel = new ModDetailViewModel
+            {
+                ModId = mod.ModId,
+                ModName = mod.ModName,
+                Tags = mod.ModTags?.Select(mt => mt.Tag?.TagName ?? "無資料").ToList() ?? new List<string> { "無資料" },
+                CreateTime = mod.CreateTime,
+                UpdateTime = mod.UpdateTime,
+                Description = mod.Description,
+                InstallationInstructions = mod.InstallationInstructions,
+                LikeCount = mod.ModLikes?.Count() ?? 0,
+                FavoriteCount = mod.Favorite?.Count() ?? 0,
+                DownloadCount = mod.Downloaded?.Count() ?? 0,
+                Price = mod.Price,
+                AuthorName = mod.Author.Username,
+                AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
+                AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
+                GameId = mod.GameId,
+                Comments = comments
+            };
+
+            return PartialView("_CommentsPartial", modDetailViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Like(string modId)
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Json(new { success = false, errorMessage = "User is not authenticated." });
+                }
+
+                // 確認該用戶是否已經點過讚
+                var existingLike = _context.ModLikes.FirstOrDefault(m => m.ModId == modId && m.UserId == userId);
+                if (existingLike == null)
+                {
+                    // 如果還沒點過讚，就建立新的 ModLike
+                    var newLike = new ModLike
+                    {
+                        ModId = modId,
+                        UserId = userId,
+                        Liked = true,
+                        RatingDate = DateTime.Now
+                    };
+                    _context.ModLikes.Add(newLike);
+                }
+                else
+                {
+                    // 如果已經點過讚，就刪除該筆記錄
+                    _context.ModLikes.Remove(existingLike);
+                }
+                _context.SaveChanges();
+
+                // 回傳新的點讚數量
+                var newLikeCount = _context.ModLikes.Count(m => m.ModId == modId);
+                return Json(new { success = true, newLikeCount = newLikeCount });
+            }
+            catch (Exception ex)
+            {
+                // 發生錯誤時，回傳錯誤訊息
+                return Json(new { success = false, errorMessage = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Favorite(string modId)
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Json(new { success = false, errorMessage = "User is not authenticated." });
+                }
+
+                // 確認該用戶是否已經點過讚
+                var existingFavorite = _context.Favorites.FirstOrDefault(m => m.ModId == modId && m.UserId == userId);
+                if (existingFavorite == null)
+                {
+                    // 如果還沒點過讚，就建立新的 ModLike
+                    var newFavorite = new Favorite
+                    {
+                        ModId = modId,
+                        UserId = userId,
+                        AddTime = DateTime.Now
+                    };
+                    _context.Favorites.Add(newFavorite);
+                }
+                else
+                {
+                    // 如果已經點過讚，就刪除該筆記錄
+                    _context.Favorites.Remove(existingFavorite);
+                }
+                _context.SaveChanges();
+
+                // 回傳新的點讚數量
+                var newFavoriteCount = _context.Favorites.Count(m => m.ModId == modId);
+                return Json(new { success = true, newFavoriteCount = newFavoriteCount });
+            }
+            catch (Exception ex)
+            {
+                // 發生錯誤時，回傳錯誤訊息
+                return Json(new { success = false, errorMessage = ex.Message });
+            }
         }
     }
 }
