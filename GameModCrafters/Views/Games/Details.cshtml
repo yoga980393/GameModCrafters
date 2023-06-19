@@ -207,90 +207,25 @@
                     最後回覆
                 </div>
             </div>
-            <div class="row align-items-start">
-                <div class="col-6 title">
-                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            @foreach(var item in Model.Commissions)
+            {
+                <div class="row align-items-start">
+                    <div class="col-6 title">
+                        <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
+                            @item.CommissionTitle
+                        </a>
+                    </div>
+                    <div class="col SendernName">
+                        @item.DelegatorName
+                    </div>
+                    <div class="col SenderDate">
+                        @item.CreateTime
+                    </div>
+                    <div class="col LastReply">
+                        @item.UpdateTime
+                    </div>
                 </div>
-                <div class="col SendernName">
-                    jack
-                </div>
-                <div class="col SenderDate">
-                    One of three columns
-                </div>
-                <div class="col LastReply">
-                    One of three columns
-                </div>
-            </div>
-            <div class="row align-items-start">
-                <div class="col-6 title">
-                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                </div>
-                <div class="col SendernName">
-                    One of three columns
-                </div>
-                <div class="col SenderDate">
-                    One of three columns
-                </div>
-                <div class="col LastReply">
-                    One of three columns
-                </div>
-            </div>
-            <div class="row align-items-start">
-                <div class="col-6 title">
-                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                </div>
-                <div class="col SendernName">
-                    One of three columns
-                </div>
-                <div class="col SenderDate">
-                    One of three columns
-                </div>
-                <div class="col LastReply">
-                    One of three columns
-                </div>
-            </div>
-            <div class="row align-items-start">
-                <div class="col-6 title">
-                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                </div>
-                <div class="col SendernName">
-                    One of three columns
-                </div>
-                <div class="col SenderDate">
-                    One of three columns
-                </div>
-                <div class="col LastReply">
-                    One of three columns
-                </div>
-            </div>
-            <div class="row align-items-start">
-                <div class="col-6 title">
-                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                </div>
-                <div class="col SendernName">
-                    One of three columns
-                </div>
-                <div class="col SenderDate">
-                    One of three columns
-                </div>
-                <div class="col LastReply">
-                    One of three columns
-                </div>
-            </div>
-            <div class="row align-items-start">
-                <div class="col-6 title">
-                    xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                </div>
-                <div class="col SendernName">
-                    One of three columns
-                </div>
-                <div class="col SenderDate">
-                    One of three columns
-                </div>
-                <div class="col LastReply">
-                    One of three columns
-                </div>
-            </div>
+            }
         </div>
 
 
@@ -405,12 +340,6 @@
         }
                     }
     </script>
-
-        //<script>
-              //    $("#filterForm select").change(function () {
-              //        $("#filterForm").submit();
-              //    });
-              //</script>
 
     <script>
         $(document).ready(function () {

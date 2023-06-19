@@ -119,12 +119,27 @@ namespace GameModCrafters.Controllers
                 filter.PageSize = 8; // fallback to default value if invalid input
             }
 
+            var commissions = await _context.Commissions
+                .Where(c => c.GameId == id)
+                .Include(c => c.Delegator)
+                .Select(c => new CommissionViewModel
+                {
+                    CommissionId = c.CommissionId,
+                    DelegatorName = c.Delegator.Username,
+                    CommissionTitle = c.CommissionTitle,
+                    Budget = c.Budget,
+                    CreateTime = c.CreateTime,
+                    UpdateTime = c.UpdateTime
+                })
+                .ToListAsync();
+
             var pagedModel = new PagedModsModel
             {
                 Mods = await mods.Skip((page - 1) * filter.PageSize).Take(filter.PageSize).ToListAsync(),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(await mods.CountAsync() / (double)filter.PageSize),
-                GameId = id
+                GameId = id,
+                Commissions = commissions
             };
 
             return View(pagedModel);
