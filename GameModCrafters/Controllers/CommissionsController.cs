@@ -164,8 +164,6 @@ namespace GameModCrafters.Controllers
                 return RedirectToAction(nameof(Index));
             }
             
-            
-            return View(commission);
         }
 
         // GET: Commissions/Edit/5
