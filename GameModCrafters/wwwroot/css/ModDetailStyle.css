@@ -196,3 +196,11 @@ span.author-tag {
 .ModOption{
     display: flex;
 }
+
+.btn.btn-light {
+    color: grey;
+}
+
+    .btn.btn-light.liked {
+        color: pink;
+    }

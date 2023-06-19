@@ -126,6 +126,8 @@ namespace GameModCrafters.Controllers
             var mod = await _context.Mods
                 .Include(m => m.Author)
                 .Include(m => m.Game)
+                .Include(m => m.ModLikes)
+                .Include(m => m.Favorite)
                 .Include(m => m.ModTags).ThenInclude(mt => mt.Tag)
                 .FirstOrDefaultAsync(m => m.ModId == id);
 
@@ -133,6 +135,13 @@ namespace GameModCrafters.Controllers
             {
                 return NotFound();
             }
+
+            // 取得用戶ID
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            // 檢查該用戶是否已經點過讚
+            bool userHasLiked = _context.ModLikes.Any(m => m.ModId == id && m.UserId == userId);
+            bool userHasFavorite = _context.Favorites.Any(m => m.ModId == id && m.UserId == userId);
 
             var comments = _context.ModComments
                 .Where(c => c.ModId == id)
@@ -163,7 +172,9 @@ namespace GameModCrafters.Controllers
                 AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
                 AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
                 GameId = mod.GameId,
-                Comments = comments
+                Comments = comments,
+                UserHasLiked = userHasLiked,
+                UserHasFavorite = userHasFavorite
             };
 
             return View(modDetailViewModel);
@@ -587,6 +598,93 @@ namespace GameModCrafters.Controllers
             };
 
             return PartialView("_CommentsPartial", modDetailViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Like(string modId)
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Json(new { success = false, errorMessage = "User is not authenticated." });
+                }
+
+                // 確認該用戶是否已經點過讚
+                var existingLike = _context.ModLikes.FirstOrDefault(m => m.ModId == modId && m.UserId == userId);
+                if (existingLike == null)
+                {
+                    // 如果還沒點過讚，就建立新的 ModLike
+                    var newLike = new ModLike
+                    {
+                        ModId = modId,
+                        UserId = userId,
+                        Liked = true,
+                        RatingDate = DateTime.Now
+                    };
+                    _context.ModLikes.Add(newLike);
+                }
+                else
+                {
+                    // 如果已經點過讚，就刪除該筆記錄
+                    _context.ModLikes.Remove(existingLike);
+                }
+                _context.SaveChanges();
+
+                // 回傳新的點讚數量
+                var newLikeCount = _context.ModLikes.Count(m => m.ModId == modId);
+                return Json(new { success = true, newLikeCount = newLikeCount });
+            }
+            catch (Exception ex)
+            {
+                // 發生錯誤時，回傳錯誤訊息
+                return Json(new { success = false, errorMessage = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Favorite(string modId)
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Json(new { success = false, errorMessage = "User is not authenticated." });
+                }
+
+                // 確認該用戶是否已經點過讚
+                var existingFavorite = _context.Favorites.FirstOrDefault(m => m.ModId == modId && m.UserId == userId);
+                if (existingFavorite == null)
+                {
+                    // 如果還沒點過讚，就建立新的 ModLike
+                    var newFavorite = new Favorite
+                    {
+                        ModId = modId,
+                        UserId = userId,
+                        AddTime = DateTime.Now
+                    };
+                    _context.Favorites.Add(newFavorite);
+                }
+                else
+                {
+                    // 如果已經點過讚，就刪除該筆記錄
+                    _context.Favorites.Remove(existingFavorite);
+                }
+                _context.SaveChanges();
+
+                // 回傳新的點讚數量
+                var newFavoriteCount = _context.Favorites.Count(m => m.ModId == modId);
+                return Json(new { success = true, newFavoriteCount = newFavoriteCount });
+            }
+            catch (Exception ex)
+            {
+                // 發生錯誤時，回傳錯誤訊息
+                return Json(new { success = false, errorMessage = ex.Message });
+            }
         }
     }
 }

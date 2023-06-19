@@ -21,5 +21,7 @@ namespace GameModCrafters.ViewModels
         public int AuthorLikesReceived { get; set; } // 作者獲讚數量
         public string GameId { get; set; }
         public List<ModCommentViewModel> Comments { get; set; }
+        public bool UserHasLiked { get; set; }
+        public bool UserHasFavorite { get; set; }
     }
 }
