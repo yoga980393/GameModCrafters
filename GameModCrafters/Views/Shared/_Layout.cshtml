@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - GameModCrafters</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/footer.css" />
+    <link rel="stylesheet" href="~/css/ChatBoxStyle.css" />
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css'>
     @await RenderSectionAsync("css", required: false)
     
@@ -15,12 +16,14 @@
     <partial name="_NavBarPartial"></partial>
 
     @*<div>
-        <input type="text" id="receiverEmailInput" placeholder="Recipient's email" />
+        
         <input type="text" id="messageInput" placeholder="Your message" />
         <input type="button" id="sendButton" value="Send Message" />
     </div>
     <div id="messagesList">
     </div>*@
+
+    <input type="text" id="receiverEmailInput" placeholder="Recipient's email" />
 
     @RenderBody()
      
@@ -55,6 +58,8 @@
         </div>
 
     </div>
+    <partial name="_ChatBoxPartial"></partial>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -72,13 +77,9 @@
         })
     </script>
 
-    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
     <script type="text/javascript">
         var connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
-
-        connection.on("ReceiveError", function (errorMessage) {
-            console.error("Error from server: " + errorMessage);
-        });
 
         connection.on("ReceiveMessage", function (senderEmail, receiverEmail, messageContent) {
             var encodedMsg = senderEmail + " says to " + receiverEmail + ": " + messageContent;
@@ -92,13 +93,56 @@
         });
 
         document.getElementById("sendButton").addEventListener("click", function (event) {
-            var receiverEmail = document.getElementById("receiverEmailInput").value;
+            var receiverEmail = $(".room-link.active:first").data("room");
             var messageContent = document.getElementById("messageInput").value;
             connection.invoke("SendMessage", receiverEmail, messageContent).catch(function (err) {
                 return console.error(err.toString());
             });
             event.preventDefault();
         });
-    </script>*@
+
+        $(document).ready(function () {
+            $.get('/Home/GetChatHistory', function (data) {
+                console.log(data);
+
+                data.forEach(function (email, index) {
+                    var roomElement = '<div class="sliderroom ' + (index == 0 ? 'active' : '') + '"><button class="room-link ' + (index == 0 ? 'active' : '') + '" data-room="' + email + '">' + email + '</button></div>';
+
+                    $('#chatList').append(roomElement);
+                });
+
+                // 綁定按鈕點擊事件
+                $(".room-link").click(function () {
+                    // 移除所有按鈕的 'active' 類別
+                    $(".room-link").removeClass("active");
+                    $(".sliderroom").removeClass("active");
+
+                    // 為被點擊的按鈕添加 'active' 類別
+                    $(this).addClass("active");
+                    $(this).parent(".sliderroom").addClass("active");
+                });
+            });
+        });
+    </script>
+
+    <script>
+        window.onload = function () {
+            let windowHeight = $(window).height();
+            let moveto = $(window).height() * 0.38;
+            $('.Container').css("top", windowHeight)
+
+            $('.span').on('click', function () {
+                let ChatBoxHeight = $('.Container').css('top');
+
+                if (parseInt(ChatBoxHeight) === windowHeight) {
+                    $('.Container').css("top", moveto)
+                }
+
+                else {
+                    $('.Container').css("top", windowHeight)
+                };
+            });
+        };
+    </script>
 </body>
 </html>

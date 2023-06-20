@@ -1,0 +1,142 @@
+﻿.chatbox{
+    z-index:1;
+}
+
+.chatbox .chat-box {
+    height: 400px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: white;
+}
+
+.chatbox .mySelf {
+    direction: rtl;
+}
+
+    .chatbox .mySelf .message {
+        margin-bottom: 10px;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 14px;
+        background-color: #f2f2f2;
+        word-wrap: break-word;
+        max-width: 100px;
+        width: fit-content;
+        direction: rtl;
+    }
+
+.chatbox .from {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.chatbox .time {
+    display: block;
+    font-size: 12px;
+    color: #999;
+    width: 100%;
+}
+
+.chatbox .sent {
+    background-color: #b3d9ff;
+}
+
+.chatbox .received {
+    background-color: #f2f2f2;
+}
+
+.chatbox .input-box {
+    display: flex;
+    margin-top: 10px;
+}
+
+    .chatbox .input-box input[type="text"] {
+        flex-grow: 1;
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        margin-right: 10px;
+    }
+
+    .chatbox .input-box input[type="submit"] {
+        padding: 5px 10px;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+.chatbox .room {
+    display: flex;
+    width: fit-content;
+    border: #ccc 1px solid;
+    padding: 1px;
+    border-radius: 4px;
+}
+
+.chatbox .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.chatbox .sliderroom {
+    width: 60px;
+    height: 20px;
+    overflow: hidden;
+    border: #ccc solid 1px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.chatbox button {
+    text-decoration: none;
+    color: gray;
+}
+
+.chatbox .sliderroom:hover {
+    background-color: antiquewhite;
+    min-width: 20px;
+    overflow: hidden;
+    border: #ccc solid 1px;
+    border-radius: 4px;
+}
+
+.chatbox .sliderroom.active {
+    background-color: antiquewhite;
+}
+
+.chatbox .Container .span {
+    background-color: #b3d9ff;
+    height: fit-content;
+    text-align: center;
+    width: fit-content;
+    padding: 5px 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+}
+
+.chatbox .Container {
+    width: fit-content;
+    position: fixed;
+    right: 20px;
+    transform: top 1s;
+    transition: 0.2s;
+    background-color:white;
+}
+
+.sliderroom button{
+    background-color:white;
+}
+
+.sliderroom.active button{
+    background-color:#fa0;
+}
