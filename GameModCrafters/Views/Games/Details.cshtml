@@ -199,7 +199,6 @@
     <script>
         window.onload = function () {
             GetRelease_Area()
-            //SelectTag()
             AddTag()
             AddDescribe()
         }
@@ -219,62 +218,36 @@
             })
         }
 
-        //const url = "https://raw.githubusercontent.com/devadanffefgfh/ipadair_json/main/ipadAir.json";
-        //let ipadObject, NewproductColor;
-        //function SelectTag() {
-        //    let xhr = new XMLHttpRequest();
-        //    xhr.onload = function () {
-        //        let select = document.getElementById('SelectTag')
-        //        ipadObject = JSON.parse(this.responseText);
-        //        let productColor = ipadObject.map(item => item.color)
-        //        NewproductColor = [...new Set(productColor)]
-
-        //        NewproductColor.forEach((item, index) => {
-        //            let option = document.createElement('option')
-        //            option.innerText = item
-        //            option.value = index
-        //            select.appendChild(option)
-        //        })
-
-
-        //    }
-        //    // NewproductColor = document.getElementById('SelectTag').value;
-        //    console.log(document.getElementById('SelectTag'))
-        //    xhr.open('GET', url);
-
-        //    xhr.send();
-        //}
-
         function AddTag() {
-        @foreach (var mod in Model.Mods)
-        {
-            <text>
-                var tagContainer = document.getElementById("tag-id-@(mod.ModId)");
-                var tagNames = @Html.Raw(Json.Serialize(mod.TagNames));
-                tagNames.forEach(function (tagName) {
-                    var spanElement = document.createElement("span");
-                    spanElement.className = "badge bg-secondary";
-                    spanElement.textContent = tagName;
-                    tagContainer.appendChild(spanElement);
-                });
-            </text>
+            @foreach (var mod in Model.Mods)
+                {
+                    <text>
+                        var tagContainer = document.getElementById("tag-id-@(mod.ModId)");
+                        var tagNames = @Html.Raw(Json.Serialize(mod.TagNames));
+                        tagNames.forEach(function (tagName) {
+                            var spanElement = document.createElement("span");
+                            spanElement.className = "badge bg-secondary";
+                            spanElement.textContent = tagName;
+                            tagContainer.appendChild(spanElement);
+                        });
+                    </text>
+                }
         }
-                    }
 
         function AddDescribe() {
-        @foreach (var mod in Model.Mods)
-        {
-            <text>
-                var description = '@Html.Raw(mod.Description)';
-                var describe = $("#describe-id-@mod.ModId");
+            @foreach (var mod in Model.Mods)
+                {
+                    <text>
+                        var description = '@Html.Raw(mod.Description)';
+                        var describe = $("#describe-id-@mod.ModId");
 
-                var $description = $("<div>").html(description);
-                $description.find("img").remove();
+                        var $description = $("<div>").html(description);
+                        $description.find("img").remove();
 
-                describe.html($description.html());
-            </text>
+                        describe.html($description.html());
+                    </text>
+                }
         }
-                    }
     </script>
 
     <script>
@@ -295,13 +268,22 @@
             $.ajax({
                 url: '@Url.Action("Details")',
                 type: 'GET',
-                data: { page: pageNumber },
+                data: {
+                    page: pageNumber,
+                    searchString: $('#searchStringInput').val(),
+                    tagFilter: $('#tagFilterInput').val(),
+                    pageSize: $('#pageSize').val(),
+                    orderFilter: $('#orderFilter').val(),
+                    sortFilter: $('#sortFilter').val(),
+                    timeFilter: $('#timeFilter').val()
+
+                },
                 success: function (result) {
                     $('.container.my-4.mod').html(result);
 
                     $('html, body').animate({
                         scrollTop: $('#modList').offset().top
-                    }, 0); 
+                    }, 0);
                 }
             });
         }
