@@ -43,7 +43,7 @@ namespace GameModCrafters
             {
                 //預設登入驗證網址為Account/Login, 若想變更才需要設定LoginPath
                 
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(100);
                 options.SlidingExpiration = true;
                 options.LoginPath = new PathString("/Account/LoginPage/");
                 //options.AccessDeniedPath = "/Account/Forbidden/";  //拒絕訪問!

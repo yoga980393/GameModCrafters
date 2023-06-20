@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GameModCrafters.Controllers
@@ -85,6 +86,27 @@ namespace GameModCrafters.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetChatHistory()
+        {
+            string userEmail = User.FindFirstValue(ClaimTypes.Email); // 從當前用戶的憑證中獲取電子郵件
+
+            // 從 PrivateMessage 表中查找包含當前用戶電子郵件的所有消息
+            var messages = await _context.PrivateMessages
+                .Where(m => m.Sender.Email == userEmail || m.Receiver.Email == userEmail)
+                .Include(m => m.Sender)
+                .Include(m => m.Receiver)
+                .ToListAsync();
+
+            // 從消息中提取所有獨特的對話者的電子郵件
+            var chatHistory = messages
+                .Select(m => m.Sender.Email == userEmail ? m.Receiver.Email : m.Sender.Email)
+                .Distinct()
+                .ToList();
+
+            return Ok(chatHistory);
         }
     }
 }

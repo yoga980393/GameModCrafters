@@ -251,6 +251,10 @@
                 event.preventDefault();
                 console.log($(this).attr('href'));
                 $('#publishedModsContainer').load($(this).attr('href'));
+
+                $('html, body').animate({
+                    scrollTop: $('#PublishedTitle').offset().top
+                }, 0);
             });
 
             $('#favoritedModsContainer').load('/Account/FavoritedModsPartial');
@@ -259,6 +263,10 @@
                 event.preventDefault();
                 console.log($(this).attr('href'));
                 $('#favoritedModsContainer').load($(this).attr('href'));
+
+                $('html, body').animate({
+                    scrollTop: $('#FavoritedTitle').offset().top
+                }, 0);
             });
 
             $('#downloadedModsContainer').load('/Account/DownloadedModsPartial');
@@ -267,6 +275,10 @@
                 event.preventDefault();
                 console.log($(this).attr('href'));
                 $('#downloadedModsContainer').load($(this).attr('href'));
+
+                $('html, body').animate({
+                    scrollTop: $('#DownloadedTitle').offset().top
+                }, 0);
             });
         });
     </script>
