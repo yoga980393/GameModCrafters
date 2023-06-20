@@ -21,6 +21,8 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.ComponentModel.DataAnnotations;
 using GameModCrafters.Services;
+using System.Net;
+using System.Text.RegularExpressions;
 
 namespace GameModCrafters.Controllers
 {
@@ -213,7 +215,12 @@ namespace GameModCrafters.Controllers
                 var confirmationLink = Url.Action("ConfirmEmail", "Account", new { email = user.Email, confirmationCode }, Request.Scheme);
                 //bool sendemailTF= await SendConfirmationEmail(user.Email, confirmationLink);
                 await SendConfirmationEmail(user.Email, confirmationLink);
+                
+
+              
                 return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
+                
+               
             }
 
             return View("RegisterEmailPage"); // 失敗
@@ -249,7 +256,7 @@ namespace GameModCrafters.Controllers
             // 郵件地址確認成功，返回成功頁面
             return View("ConfirmEmail");
         }
-        
+      
         private async Task SendConfirmationEmail(string email, string confirmationLink)
         {
             var from = new EmailAddress("wggisddejp@gmail.com", "第七小組遊戲mod");
@@ -260,16 +267,7 @@ namespace GameModCrafters.Controllers
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);
             await _sendGridClient.SendEmailAsync(msg);
-            //var response = await _sendGridClient.SendEmailAsync(msg);
-            //if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            //{
-            //    // 电子邮件发送成功
-            //    return true;
-            //}
-            //else
-            //{
-            //    return false;
-            //}
+           
 
         }
 
@@ -312,6 +310,25 @@ namespace GameModCrafters.Controllers
             var userCover = user.BackgroundImage;
             personVM.Avatar = userAvatar;
             personVM.BackgroundImage = userCover;
+
+            var commissions = await _context.Commissions
+               .Where(c => c.DelegatorId == usermail)
+               .Include(c => c.Delegator)
+               .Select(c => new CommissionViewModel
+               {
+                   CommissionId = c.CommissionId,
+                   DelegatorName = c.Delegator.Username,
+                   CommissionTitle = c.CommissionTitle,
+                   Budget = c.Budget,
+                   CreateTime = c.CreateTime,
+                   UpdateTime = c.UpdateTime
+               })
+               .ToListAsync();
+            if (commissions == null)
+            {
+                return NotFound();
+            }
+            personVM.Commissions = commissions;
 
             var publishedMods = await _modService.GetPublishedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);
             personVM.PublishedMods = publishedMods.Mods;

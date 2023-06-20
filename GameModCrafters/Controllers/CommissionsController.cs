@@ -11,26 +11,60 @@ using GameModCrafters.ViewModels;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Authorization;
+using GameModCrafters.Encryption;
+using GameModCrafters.Services;
+using SendGrid;
 
 namespace GameModCrafters.Controllers
 {
     public class CommissionsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ILogger _logger;
+        private readonly IHashService _hashService;
 
-        public CommissionsController(ApplicationDbContext context, ILogger<CommissionsController> logger)
+        private readonly ApplicationDbContext _context;
+
+        private readonly ISendGridClient _sendGridClient;
+
+        private readonly ModService _modService;
+
+        private readonly ILogger<CommissionsController> _logger;
+
+
+        public CommissionsController(ApplicationDbContext context, IHashService hashService, ISendGridClient sendGridClient, ModService modService, ILogger<CommissionsController> logger)
         {
+            _hashService = hashService;
             _context = context;
+            _sendGridClient = sendGridClient;
+            _modService = modService;
             _logger = logger;
         }
 
 
         // GET: Commissions
+        [Authorize]
         public async Task<IActionResult> Index()
         {
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+            if (usermail == null)
+            {
+                return NotFound();
+            }
             var applicationDbContext = _context.Commissions.Include(c => c.CommissionStatus).Include(c => c.Delegator).Include(c => c.Game);
-            return View(await applicationDbContext.ToListAsync());
+            var commissions = await _context.Commissions
+               .Where(c => c.DelegatorId == usermail)
+               .Include(c => c.Delegator)
+               .Select(c => new CommissionViewModel
+               {
+                   CommissionId = c.CommissionId,
+                   DelegatorName = c.Delegator.Username,
+                   CommissionTitle = c.CommissionTitle,
+                   Budget = c.Budget,
+                   CreateTime = c.CreateTime,
+                   UpdateTime = c.UpdateTime
+               })
+               .ToListAsync();
+            return View(commissions);
         }
 
         //GET: Commissions/Details/5
@@ -111,7 +145,7 @@ namespace GameModCrafters.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string id,[Bind("DelegatorId,CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
+        public async Task<IActionResult> Create(string gameid,[Bind("DelegatorId,CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
             //ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
             //ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
@@ -156,12 +190,12 @@ namespace GameModCrafters.Controllers
                 //string gameId = SelectGameId.FirstOrDefault();
 
                 //commission.GameId = gameId;
-                commission.GameId = id;
+                commission.GameId = gameid;
                 commission.IsDone = false;
                 commission.Trash = false;
                 _context.Add(commission);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Games", new {id = gameid});
             }
             else
             {
@@ -175,13 +209,13 @@ namespace GameModCrafters.Controllers
         {
             if (id == null)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
 
             var commission = await _context.Commissions.FindAsync(id);
             if (commission == null)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "Status", commission.CommissionStatusId);
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
@@ -198,7 +232,7 @@ namespace GameModCrafters.Controllers
         {
             if (id != commission.CommissionId)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
 
             if (ModelState.IsValid)
@@ -214,14 +248,14 @@ namespace GameModCrafters.Controllers
                 {
                     if (!CommissionExists(commission.CommissionId))
                     {
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction("PersonPage", "Account");
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("PersonPage", "Account");
             }
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
@@ -258,7 +292,7 @@ namespace GameModCrafters.Controllers
             var commission =  _context.Commissions.FirstOrDefault(c => c.CommissionId == id);
             _context.Commissions.Remove(commission);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("PersonPage", "Account");
         }
 
         private bool CommissionExists(string id)
