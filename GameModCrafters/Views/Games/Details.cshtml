@@ -15,7 +15,7 @@
 </div>
 
 <div class="bg_color">
-    <div class="container-fluid more_mods">
+    <div class="container-fluid more_mods" id="modList">
         <div class="label_tag">
             <nav>
                 <button class="release_area bttn active">
@@ -124,71 +124,7 @@
 
     </div>
     <div class="more_mods_wrap ShowGameMod paging active">
-        <div class="container my-4 mod">
-            <div class="row">
-                @foreach (var mod in Model.Mods)
-                {
-                    <div class="col-12 col-md-3 mt-3">
-                        <div class="card">
-                            <div class="pic">
-                                <a href="@Url.Action("Details", "Mods", new { id = mod.ModId })">
-                                    <img src=@(mod.Thumbnail == null ? "https://picsum.photos/300/200/?random=10" : mod.Thumbnail)>
-                                </a>
-                            </div>
-                            <div class="text">
-                                <div class="name_price">
-                                    <h3 class="name">@mod.ModName</h3>
-                                    <h3 class="price">@(mod.Price == 0 ? "Free" : mod.Price + " NTD")</h3>
-                                </div>
-                                <div class="detail">
-                                    <h2 class="tag" id="tag-id-@(mod.ModId)"><span class="badge bg-secondary" id="previewGame">@mod.GameName</span></h2>
-                                    <h3 class="author"><span>作者：</span>@mod.AuthorName</h3>
-                                    <h3 class="creatTime"><span>上傳日期：</span>@mod.CreateTime</h3>
-                                    <h3 class="UpdateTime"><span>更新日期：</span>@mod.UpdateTime</h3>
-                                    <p class="describe" id="describe-id-@(mod.ModId)"></p>
-                                </div>
-                            </div>
-                            <div class="data">
-                                <h3><span>容量：</span>@mod.Capacity</h3>
-                                <h3><span>點贊：</span>@mod.LikeCount</h3>
-                                <h3><span>收藏：</span>@mod.FavoriteCount</h3>
-                                <h3><span>下載：</span>@mod.DownloadCount</h3>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            <div class="more-mod-Pagination">
-                <nav aria-label="Page navigation ">
-                    <ul class="pagination">
-                        @if (Model.CurrentPage > 1)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="@Url.Action("Details", new { page = Model.CurrentPage - 1 })" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                        }
-                        @for (var i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" href="@Url.Action("Details", new { page = i })">@i</a>
-                            </li>
-                        }
-                        @if (Model.CurrentPage < Model.TotalPages)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="@Url.Action("Details", new { page = Model.CurrentPage + 1 })" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-            </div>
-
-        </div>
+        @await Html.PartialAsync("_ModListPartial", Model)
     </div>
 
     <div class="container entrust Release_Area_Wrap paging">
@@ -267,7 +203,6 @@
     <script>
         window.onload = function () {
             GetRelease_Area()
-            SelectTag()
             AddTag()
             AddDescribe()
         }
@@ -287,62 +222,36 @@
             })
         }
 
-        const url = "https://raw.githubusercontent.com/devadanffefgfh/ipadair_json/main/ipadAir.json";
-        let ipadObject, NewproductColor;
-        function SelectTag() {
-            let xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                let select = document.getElementById('SelectTag')
-                ipadObject = JSON.parse(this.responseText);
-                let productColor = ipadObject.map(item => item.color)
-                NewproductColor = [...new Set(productColor)]
-
-                NewproductColor.forEach((item, index) => {
-                    let option = document.createElement('option')
-                    option.innerText = item
-                    option.value = index
-                    select.appendChild(option)
-                })
-
-
-            }
-            // NewproductColor = document.getElementById('SelectTag').value;
-            console.log(document.getElementById('SelectTag'))
-            xhr.open('GET', url);
-
-            xhr.send();
-        }
-
         function AddTag() {
-        @foreach (var mod in Model.Mods)
-        {
-            <text>
-                                    var tagContainer = document.getElementById("tag-id-@(mod.ModId)");
-                var tagNames = @Html.Raw(Json.Serialize(mod.TagNames));
-                tagNames.forEach(function (tagName) {
-                    var spanElement = document.createElement("span");
-                    spanElement.className = "badge bg-secondary";
-                    spanElement.textContent = tagName;
-                    tagContainer.appendChild(spanElement);
-                });
-            </text>
+            @foreach (var mod in Model.Mods)
+                {
+                    <text>
+                        var tagContainer = document.getElementById("tag-id-@(mod.ModId)");
+                        var tagNames = @Html.Raw(Json.Serialize(mod.TagNames));
+                        tagNames.forEach(function (tagName) {
+                            var spanElement = document.createElement("span");
+                            spanElement.className = "badge bg-secondary";
+                            spanElement.textContent = tagName;
+                            tagContainer.appendChild(spanElement);
+                        });
+                    </text>
+                }
         }
-                    }
 
         function AddDescribe() {
-        @foreach (var mod in Model.Mods)
-        {
-            <text>
-                                    var description = '@Html.Raw(mod.Description)';
-                var describe = $("#describe-id-@mod.ModId");
+            @foreach (var mod in Model.Mods)
+                {
+                    <text>
+                        var description = '@Html.Raw(mod.Description)';
+                        var describe = $("#describe-id-@mod.ModId");
 
-                var $description = $("<div>").html(description);
-                $description.find("img").remove();
+                        var $description = $("<div>").html(description);
+                        $description.find("img").remove();
 
-                describe.html($description.html());
-            </text>
+                        describe.html($description.html());
+                    </text>
+                }
         }
-                    }
     </script>
 
     <script>
@@ -356,5 +265,31 @@
             $('#Search').val(params.get('searchString') || "");
             $('#tagFilter').val(params.get('tagFilter') || "");
         });
+    </script>
+
+    <script>
+        function loadPage(pageNumber) {
+            $.ajax({
+                url: '@Url.Action("Details")',
+                type: 'GET',
+                data: {
+                    page: pageNumber,
+                    searchString: $('#searchStringInput').val(),
+                    tagFilter: $('#tagFilterInput').val(),
+                    pageSize: $('#pageSize').val(),
+                    orderFilter: $('#orderFilter').val(),
+                    sortFilter: $('#sortFilter').val(),
+                    timeFilter: $('#timeFilter').val()
+
+                },
+                success: function (result) {
+                    $('.container.my-4.mod').html(result);
+
+                    $('html, body').animate({
+                        scrollTop: $('#modList').offset().top
+                    }, 0);
+                }
+            });
+        }
     </script>
 }

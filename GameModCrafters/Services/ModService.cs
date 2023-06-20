@@ -71,6 +71,7 @@ namespace GameModCrafters.Services
             var mods = await _context.Mods
                 .Where(m => m.Favorite.Any(f => f.UserId == id))
                 .Where(m => m.IsDone)
+                .OrderByDescending(c => c.CreateTime)
                 .Skip((currentPage - 1) * pageSize)
                 .Take(pageSize)
                 .Include(m => m.Author)

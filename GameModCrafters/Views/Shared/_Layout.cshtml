@@ -53,5 +53,16 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("js", required: false)
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        $(() => {
+            $.ajax({
+                url: '/Account/GetUserName',
+                type: 'GET',
+                success: function (result) {
+                    $('#navbarname').text("Hello " + result);
+                }
+            });
+        })
+    </script>
 </body>
 </html>

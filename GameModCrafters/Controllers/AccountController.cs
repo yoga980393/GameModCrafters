@@ -626,5 +626,12 @@ namespace GameModCrafters.Controllers
 
             return PartialView("_DownloadedModsPartial", personVM);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserName()
+        {
+            var user = await _context.Users.Where(u => u.Email == User.FindFirstValue(ClaimTypes.Email)).Select(u => u.Username).FirstOrDefaultAsync();
+            return Ok(user);
+        }
     }
 }
