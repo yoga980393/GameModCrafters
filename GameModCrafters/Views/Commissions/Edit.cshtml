@@ -35,7 +35,7 @@
             </div>
             <div class="btnCantaner">
                @* <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />*@
-                <input type="submit" value="修改" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
+                <input type="submit" value="修改" asp-controller="Commissions" asp-action="Edit" onclick="return confirm('修改成功!')" class="btn btn-primary form-control" />
                 @*<input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />*@
                 <input type="submit" value="刪除" asp-controller="Commissions" asp-action="Delete" asp-route-id="@Model.CommissionId" onclick="return confirm('確定要刪除此委託嗎？')" class="btn btn-primary form-control" />
             </div>
