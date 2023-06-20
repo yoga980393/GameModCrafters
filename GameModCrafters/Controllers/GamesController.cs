@@ -142,6 +142,11 @@ namespace GameModCrafters.Controllers
                 Commissions = commissions
             };
 
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_ModListPartial", pagedModel); 
+            }
+
             return View(pagedModel);
         }
 
