@@ -14,13 +14,13 @@
     
     <partial name="_NavBarPartial"></partial>
 
-    <div>
+    @*<div>
         <input type="text" id="receiverEmailInput" placeholder="Recipient's email" />
         <input type="text" id="messageInput" placeholder="Your message" />
         <input type="button" id="sendButton" value="Send Message" />
     </div>
     <div id="messagesList">
-    </div>
+    </div>*@
 
     @RenderBody()
      
@@ -72,7 +72,7 @@
         })
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
     <script type="text/javascript">
         var connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
 
@@ -99,6 +99,6 @@
             });
             event.preventDefault();
         });
-    </script>
+    </script>*@
 </body>
 </html>
