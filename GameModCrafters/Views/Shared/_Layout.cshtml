@@ -13,7 +13,14 @@
 <body>
     
     <partial name="_NavBarPartial"></partial>
-    
+
+    <div>
+        <input type="text" id="receiverEmailInput" placeholder="Recipient's email" />
+        <input type="text" id="messageInput" placeholder="Your message" />
+        <input type="button" id="sendButton" value="Send Message" />
+    </div>
+    <div id="messagesList">
+    </div>
 
     @RenderBody()
      
@@ -63,6 +70,35 @@
                 }
             });
         })
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
+    <script type="text/javascript">
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+
+        connection.on("ReceiveError", function (errorMessage) {
+            console.error("Error from server: " + errorMessage);
+        });
+
+        connection.on("ReceiveMessage", function (senderEmail, receiverEmail, messageContent) {
+            var encodedMsg = senderEmail + " says to " + receiverEmail + ": " + messageContent;
+            var li = document.createElement("li");
+            li.textContent = encodedMsg;
+            document.getElementById("messagesList").appendChild(li);
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            var receiverEmail = document.getElementById("receiverEmailInput").value;
+            var messageContent = document.getElementById("messageInput").value;
+            connection.invoke("SendMessage", receiverEmail, messageContent).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
     </script>
 </body>
 </html>
