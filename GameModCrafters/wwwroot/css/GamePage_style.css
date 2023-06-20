@@ -138,14 +138,24 @@ img {
     margin: 0 60px;
     gap: 5px;
 }
+
+    .entrustClassification{
+        justify-content : space-between;
+    }
     .ModGameClassification .upload-button {
         margin-left: auto;
-        height:50px;
+        height: 50px;
+    }
+
+    .entrustClassification .upload-button {
+        margin-left: auto;
+        height: 50px;
     }
 
     .ModGameClassification button,
     .ModGameClassification a,
-    .entrustClassification button {
+    .entrustClassification div  button,
+    .entrustClassification a {
         padding: 10px;
         border: 1px solid white;
         background-color: rgb(170, 163, 163);
@@ -154,10 +164,11 @@ img {
 
         .ModGameClassification button:hover,
         .ModGameClassification a:hover,
-        .entrustClassification button:hover {
+        .entrustClassification button:hover,
+        .entrustClassification a:hover {
             transition: .5s;
             background-color: azure;
-            color:black;
+            color: black;
         }
 
 .paging_title {
