@@ -125,7 +125,7 @@ namespace GameModCrafters.Controllers
         [HttpPost]
         public IActionResult SearchResult(string keyword)
         {
-            return RedirectToAction("Search", new { keyword = keyword });
+            return View();
         }
        
 
