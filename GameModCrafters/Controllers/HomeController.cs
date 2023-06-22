@@ -86,5 +86,49 @@ namespace GameModCrafters.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        //自動搜尋
+        [HttpGet]
+        public async Task<IActionResult>AutoSearch(string keyword)
+        {
+            
+            List<AutoSearchViewModelcs> searchResults = await GetAutoSearchResults(keyword);
+
+            return PartialView("_AutoSearchResults", searchResults);
+        }
+        
+        private async Task<List<AutoSearchViewModelcs>> GetAutoSearchResults(string keyword)
+        {
+            var searchResults = await _context.Games
+                .Include(g => g.Mods)
+                    .ThenInclude(m=>m.Author)
+                .Where(g=>g.GameName.Contains(keyword) || g.Mods.Any(m => m.ModName.Contains(keyword)))
+                .SelectMany(g=>g.Mods.Select(m => new AutoSearchViewModelcs
+                {
+                    GameId = g.GameId,
+                    GameName = g.GameName,
+                    ModId = m.ModId,
+                    ModName = m.ModName,
+                    Price = m.Price,
+                    AuthorName = m.Author.Username,
+                    ModThumbnail = m.Thumbnail,
+                    GameThumbnail = g.Thumbnail,
+                }))
+                .ToListAsync();
+            
+            return searchResults;
+        }
+
+
+
+        //搜尋按鈕按下
+        [HttpPost]
+        public IActionResult SearchResult(string keyword)
+        {
+            return RedirectToAction("Search", new { keyword = keyword });
+        }
+       
+
+
     }
 }

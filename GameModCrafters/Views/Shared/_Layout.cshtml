@@ -8,7 +8,32 @@
     <link rel="stylesheet" href="~/css/footer.css" />
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css'>
     @await RenderSectionAsync("css", required: false)
-    
+    <style>
+        #searchResults{
+            position:absolute;
+            top:50px;
+            z-index:5;
+        }
+
+        #searchForm{
+            position:relative;
+        }
+
+        .GameNameTitle-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .detail-nav {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .detail-nav p{
+            margin-left:10px;
+        }
+    </style>
 </head>
 <body>
     
@@ -100,5 +125,40 @@
             event.preventDefault();
         });
     </script>*@
+    <script>
+        $(document).ready(function () {
+            $('input[name="keyword"]').keyup(function () {
+
+                console.log("111");
+                var keyword = $('input[name="keyword"]').val();
+                if (keyword.trim() === '') {
+                    // 清空输入框内容时隐藏搜索结果
+                    $('#searchResults').empty();
+                    return;
+                }
+                // 发送 AJAX 请求
+                $.get('/Home/AutoSearch', { keyword: keyword }, function (data) {
+                    $('#searchResults').html(data); // 将搜索结果渲染到页面中
+                });
+            });
+        });
+        @*$(document).ready(function () {
+            $('#search_btn').keyup(function () {
+
+                console.log("111");
+                var keyword = $('input[name="keyword"]').val();
+                if (keyword.trim() === '') {
+                    // 清空输入框内容时隐藏搜索结果
+                    $('#searchResults').empty();
+                    return;
+                }
+                // 发送 AJAX 请求
+                $.get('/Home/Search', { keyword: keyword }, function (data) {
+                    $('#searchResults').append(data); // 将搜索结果渲染到页面中
+                });
+            });
+        });
+        *@
+    </script>
 </body>
 </html>

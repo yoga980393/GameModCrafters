@@ -1,0 +1,61 @@
+﻿@model List<AutoSearchViewModelcs>
+
+@if (Model != null && Model.Count > 0)
+{
+
+    <ul class="list-group"style="width:500px">
+        @{
+            var gameNames = new List<string>();
+        }
+        @foreach (var result in Model)
+        {
+            @if (result.GameName != null && !gameNames.Contains(result.GameName))
+            {
+                gameNames.Add(result.GameName);
+                <a href="@Url.Action("Details", "Games", new { id = result.GameId })">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4">
+                                <img src="@result.GameThumbnail" alt="Thumbnail" style=" display: block; width: 100%;height: 100%;object-fit: scale-down;">
+                            </div>
+                            <div class="col-8">                          
+                                    <h2>@result.GameName</h2>
+                            </div>
+                        </div>
+                    </li>
+                </a>
+            }
+                    
+               
+                
+            
+        }
+        
+        @foreach (var result in Model)
+        {
+            <a href="@Url.Action("Details", "Mods", new { id = result.ModId })">
+                <li class="list-group-item">
+                <div class="row">
+                    <div class="col-4">
+                        <img src="@result.ModThumbnail" alt="Thumbnail" style=" display: block; width: 100%;height: 100%;object-fit: scale-down;">
+                    </div>
+                    <div class="col-8">
+                        <div class="GameNameTitle-nav">
+                            <h5>@result.GameName</h5>
+                        </div>
+
+                        <h2>@result.ModName</h2>
+                        <div class="detail-nav">
+                            <p>作者:@result.AuthorName</p>
+                            <p>價格:@result.Price</p>
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+        </a>
+        }
+        
+    </ul>
+}
+
