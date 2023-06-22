@@ -17,7 +17,7 @@ namespace GameModCrafters.ViewModels
 
         [Display(Name = "背景圖片")]
         public string BackgroundImage { get; set; }
-
+        public List<CommissionViewModel> Commissions { get; set; }
         public List<ModViewModel> PublishedMods { get; set; }
         public int PublishedCurrentPage { get; set; }
         public int PublishedTotalPages { get; set; }

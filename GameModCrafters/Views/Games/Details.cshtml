@@ -72,7 +72,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="tagFilter">标签：</label>
+                        <label for="tagFilter">標籤：</label>
                         <select id="tagFilter" name="tagFilter" class="form-control">
                             <option value="">全部</option>
                             @foreach (var tag in ViewBag.Tags)
@@ -151,7 +151,7 @@
             {
                 <div class="row align-items-start">
                     <div class="col-6 title">
-                        <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
+                        <a href="@Url.Action("Details", "Commissions", new { id = item.CommissionId })">
                             @item.CommissionTitle
                         </a>
                     </div>

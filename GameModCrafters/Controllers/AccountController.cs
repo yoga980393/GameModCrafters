@@ -311,6 +311,25 @@ namespace GameModCrafters.Controllers
             personVM.Avatar = userAvatar;
             personVM.BackgroundImage = userCover;
 
+            var commissions = await _context.Commissions
+               .Where(c => c.DelegatorId == usermail)
+               .Include(c => c.Delegator)
+               .Select(c => new CommissionViewModel
+               {
+                   CommissionId = c.CommissionId,
+                   DelegatorName = c.Delegator.Username,
+                   CommissionTitle = c.CommissionTitle,
+                   Budget = c.Budget,
+                   CreateTime = c.CreateTime,
+                   UpdateTime = c.UpdateTime
+               })
+               .ToListAsync();
+            if (commissions == null)
+            {
+                return NotFound();
+            }
+            personVM.Commissions = commissions;
+
             var publishedMods = await _modService.GetPublishedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);
             personVM.PublishedMods = publishedMods.Mods;
             personVM.PublishedCurrentPage = page;
