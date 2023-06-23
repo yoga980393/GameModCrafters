@@ -164,8 +164,8 @@
                 });
             });
         });
-        @*$(document).ready(function () {
-            $('#search_btn').keyup(function () {
+        $(document).ready(function () {
+            $('#search_btn').click(function () {
 
                 console.log("111");
                 var keyword = $('input[name="keyword"]').val();
@@ -180,7 +180,20 @@
                 });
             });
         });
-        *@
+        $(document).ready(function () {
+            $('#search_btn').click(function () {
+                var keyword = $('input[name="keyword"]').val().trim();
+                if (keyword === '') {
+                    // 清空输入框内容时隐藏搜索结果
+                    $('#searchResults').empty();
+                    return;
+                }
+                // 跳转到搜索结果页
+                var url = '/Home/SearchResult?keyword=' + encodeURIComponent(keyword);
+                window.location.href = url;
+            });
+        });
+
     </script>
 </body>
 </html>

@@ -115,18 +115,18 @@ namespace GameModCrafters.Controllers
         public async Task<IActionResult>AutoSearch(string keyword)
         {
             
-            List<AutoSearchViewModelcs> searchResults = await GetAutoSearchResults(keyword);
+            List<AutoSearchViewModel> searchResults = await GetAutoSearchResults(keyword);
 
             return PartialView("_AutoSearchResults", searchResults);
         }
         
-        private async Task<List<AutoSearchViewModelcs>> GetAutoSearchResults(string keyword)
+        private async Task<List<AutoSearchViewModel>> GetAutoSearchResults(string keyword)
         {
             var searchResults = await _context.Games
                 .Include(g => g.Mods)
                     .ThenInclude(m=>m.Author)
                 .Where(g=>g.GameName.Contains(keyword) || g.Mods.Any(m => m.ModName.Contains(keyword)))
-                .SelectMany(g=>g.Mods.Select(m => new AutoSearchViewModelcs
+                .SelectMany(g=>g.Mods.Select(m => new AutoSearchViewModel
                 {
                     GameId = g.GameId,
                     GameName = g.GameName,
@@ -145,12 +145,79 @@ namespace GameModCrafters.Controllers
 
 
         //搜尋按鈕按下1
-        [HttpPost]
-        public IActionResult SearchResult(string keyword)
+        //[HttpPost]
+        //public IActionResult SearchResult(string keyword)
+        //{
+
+        //    return View();
+        //}
+        [HttpGet]
+        public async Task<IActionResult> SearchResult(string keyword)
         {
-            return View();
+            var searchResults = await GetSearchResults(keyword);
+            var viewModel = new NavbarSearchResultViewmodel
+            {
+                Games = searchResults.Select(g => new Game
+                {
+                    GameId = g.GameId,
+                    GameName = g.GameName,
+                    Thumbnail = g.GameThumbnail
+                }).ToList(),
+                Mods = searchResults.Select(m => new ModViewModel
+                {
+                    ModId = m.ModId,
+                    Thumbnail = m.ModThumbnail,
+                    ModName = m.ModName,
+                    Price = m.Price,
+                    GameName = m.GameName,
+                    AuthorName = m.AuthorName,
+                    CreateTime = m.CreateTime,
+                    UpdateTime = m.UpdateTime,
+                    Description = m.Description,
+                   // Capacity = m.Capacity,
+                    LikeCount = m.LikeCount,
+                    FavoriteCount = m.FavoriteCount,
+                    DownloadCount = m.DownloadCount,
+                    TagNames = m.TagNames
+                }).ToList(),
+                TotalPages = 0 // Set the total pages value according to your implementation
+            };
+
+            return View(viewModel);
         }
-       
+
+        private async Task<List<AutoSearchViewModel>> GetSearchResults(string keyword)
+        {
+            var searchResults = await _context.Games
+                .Include(g => g.Mods)
+                .ThenInclude(m => m.Author)
+                .Where(g => g.GameName.Contains(keyword) || g.Mods.Any(m => m.ModName.Contains(keyword)))
+                .SelectMany(g => g.Mods.Select(m => new AutoSearchViewModel
+                {
+                    GameId = g.GameId,
+                    GameName = g.GameName,
+                    ModId = m.ModId,
+                    ModName = m.ModName,
+                    Price = m.Price,
+                    AuthorName = m.Author.Username,
+                    ModThumbnail = m.Thumbnail,
+                    GameThumbnail = g.Thumbnail,
+                    CreateTime = m.CreateTime,
+                    UpdateTime = m.UpdateTime,
+                    Description = m.Description,
+                    //Capacity = m.Capacity,
+                    LikeCount = m.ModLikes.Count,
+                    FavoriteCount = m.Favorite.Count,
+                    DownloadCount = m.Downloaded.Count,
+                    TagNames = m.ModTags.Select(t => t.Tag.TagName).ToList()
+                }))
+                .ToListAsync();
+
+            return searchResults;
+        }
+
+
+
 
 
     }
