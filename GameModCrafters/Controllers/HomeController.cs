@@ -1,4 +1,5 @@
 ﻿using GameModCrafters.Data;
+using GameModCrafters.Data;
 using GameModCrafters.Models;
 using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -98,12 +99,17 @@ namespace GameModCrafters.Controllers
                 .Where(m => m.Sender.Email == userEmail || m.Receiver.Email == userEmail)
                 .Include(m => m.Sender)
                 .Include(m => m.Receiver)
+                .OrderByDescending(m => m.MessageTime)
                 .ToListAsync();
 
-            // 從消息中提取所有獨特的對話者的電子郵件
+            // 從消息中提取所有獨特的對話者的電子郵件以及是否有未讀訊息
             var chatHistory = messages
-                .Select(m => m.Sender.Email == userEmail ? m.Receiver.Email : m.Sender.Email)
-                .Distinct()
+                .GroupBy(m => m.Sender.Email == userEmail ? m.Receiver.Email : m.Sender.Email)
+                .Select(g => new
+                {
+                    Email = g.Key,
+                    HasUnread = g.Any(m => !m.IsRead && m.Receiver.Email == userEmail)
+                })
                 .ToList();
 
             return Ok(chatHistory);
@@ -216,9 +222,43 @@ namespace GameModCrafters.Controllers
             return searchResults;
         }
 
+        [HttpGet]
+        public IActionResult GetChatHistoryWithUser(string receiverId)
+        {
+            var senderId = User.FindFirst(ClaimTypes.Email)?.Value;
+            var chatHistory = _context.PrivateMessages
+                .Where(m => m.SenderId == senderId && m.ReceiverId == receiverId || m.SenderId == receiverId && m.ReceiverId == senderId)
+                .OrderBy(m => m.MessageTime)
+                .Select(m => new {
+                    SenderId = m.SenderId,
+                    ReceiverId = m.ReceiverId,
+                    MessageContent = m.MessageContent,
+                    MessageTime = m.MessageTime
+                })
+                .ToList();
+            return Json(chatHistory);
+        }
 
+        // GET: /Home/GetUserByEmail
+        [HttpGet]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
+            if (user == null)
+            {
+                return NotFound(new { message = "No user found with this email." });
+            }
 
+            return Ok(user);
+        }
 
+        // GET: /Home/GetAllUserEmails
+        [HttpGet]
+        public async Task<IActionResult> GetAllUserEmails()
+        {
+            var emails = await _context.Users.Select(u => u.Email).ToListAsync();
+            return Ok(emails);
+        }
     }
 }

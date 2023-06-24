@@ -21,6 +21,9 @@
         [Required, Display(Name = "訊息時間")]
         public DateTime MessageTime { get; set; }
 
+        [Required, Display(Name = "是否已讀")]
+        public bool IsRead { get; set; }
+
         // Navigation properties and Foreign key settings
         [ForeignKey(nameof(SenderId))]
         public User Sender { get; set; }

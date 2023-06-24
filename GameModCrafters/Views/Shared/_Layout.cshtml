@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var emailClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+    var email = emailClaim?.Value ?? string.Empty;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,6 +14,7 @@
     <link rel="stylesheet" href="~/css/ChatBoxStyle.css" />
     <link href="~/css/AutoSearch.css" rel="stylesheet" />
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css'>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     @await RenderSectionAsync("css", required: false)
    
 </head>
@@ -49,6 +55,7 @@
         </div>
 
     </div>
+    <input type="hidden" id="userEmail" value="@email" />
     <partial name="_ChatBoxPartial"></partial>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -69,14 +76,42 @@
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.6/signalr.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
     <script type="text/javascript">
         var connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+        var currentEmail = document.getElementById('userEmail').value;
 
         connection.on("ReceiveMessage", function (senderEmail, receiverEmail, messageContent) {
-            var encodedMsg = senderEmail + " says to " + receiverEmail + ": " + messageContent;
+            var encodedMsg = messageContent;
             var li = document.createElement("li");
-            li.textContent = encodedMsg;
-            document.getElementById("messagesList").appendChild(li);
+            var div = document.createElement("div");
+
+            var currentChatPartnerEmail = $(".room-link.btn.active").data("room");
+            if ((senderEmail == currentEmail && receiverEmail == currentChatPartnerEmail) || (senderEmail == currentChatPartnerEmail && receiverEmail == currentEmail)) {
+                if (senderEmail == currentEmail) {
+                    li.className = "messageli rightli";
+                    div.className = "messages right";
+                    // 將接收到訊息的聊天室按鈕移動到最前面
+                    var chatButton = $('.room-link[data-room="' + receiverEmail + '"]').parent();
+                    $('#chatList').prepend(chatButton);
+                }
+                else {
+                    li.className = "messageli leftli";
+                    div.className = "messages right";
+                    // 將接收到訊息的聊天室按鈕移動到最前面
+                    var chatButton = $('.room-link[data-room="' + senderEmail + '"]').parent();
+                    $('#chatList').prepend(chatButton);
+                }
+
+                div.textContent = encodedMsg;
+                li.appendChild(div);
+                var messagesList = document.getElementById("messagesList");
+                messagesList.appendChild(li);
+                messagesList.scrollTop = messagesList.scrollHeight;
+
+                
+            }
         });
 
         connection.start().catch(function (err) {
@@ -89,21 +124,56 @@
             connection.invoke("SendMessage", receiverEmail, messageContent).catch(function (err) {
                 return console.error(err.toString());
             });
+            document.getElementById("messageInput").value = "";
             event.preventDefault();
+        });
+
+        document.getElementById("messageInput").addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("sendButton").click();
+            }
         });
 
         $(document).ready(function () {
             $.get('/Home/GetChatHistory', function (data) {
                 console.log(data);
 
-                data.forEach(function (email, index) {
-                    var roomElement = '<div class="sliderroom ' + (index == 0 ? 'active' : '') + '"><button class="room-link ' + (index == 0 ? 'active' : '') + '" data-room="' + email + '">' + email + '</button></div>';
+                data.forEach(function (item, index) {
+                    var roomElement = '<div class="sliderroom ' + (index == 0 ? 'active' : '') + '"><button class="room-link btn ' + (index == 0 ? 'active' : '') + '" data-room="' + item.email + '">' + item.email + '</button></div>';
 
                     $('#chatList').append(roomElement);
                 });
 
                 // 綁定按鈕點擊事件
                 $(".room-link").click(function () {
+                    var receiverId = $(this).data("room");
+                    // 获取并显示聊天记录
+                    $.get('/Home/GetChatHistoryWithUser?receiverId=' + receiverId, function (data) {
+                        // 清空之前的聊天记录
+                        $("#messagesList").empty();
+                        // 添加新的聊天记录
+                        data.forEach(function (message) {
+                            var encodedMsg = message.messageContent;
+                            var li = document.createElement("li");
+                            var div = document.createElement("div");
+
+                            if (message.senderId == currentEmail){
+                                li.className = "messageli rightli";
+                                div.className = "messages right";
+                            }
+                            else{
+                                li.className = "messageli leftli";
+                                div.className = "messages right";
+                            }
+
+                            div.textContent = encodedMsg;
+                            li.appendChild(div);
+                            document.getElementById("messagesList").appendChild(li);
+                            messagesList.scrollTop = messagesList.scrollHeight;
+                        });
+                    });
+
                     // 移除所有按鈕的 'active' 類別
                     $(".room-link").removeClass("active");
                     $(".sliderroom").removeClass("active");
@@ -113,7 +183,81 @@
                     $(this).parent(".sliderroom").addClass("active");
                 });
             });
+
+            $('#searchButton').click(function () {
+                var userEmail = $('#userSearchInput').val();
+                if (userEmail) {
+                    var existingButton = $('.room-link[data-room="' + userEmail + '"]');
+                    if (existingButton.length > 0) {
+                        // 如果已經在列表中，則觸發click事件
+                        existingButton.click();
+                    }else{
+                        $.get('/Home/GetUserByEmail?email=' + userEmail)
+                            .done(function (data) {
+                                var roomElement = '<div class="sliderroom"><button class="room-link btn" data-room="' + userEmail + '">' + userEmail + '</button></div>';
+                                $('#chatList').prepend(roomElement);
+
+                                $(".room-link").click(function () {
+                                    var receiverId = $(this).data("room");
+                                    // 获取并显示聊天记录
+                                    $.get('/Home/GetChatHistoryWithUser?receiverId=' + receiverId, function (data) {
+                                        // 清空之前的聊天记录
+                                        $("#messagesList").empty();
+                                        // 添加新的聊天记录
+                                        data.forEach(function (message) {
+                                            var encodedMsg = message.messageContent;
+                                            var li = document.createElement("li");
+                                            var div = document.createElement("div");
+
+                                            if (message.senderId == currentEmail) {
+                                                li.className = "messageli rightli";
+                                                div.className = "messages right";
+                                            }
+                                            else {
+                                                li.className = "messageli leftli";
+                                                div.className = "messages right";
+                                            }
+
+                                            div.textContent = encodedMsg;
+                                            li.appendChild(div);
+                                            document.getElementById("messagesList").appendChild(li);
+                                        });
+                                    });
+
+                                    // 移除所有按鈕的 'active' 類別
+                                    $(".room-link").removeClass("active");
+                                    $(".sliderroom").removeClass("active");
+
+                                    // 為被點擊的按鈕添加 'active' 類別
+                                    $(this).addClass("active");
+                                    $(this).parent(".sliderroom").addClass("active");
+                                });
+                            })
+                            .fail(function (jqXHR) {
+                                if (jqXHR.status == 404) {
+                                    // User not found. Show an error message.
+                                    alert(jqXHR.responseJSON.message);
+                                } else {
+                                    // Some other error occurred.
+                                    console.log("Error: " + jqXHR.status);
+                                }
+                            });
+                    }
+                } else {
+                    alert('Please enter an email to search.');
+                }
+            });
+
         });
+
+        $(function () {
+            $.get('/Home/GetAllUserEmails', function (data) {
+                $("#userSearchInput").autocomplete({
+                    source: data
+                });
+            });
+        });
+
     </script>
 
     <script>
@@ -135,17 +279,6 @@
             });
         };
     </script>
-    
-
-
-
-
-
-
-
-
-
-
 
     <script>
         $(document).ready(function () {
