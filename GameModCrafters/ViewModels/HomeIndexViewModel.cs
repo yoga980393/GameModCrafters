@@ -7,5 +7,6 @@ namespace GameModCrafters.ViewModels
     {
         public List<Game> Games { get; set; }
         public List<ModViewModel> Mods { get; set; }
+        public List<AuthorViewModel> Author { get; set; }
     }
 }

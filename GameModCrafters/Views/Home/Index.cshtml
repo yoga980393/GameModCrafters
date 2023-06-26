@@ -131,7 +131,28 @@
 <div class="container my-4 author">
     <h3>熱門作者：</h3>
     <div class="row" id="authorRow">
-        <!-- 改用js產生 -->
+        @foreach(var author in Model.Author)
+        {
+            <div class="col-12 col-md-3">
+                <a href="">
+                    <div class="card">
+                        <div class="pic">
+                            <img src=@(author.BackgroundImage == null ? "https://picsum.photos/300/200/?random=1" : author.BackgroundImage)>
+                        </div>
+                        <div class="authorData">
+                            <h3 class="name">@author.Name</h3>
+                            <div class="detail">
+                                <div>作品數量：@author.WorkCount</div>
+                                <div>獲讚數：@author.LikeCount</div>
+                            </div>
+                        </div>
+                        <div class="avatar">
+                            <img src=@(author.Avatar == null ? "https://picsum.photos/300/200/?random=1" : author.Avatar)>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
     </div>
 </div>
 
@@ -179,39 +200,6 @@
 @section js{
 
     <script>
-        let authorCardArray = [5, 6, 7, 8]
-        let authorData = {
-            name: "作者名字",
-            works: 5,
-            likes: 100
-        }
-
-        
-        function author() {
-            let row = document.querySelector("#authorRow");
-            authorCardArray.forEach(item => {
-                let card = `<div class="col-12 col-md-3">
-                                    <a href="">
-                                        <div class="card">
-                                            <div class="pic">
-                                                <img src="https://picsum.photos/300/200/?random=${item}">
-                                            </div>
-                                            <div class="authorData">
-                                                <h3 class="name">${authorData.name}</h3>
-                                                <div class="detail">
-                                                    <div>作品數量：${authorData.works}</div>
-                                                    <div>獲讚數：${authorData.likes}</div>
-                                                </div>
-                                            </div>
-                                            <div class="avatar">
-                                                <img src="https://picsum.photos/100/100/?random=${item + 4}">
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>`
-                row.innerHTML += card;
-            })
-        }
 
         function AddTag() {
             @foreach (var mod in Model.Mods)
@@ -244,10 +232,9 @@
             }
         }
 
-        window.onload = function () {
-            author()
+        $(() => {
             AddTag()
             AddDescribe()
-        };
+        })
     </script>
 }

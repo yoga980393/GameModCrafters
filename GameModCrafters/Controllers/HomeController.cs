@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace GameModCrafters.Controllers
 {
@@ -69,10 +70,27 @@ namespace GameModCrafters.Controllers
                 .Take(4)
                 .ToList();
 
+            var AuthorList = _context.Users
+                .Include(u => u.Mods)
+                .Where(u => u.Mods != null)
+                .Select(u => new AuthorViewModel
+                {
+                    Name = u.Username,
+                    LikeCount = u.ModLikes.Count,
+                    WorkCount = u.Mods.Count,
+                    Avatar = u.Avatar,
+                    BackgroundImage = u.BackgroundImage,
+
+                })
+                .OrderByDescending(x => x.WorkCount)
+                .Take(4)
+                .ToList();
+
             var viewModel = new HomeIndexViewModel
             {
                 Games = gameList,
-                Mods = modList
+                Mods = modList,
+                Author = AuthorList
             };
 
             return View(viewModel);
