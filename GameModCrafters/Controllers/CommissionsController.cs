@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authorization;
 using GameModCrafters.Encryption;
 using GameModCrafters.Services;
 using SendGrid;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace GameModCrafters.Controllers
 {
@@ -54,6 +56,7 @@ namespace GameModCrafters.Controllers
             var commissions = await _context.Commissions
                .Where(c => c.DelegatorId == usermail)
                .Include(c => c.Delegator)
+               .Include(c => c.CommissionStatus)
                .Select(c => new CommissionViewModel
                {
                    CommissionId = c.CommissionId,
@@ -61,7 +64,8 @@ namespace GameModCrafters.Controllers
                    CommissionTitle = c.CommissionTitle,
                    Budget = c.Budget,
                    CreateTime = c.CreateTime,
-                   UpdateTime = c.UpdateTime
+                   UpdateTime = c.UpdateTime,
+                   Status = c.CommissionStatus.Status
                })
                .ToListAsync();
             return View(commissions);
@@ -198,7 +202,7 @@ namespace GameModCrafters.Controllers
 
                 //commission.GameId = gameId;
                 commission.GameId = gameid;
-                commission.IsDone = false;
+                commission.IsDone = true;
                 commission.Trash = false;
                 _context.Add(commission);
                 await _context.SaveChangesAsync();
@@ -310,6 +314,54 @@ namespace GameModCrafters.Controllers
         private bool CommissionExists(string id)
         {
             return _context.Commissions.Any(e => e.CommissionId == id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Invalid file.");
+            }
+
+            var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+            var extension = Path.GetExtension(file.FileName);
+            var date = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var random = Guid.NewGuid().ToString().Substring(0, 4); // 生成一個4位數的隨機字串
+            var newFileName = $"{fileName}_{date}_{random}{extension}";
+
+            var filePath = Path.Combine("wwwroot/ModImages", newFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            var fileUrl = Url.Content("~/ModImages/" + newFileName);
+            return Ok(new { fileUrl });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Upload(IFormFile upload)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(upload.FileName);
+            var extension = Path.GetExtension(upload.FileName);
+            var date = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var random = Guid.NewGuid().ToString().Substring(0, 4); // 生成一個4位數的隨機字串
+            var newFileName = $"{fileName}_{date}_{random}{extension}";
+
+            var path = Path.Combine("wwwroot/ModDescriptionImages", newFileName);
+
+            using (var stream = System.IO.File.Create(path))
+            {
+                await upload.CopyToAsync(stream);
+            }
+
+            return Json(new
+            {
+                uploaded = true,
+                url = Url.Content("~/ModDescriptionImages/" + newFileName) // Update the path here
+            });
         }
     }
 }

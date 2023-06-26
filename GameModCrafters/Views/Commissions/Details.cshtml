@@ -8,7 +8,7 @@
     <h1>委託修改</h1>
     <div class="row">
         <form method="post">
-            <select asp-for="CommissionStatusId" class="form-control" asp-items="@ViewBag.CommissionStatusId" disabled></select>
+            <label asp-for="DelegatorId">委託人</label>
             <select asp-for="DelegatorId" class="form-control" asp-items="@ViewBag.DelegatorId" disabled></select>
             <input type="hidden" class="form-control" asp-for="CommissionId" disabled>
             <div class="mb-3">
@@ -21,7 +21,7 @@
             </div>
             <div class="mb-3">
                 <label asp-for="CommissionDescription" class="form-label">委託詳情:</label>
-                <dic class="CommissionDescription"></dic>
+                <div class="CommissionDescription">@Html.Raw(Model.CommissionDescription)</div>
                 <input asp-for="CommissionDescription" class="form-control" type="hidden" />
             </div>
             <div class="mb-3">
@@ -34,9 +34,9 @@
             </div>*@
             <div class="btnCantaner">
                 @* <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />*@
-                <input type="submit" value="修改" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
+                <input type="submit" value="接受委託" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
                 @*<input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />*@
-                <input type="submit" value="修改" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
+                <input type="submit" value="聯繫委託人" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
             </div>
         </form>
     </div>
@@ -54,7 +54,6 @@
     <script>
 
         let myEditor;
-        $(.CommissionDescription).html(@Html.Raw(Model.CommissionDescription))
 
         ClassicEditor
             .create(document.querySelector('#editor'), {

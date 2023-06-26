@@ -121,6 +121,7 @@ namespace GameModCrafters.Controllers
 
             var commissions = await _context.Commissions
                 .Where(c => c.GameId == id)
+                .Where(c => c.IsDone)
                 .Include(c => c.Delegator)
                 .Select(c => new CommissionViewModel
                 {

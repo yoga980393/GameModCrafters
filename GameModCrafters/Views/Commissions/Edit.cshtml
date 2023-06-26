@@ -9,8 +9,6 @@
     <h1>委託修改</h1>
     <div class="row">
         <form method="post">
-            <select asp-for="CommissionStatusId" class="form-control" asp-items="@ViewBag.CommissionStatusId"></select>
-            <select asp-for="DelegatorId" class="form-control" asp-items="@ViewBag.DelegatorId"></select>
             <input type="hidden" class="form-control" asp-for="CommissionId">
             <div class="mb-3">
                 <label asp-for="CommissionTitle" class="form-label">委託標題:</label>
@@ -30,8 +28,8 @@
                 <input type="text" class="budgetinput" asp-for="Budget">
             </div>
             <div class="mb-3">
-                <label asp-for="Trash">是否放入暫存匣:</label>
-                <input type="checkbox" class="Trashinput" asp-for="Trash">
+                <label asp-for="IsDone">公開委託:</label>
+                <input type="checkbox" class="IsDoneinput" asp-for="IsDone">
             </div>
             <div class="btnCantaner">
                @* <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />*@
@@ -50,20 +48,34 @@
 @section js {
 
 
-    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
+    <script src="/js/ckeditor.js"></script>
 
     <script>
-
         let myEditor;
 
         ClassicEditor
             .create(document.querySelector('#editor'), {
                 // ...other configurations,
-                extraPlugins: [Base64UploadAdapterPlugin]
+                extraPlugins: [ServerUploadAdapterPlugin]
             })
 
             .then(editor => {
                 myEditor = editor;
+
+                editor.model.document.on('change:data', () => {
+                    const html = myEditor.getData();
+
+                    // 创建一个新的 HTML 元素
+                    let tempDiv = document.createElement('div');
+                    // 将 CKEditor 的内容赋值给这个元素
+                    tempDiv.innerHTML = html;
+                    // 移除所有 img 标签
+                    Array.from(tempDiv.getElementsByTagName('img')).forEach(img => img.parentNode.removeChild(img));
+                    // 提取出纯文本
+                    let text = tempDiv.innerText;
+
+
+                });
             })
 
             .catch(error => {
@@ -75,10 +87,6 @@
                 return new Base64UploadAdapter(loader);
             };
         }
-
-        $(document).ready(function () {
-            myEditor.setData($("#CommissionDescription").val());
-        });
 
         class Base64UploadAdapter {
             constructor(loader) {
@@ -102,12 +110,52 @@
             abort() { }
         }
 
-
         $('form').on('submit', function (e) {
             // 在表單提交時，手動更新隱藏的 input 欄位的值
             $('#CommissionDescription').val(myEditor.getData());
         });
 
+        $(document).ready(function () {
+            myEditor.setData($("#CommissionDescription").val());
+        });
 
+        //改用上傳檔案顯示圖片
+        class ServerUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file
+                    .then(file => new Promise((resolve, reject) => {
+                        const data = new FormData();
+                        data.append('upload', file);
+
+                        fetch('/Commissions/Upload', {
+                            method: 'POST',
+                            body: data
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.uploaded) {
+                                    resolve({ default: data.url });
+                                } else {
+                                    reject(`Upload failed: ${data.error.message}`);
+                                }
+                            })
+                            .catch(reject);
+                    }));
+            }
+
+            abort() {
+                // Handle the abort.
+            }
+        }
+
+        function ServerUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
+                return new ServerUploadAdapter(loader);
+            };
+        }
     </script>
 }

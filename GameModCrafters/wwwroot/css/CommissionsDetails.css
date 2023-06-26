@@ -11,3 +11,9 @@
     margin-top: 10px;
 }
 
+.CommissionDescription {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+}

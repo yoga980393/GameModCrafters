@@ -147,6 +147,9 @@
             <div class="col LastReply">
                 最後回覆
             </div>
+            <div class="col LastReply">
+                狀態
+            </div>
         </div>
         @foreach (var item in commssions)
         {
@@ -164,6 +167,9 @@
                 </div>
                 <div class="col LastReply">
                     @item.UpdateTime
+                </div>
+                <div class="col LastReply">
+                    @item.Status
                 </div>
             </div>
         }
