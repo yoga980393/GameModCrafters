@@ -4,6 +4,7 @@
 
 .chatbox .chat-box {
     height: 400px;
+    width:500px;
     overflow-y: scroll;
     border: 1px solid #ccc;
     padding: 10px;
@@ -83,21 +84,20 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    width:100%;
 }
 
 .chatbox .sliderroom {
-    width: 60px;
-    height: 20px;
-    overflow: hidden;
+    width: 100%;
     border: #ccc solid 1px;
     border-radius: 4px;
     overflow: hidden;
 }
 
-.chatbox button {
-    text-decoration: none;
-    color: gray;
-}
+    .chatbox .room-link {
+        text-decoration: none;
+        color: gray;
+    }
 
 .chatbox .sliderroom:hover {
     background-color: antiquewhite;
@@ -133,10 +133,48 @@
     background-color:white;
 }
 
-.sliderroom button{
-    background-color:white;
+.messageli {
+    width: 100%;
+    display: flex;
 }
 
-.sliderroom.active button{
-    background-color:#fa0;
+.rightli {
+    justify-content: flex-end;
+}
+
+.leftli {
+    justify-content: flex-start;
+}
+
+.messages {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.left {
+    background-color: #ddd;
+}
+
+.right {
+    background-color: #aaf;
+}
+
+.btn.active {
+    border:none !important;
+}
+
+.sliderroom .btn{
+    width:100%;
+}
+
+.sidebar-frame{
+    width:200px;
+}
+
+.sidebar-search{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+    margin-bottom:10px;
 }

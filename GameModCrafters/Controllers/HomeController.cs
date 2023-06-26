@@ -1,4 +1,5 @@
 ﻿using GameModCrafters.Data;
+using GameModCrafters.Data;
 using GameModCrafters.Models;
 using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -98,15 +99,166 @@ namespace GameModCrafters.Controllers
                 .Where(m => m.Sender.Email == userEmail || m.Receiver.Email == userEmail)
                 .Include(m => m.Sender)
                 .Include(m => m.Receiver)
+                .OrderByDescending(m => m.MessageTime)
                 .ToListAsync();
 
-            // 從消息中提取所有獨特的對話者的電子郵件
+            // 從消息中提取所有獨特的對話者的電子郵件以及是否有未讀訊息
             var chatHistory = messages
-                .Select(m => m.Sender.Email == userEmail ? m.Receiver.Email : m.Sender.Email)
-                .Distinct()
+                .GroupBy(m => m.Sender.Email == userEmail ? m.Receiver.Email : m.Sender.Email)
+                .Select(g => new
+                {
+                    Email = g.Key,
+                    HasUnread = g.Any(m => !m.IsRead && m.Receiver.Email == userEmail)
+                })
                 .ToList();
 
             return Ok(chatHistory);
+        }
+
+
+        //自動搜尋
+        [HttpGet]
+        public async Task<IActionResult>AutoSearch(string keyword)
+        {
+            
+            List<AutoSearchViewModel> searchResults = await GetAutoSearchResults(keyword);
+
+            return PartialView("_AutoSearchResults", searchResults);
+        }
+        
+        private async Task<List<AutoSearchViewModel>> GetAutoSearchResults(string keyword)
+        {
+            var searchResults = await _context.Games
+                .Include(g => g.Mods)
+                    .ThenInclude(m=>m.Author)
+                .Where(g=>g.GameName.Contains(keyword) || g.Mods.Any(m => m.ModName.Contains(keyword)))
+                .SelectMany(g=>g.Mods.Select(m => new AutoSearchViewModel
+                {
+                    GameId = g.GameId,
+                    GameName = g.GameName,
+                    ModId = m.ModId,
+                    ModName = m.ModName,
+                    Price = m.Price,
+                    AuthorName = m.Author.Username,
+                    ModThumbnail = m.Thumbnail,
+                    GameThumbnail = g.Thumbnail,
+                }))
+                .ToListAsync();
+            
+            return searchResults;
+        }
+
+
+
+        //搜尋按鈕按下1
+        //[HttpPost]
+        //public IActionResult SearchResult(string keyword)
+        //{
+
+        //    return View();
+        //}
+        [HttpGet]
+        public async Task<IActionResult> SearchResult(string keyword)
+        {
+            var searchResults = await GetSearchResults(keyword);
+            var viewModel = new NavbarSearchResultViewmodel
+            {
+                Games = searchResults.Select(g => new Game
+                {
+                    GameId = g.GameId,
+                    GameName = g.GameName,
+                    Thumbnail = g.GameThumbnail
+                }).ToList(),
+                Mods = searchResults.Select(m => new ModViewModel
+                {
+                    ModId = m.ModId,
+                    Thumbnail = m.ModThumbnail,
+                    ModName = m.ModName,
+                    Price = m.Price,
+                    GameName = m.GameName,
+                    AuthorName = m.AuthorName,
+                    CreateTime = m.CreateTime,
+                    UpdateTime = m.UpdateTime,
+                    Description = m.Description,
+                   // Capacity = m.Capacity,
+                    LikeCount = m.LikeCount,
+                    FavoriteCount = m.FavoriteCount,
+                    DownloadCount = m.DownloadCount,
+                    TagNames = m.TagNames
+                }).ToList(),
+                TotalPages = 0 // Set the total pages value according to your implementation
+            };
+
+            return View(viewModel);
+        }
+
+        private async Task<List<AutoSearchViewModel>> GetSearchResults(string keyword)
+        {
+            var searchResults = await _context.Games
+                .Include(g => g.Mods)
+                .ThenInclude(m => m.Author)
+                .Where(g => g.GameName.Contains(keyword) || g.Mods.Any(m => m.ModName.Contains(keyword)))
+                .SelectMany(g => g.Mods.Select(m => new AutoSearchViewModel
+                {
+                    GameId = g.GameId,
+                    GameName = g.GameName,
+                    ModId = m.ModId,
+                    ModName = m.ModName,
+                    Price = m.Price,
+                    AuthorName = m.Author.Username,
+                    ModThumbnail = m.Thumbnail,
+                    GameThumbnail = g.Thumbnail,
+                    CreateTime = m.CreateTime,
+                    UpdateTime = m.UpdateTime,
+                    Description = m.Description,
+                    //Capacity = m.Capacity,
+                    LikeCount = m.ModLikes.Count,
+                    FavoriteCount = m.Favorite.Count,
+                    DownloadCount = m.Downloaded.Count,
+                    TagNames = m.ModTags.Select(t => t.Tag.TagName).ToList()
+                }))
+                .ToListAsync();
+
+            return searchResults;
+        }
+
+        [HttpGet]
+        public IActionResult GetChatHistoryWithUser(string receiverId)
+        {
+            var senderId = User.FindFirst(ClaimTypes.Email)?.Value;
+            var chatHistory = _context.PrivateMessages
+                .Where(m => m.SenderId == senderId && m.ReceiverId == receiverId || m.SenderId == receiverId && m.ReceiverId == senderId)
+                .OrderBy(m => m.MessageTime)
+                .Select(m => new {
+                    SenderId = m.SenderId,
+                    ReceiverId = m.ReceiverId,
+                    MessageContent = m.MessageContent,
+                    MessageTime = m.MessageTime
+                })
+                .ToList();
+            return Json(chatHistory);
+        }
+
+        // GET: /Home/GetUserByEmail
+        [HttpGet]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                return NotFound(new { message = "No user found with this email." });
+            }
+
+            return Ok(user);
+        }
+
+        // GET: /Home/GetAllUserEmails
+        [HttpGet]
+        public async Task<IActionResult> GetAllUserEmails()
+        {
+            var emails = await _context.Users.Select(u => u.Email).ToListAsync();
+            return Ok(emails);
         }
     }
 }

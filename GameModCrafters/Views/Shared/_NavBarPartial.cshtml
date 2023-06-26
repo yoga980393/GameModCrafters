@@ -1,4 +1,5 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+﻿
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" asp-controller="Home" asp-action="Index">GameModCrafters</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -7,11 +8,12 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-light rounded" type="submit">Search</button>
+            <form class="d-flex" role="search" id="searchForm" asp-action="SearchResult" asp-controller="Home">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="keyword">
+                <button class="btn btn-outline-light rounded" type="button" id="search_btn">Search</button>
+                <div id="searchResults" ></div>
             </form>
-
+            
             <ul class="navbar-nav ms-3">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="ModMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -96,3 +98,6 @@
         </div>
     </div>
 </nav>
+@section js {
+    
+}
