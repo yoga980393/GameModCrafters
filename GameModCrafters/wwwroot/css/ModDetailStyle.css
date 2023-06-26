@@ -75,6 +75,11 @@ body {
     }
 
 /*author*/
+.author{
+    width:300px !important;
+    display: block;
+}
+
 .author .card {
     position: relative;
 }
@@ -95,14 +100,15 @@ body {
         font-size: 15px;
     }
 
-.author .avatar {
-    border-radius: 50%;
-    overflow: hidden;
-    position: absolute;
-    bottom: -5px;
-    left: -5px;
-    border: 2px solid white;
-}
+    .author .avatar {
+        border-radius: 50%;
+        overflow: hidden;
+        position: absolute;
+        bottom: -5px;
+        left: -5px;
+        width: 35%;
+        border: 3px solid #ccc;
+    }
 
 .author .name {
     padding-left: 105px;
@@ -113,25 +119,6 @@ body {
     background-color: #eee;
 }
 
-.footer {
-    background-color: #343a40;
-    color: #ffffff;
-    padding: 20px 0;
-    width: 100%;
-    position: relative;
-    bottom: 0;
-}
-
-    .footer .container {
-        width: 100%;
-        max-width: 1140px;
-        margin: 0 auto;
-        padding: 0 15px;
-    }
-
-    .footer .text-center {
-        text-align: center;
-    }
 
 .message {
     border-bottom: 1px solid black;

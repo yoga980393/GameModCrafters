@@ -174,7 +174,9 @@ namespace GameModCrafters.Controllers
                 GameId = mod.GameId,
                 Comments = comments,
                 UserHasLiked = userHasLiked,
-                UserHasFavorite = userHasFavorite
+                UserHasFavorite = userHasFavorite,
+                userAtavar = mod.Author.Avatar,
+                userCover = mod.Author.BackgroundImage
             };
 
             return View(modDetailViewModel);

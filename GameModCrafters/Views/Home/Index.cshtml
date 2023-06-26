@@ -99,7 +99,7 @@
             <div class="col-12 col-md-3 mt-3">
                 <div class="card">
                     <div class="pic">
-                        <a href="@Url.Action("Details", new { id = mod.ModId })">
+                        <a href="@Url.Action("Details","Mods",  new { id = mod.ModId })">
                             <img src=@(mod.Thumbnail == null ? "https://picsum.photos/300/200/?random=10" : mod.Thumbnail)>
                         </a>
                     </div>
