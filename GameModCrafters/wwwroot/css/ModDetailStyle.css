@@ -100,15 +100,15 @@ body {
         font-size: 15px;
     }
 
-.author .avatar {
-    border-radius: 50%;
-    overflow: hidden;
-    position: absolute;
-    bottom: -5px;
-    left: -5px;
-    width: 35%;
-    border:2px double black;
-}
+    .author .avatar {
+        border-radius: 50%;
+        overflow: hidden;
+        position: absolute;
+        bottom: -5px;
+        left: -5px;
+        width: 35%;
+        border: 3px solid #ccc;
+    }
 
 .author .name {
     padding-left: 105px;
