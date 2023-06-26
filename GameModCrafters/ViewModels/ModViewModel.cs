@@ -14,7 +14,7 @@ namespace GameModCrafters.ViewModels
         public DateTime? CreateTime { get; set; }
         public DateTime? UpdateTime { get; set; }
         public string Description { get; set; }
-        public int Capacity { get; set; }
+        public double Capacity { get; set; }
         public int LikeCount { get; set; }
         public int FavoriteCount { get; set; }
         public int DownloadCount { get; set; }

@@ -169,6 +169,7 @@ namespace GameModCrafters.Controllers
                 DownloadCount = mod.Downloaded?.Count() ?? 0,
                 Price = mod.Price,
                 AuthorName = mod.Author.Username,
+                AuthorId = mod.AuthorId,
                 AuthorWorkCount = _context.Mods.Count(m => m.AuthorId == mod.AuthorId),
                 AuthorLikesReceived = _context.ModLikes.Count(ml => ml.Mod.AuthorId == mod.AuthorId),
                 GameId = mod.GameId,

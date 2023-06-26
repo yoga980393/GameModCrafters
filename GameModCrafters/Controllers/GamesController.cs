@@ -8,16 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using GameModCrafters.Data;
 using GameModCrafters.Models;
 using GameModCrafters.ViewModels;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.FileProviders;
 
 namespace GameModCrafters.Controllers
 {
     public class GamesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public GamesController(ApplicationDbContext context)
+        public GamesController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Games
@@ -64,19 +70,29 @@ namespace GameModCrafters.Controllers
             }
 
             var mods = _context.Mods
-                .Where(m => m.ModId != null && (string.IsNullOrEmpty(filter.SearchString) || m.ModName.Contains(filter.SearchString)))
-                .Where(m => string.IsNullOrEmpty(filter.TagFilter) || m.ModTags.Any(mt => mt.TagId == filter.TagFilter))
-                .Where(m => m.CreateTime >= startDate)
-                .Where(m => m.GameId == id)
-                .Where(m => m.IsDone)
-                .Include(m => m.Author)
-                .Include(m => m.Game)
-                .Include(m => m.ModLikes)
-                .Include(m => m.Favorite)
-                .Include(m => m.Downloaded)
-                .Include(m => m.ModTags)
-                    .ThenInclude(mt => mt.Tag)
-                .Select(m => new ModViewModel
+            .Where(m => m.ModId != null && (string.IsNullOrEmpty(filter.SearchString) || m.ModName.Contains(filter.SearchString)))
+            .Where(m => string.IsNullOrEmpty(filter.TagFilter) || m.ModTags.Any(mt => mt.TagId == filter.TagFilter))
+            .Where(m => m.CreateTime >= startDate)
+            .Where(m => m.GameId == id)
+            .Where(m => m.IsDone)
+            .Include(m => m.Author)
+            .Include(m => m.Game)
+            .Include(m => m.ModLikes)
+            .Include(m => m.Favorite)
+            .Include(m => m.Downloaded)
+            .Include(m => m.ModTags)
+                .ThenInclude(mt => mt.Tag)
+            .ToList() // Retrieve the data from the database
+            .Select(m => {
+                double roundedFileSizeInKB = 0;
+
+                IFileInfo fileInfo = _webHostEnvironment.WebRootFileProvider.GetFileInfo(m.DownloadLink);
+                if (fileInfo.Exists)
+                {
+                    roundedFileSizeInKB = Math.Round((double)fileInfo.Length / 1024 , 1); // KB
+                }
+
+                return new ModViewModel
                 {
                     ModId = m.ModId,
                     Thumbnail = m.Thumbnail,
@@ -87,12 +103,14 @@ namespace GameModCrafters.Controllers
                     CreateTime = m.CreateTime,
                     UpdateTime = m.UpdateTime,
                     Description = m.Description,
-                    Capacity = 0,
+                    Capacity = roundedFileSizeInKB, // Set capacity to the rounded file size in KB
                     LikeCount = m.ModLikes.Count,
                     FavoriteCount = m.Favorite.Count,
                     DownloadCount = m.Downloaded.Count,
                     TagNames = m.ModTags.Select(mt => mt.Tag.TagName).ToList()
-                });
+                };
+            });
+
 
 
             switch (filter.SortFilter)
@@ -136,9 +154,9 @@ namespace GameModCrafters.Controllers
 
             var pagedModel = new PagedModsModel
             {
-                Mods = await mods.Skip((page - 1) * filter.PageSize).Take(filter.PageSize).ToListAsync(),
+                Mods = mods.Skip((page - 1) * filter.PageSize).Take(filter.PageSize).ToList(),
                 CurrentPage = page,
-                TotalPages = (int)Math.Ceiling(await mods.CountAsync() / (double)filter.PageSize),
+                TotalPages = (int)Math.Ceiling(mods.Count() / (double)filter.PageSize),
                 GameId = id,
                 Commissions = commissions
             };

@@ -133,40 +133,42 @@ Bulletin .btn {
 }
 
 /*author*/
-.author .card {
-    position: relative;
-}
 
-.author img {
-    vertical-align: top;
-    width: 100%;
-}
-
-.author .detail {
-    display: flex;
-    justify-content: space-between;
-    padding-right: 15px;
-    padding-left: 100px;
-}
-
-    .author .detail div {
-        font-size: 15px;
+    .author .card {
+        position: relative;
     }
 
-.author .avatar {
-    border-radius: 50%;
-    overflow: hidden;
-    position: absolute;
-    bottom: -5px;
-    left: -5px;
-    border: 2px solid white;
-}
+    .author img {
+        vertical-align: top;
+        width: 100%;
+    }
 
-.author .name {
-    padding-left: 105px;
-}
+    .author .detail {
+        display: flex;
+        justify-content: space-between;
+        padding-right: 15px;
+        padding-left: 100px;
+    }
 
-.author .authorData {
-    padding: 10px 0;
-    background-color: #eee;
-}
+        .author .detail div {
+            font-size: 15px;
+        }
+
+    .author .avatar {
+        border-radius: 50%;
+        overflow: hidden;
+        position: absolute;
+        bottom: -5px;
+        left: -5px;
+        width: 35%;
+        border: 3px solid #ccc;
+    }
+
+    .author .name {
+        padding-left: 105px;
+    }
+
+    .author .authorData {
+        padding: 10px 0;
+        background-color: #eee;
+    }
