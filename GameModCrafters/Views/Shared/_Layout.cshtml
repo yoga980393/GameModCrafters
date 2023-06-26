@@ -92,14 +92,14 @@
                 if (senderEmail == currentEmail) {
                     li.className = "messageli rightli";
                     div.className = "messages right";
-                    // 將接收到訊息的聊天室按鈕移動到最前面
+                    
                     var chatButton = $('.room-link[data-room="' + receiverEmail + '"]').parent();
                     $('#chatList').prepend(chatButton);
                 }
                 else {
                     li.className = "messageli leftli";
                     div.className = "messages left";
-                    // 將接收到訊息的聊天室按鈕移動到最前面
+                    
                     var chatButton = $('.room-link[data-room="' + senderEmail + '"]').parent();
                     $('#chatList').prepend(chatButton);
                 }
@@ -109,8 +109,14 @@
                 var messagesList = document.getElementById("messagesList");
                 messagesList.appendChild(li);
                 messagesList.scrollTop = messagesList.scrollHeight;
+            }
+            else if (senderEmail != currentChatPartnerEmail && receiverEmail == currentEmail){
+                var chatButton = $('.room-link[data-room="' + senderEmail + '"]').parent();
+                $('#chatList').prepend(chatButton);
 
-                
+                if (senderEmail != currentChatPartnerEmail) {
+                    chatButton.find('.exclamation-mark').removeClass('markNone');
+                }
             }
         });
 
@@ -140,7 +146,8 @@
                 console.log(data);
 
                 data.forEach(function (item, index) {
-                    var roomElement = '<div class="sliderroom ' + (index == 0 ? 'active' : '') + '"><button class="room-link btn ' + (index == 0 ? 'active' : '') + '" data-room="' + item.email + '">' + item.email + '</button></div>';
+                    var roomElement = '<div class="sliderroom"><button class="room-link btn" data-room="' + item.email + '">' + item.email + '<span class="exclamation-mark ' 
+                    + (item.hasUnread ? '' : 'markNone') + '"> ! </span></button></div>';
 
                     $('#chatList').append(roomElement);
                 });
@@ -148,6 +155,14 @@
                 // 綁定按鈕點擊事件
                 $(".room-link").click(function () {
                     var receiverId = $(this).data("room");
+
+                    $(this).find('.exclamation-mark').addClass('markNone');
+
+                    // 新增這裡: 發送一個 POST 請求來標記訊息為已讀
+                    $.post('/Home/MarkMessagesAsRead', { senderEmail: receiverId }, function (response) {
+                        console.log(response);
+                    });
+
                     // 获取并显示聊天记录
                     $.get('/Home/GetChatHistoryWithUser?receiverId=' + receiverId, function (data) {
                         // 清空之前的聊天记录
@@ -158,11 +173,11 @@
                             var li = document.createElement("li");
                             var div = document.createElement("div");
 
-                            if (message.senderId == currentEmail){
+                            if (message.senderId == currentEmail) {
                                 li.className = "messageli rightli";
                                 div.className = "messages right";
                             }
-                            else{
+                            else {
                                 li.className = "messageli leftli";
                                 div.className = "messages right";
                             }
@@ -182,6 +197,7 @@
                     $(this).addClass("active");
                     $(this).parent(".sliderroom").addClass("active");
                 });
+
             });
 
             $('#searchButton').click(function () {

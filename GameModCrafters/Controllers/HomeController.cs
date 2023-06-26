@@ -260,5 +260,29 @@ namespace GameModCrafters.Controllers
             var emails = await _context.Users.Select(u => u.Email).ToListAsync();
             return Ok(emails);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkMessagesAsRead(string senderEmail)
+        {
+            // 從授權中獲取當前用戶的 Email
+            string receiverEmail = User.FindFirstValue(ClaimTypes.Email);
+
+            // 找到所有未讀的消息並標記為已讀
+            var unreadMessages = _context.PrivateMessages
+                .Where(m => m.Sender.Email == senderEmail && m.Receiver.Email == receiverEmail && m.IsRead == false);
+
+            if (unreadMessages.Any())
+            {
+                foreach (var message in unreadMessages)
+                {
+                    message.IsRead = true;
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
     }
 }

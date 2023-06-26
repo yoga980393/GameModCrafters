@@ -80,10 +80,17 @@ namespace GameModCrafters.Controllers
                 .Include(c => c.Delegator)
                 .Include(c => c.Game)
                 .FirstOrDefaultAsync(m => m.CommissionId == id);
+
+            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "Status", commission.CommissionStatusId);
+            ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
+            ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
+
             if (commission == null)
             {
                 return NotFound();
             }
+
+
 
             return View(commission);
         }
@@ -281,6 +288,10 @@ namespace GameModCrafters.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
+            ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
+            ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
+
             return View(commission);
         }
 
@@ -294,6 +305,7 @@ namespace GameModCrafters.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("PersonPage", "Account");
         }
+
 
         private bool CommissionExists(string id)
         {
