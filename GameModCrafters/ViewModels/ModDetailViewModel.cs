@@ -23,5 +23,7 @@ namespace GameModCrafters.ViewModels
         public List<ModCommentViewModel> Comments { get; set; }
         public bool UserHasLiked { get; set; }
         public bool UserHasFavorite { get; set; }
+        public string userAtavar { get; set; }
+        public string userCover { get; set; }
     }
 }
