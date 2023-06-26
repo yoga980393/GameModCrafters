@@ -7,16 +7,16 @@
     var commssions = Model.Commissions;
 }
 <div class="ImgWrap">
-    @if (string.IsNullOrEmpty(userCover))
+   @* @if (string.IsNullOrEmpty(userCover))
     {
         <img src="https://picsum.photos/1400/600/?random=10" class="img-fluid Img_cover" id="Cover_pic" alt="...">
     }
     else
     {
         <img src="@userCover" class="img-fluid Img_cover" id="Cover_pic" alt="...">
-    }
+    }*@
 
-
+    <img src="@userCover" class="img-fluid Img_cover" id="Cover_pic" alt="...">
 
 </div>
 <div class="container-fluid position_height">
