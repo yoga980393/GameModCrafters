@@ -201,15 +201,17 @@
 
 @section js{
     <script>
-        window.onload = function () {
-            GetRelease_Area()
-            AddTag()
-            AddDescribe()
-        }
+        $(document).ready(function () {
+            GetRelease_Area();
+            AddTag();
+            AddDescribe();
+        });
+
         function GetRelease_Area() {
-            let release_area = document.querySelectorAll(".label_tag button")
+            let release_area = document.querySelectorAll(".bttn")
             release_area.forEach(function (btn, index) {
                 btn.addEventListener('click', function () {
+                    console.log("111")
                     document.getElementsByClassName("paging active")[0].classList.remove('active')
                     document.getElementsByClassName("paging")[index].classList.add("active")
                     document.getElementsByClassName("paging_title active")[0].classList.remove('active')
