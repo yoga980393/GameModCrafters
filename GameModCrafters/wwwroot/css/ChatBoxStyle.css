@@ -97,6 +97,11 @@
     .chatbox .room-link {
         text-decoration: none;
         color: gray;
+        display:flex;
+        flex-direction:row;
+        gap: 3px;
+        align-items:center;
+        justify-content:space-between;
     }
 
 .chatbox .sliderroom:hover {
@@ -169,7 +174,7 @@
 }
 
 .sidebar-frame{
-    width:200px;
+    width:fit-content;
 }
 
 .sidebar-search{
@@ -177,4 +182,18 @@
     flex-direction:column;
     gap:3px;
     margin-bottom:10px;
+}
+
+.exclamation-mark{
+    display:block;
+    width:15px;
+    height:15px;
+    background-color:red;
+    border-radius:50%;
+    color:white;
+    font-size:5px;
+}
+
+.markNone{
+    display:none;
 }
