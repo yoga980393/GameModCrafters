@@ -27,7 +27,7 @@
             @if (Model.AuthorName == User.Identity.Name)
             {
                 <div class="ModOption mt-3">
-                    <button class="btn btn-primary">
+                    <button class="btn btn-primary me-3">
                         <a asp-controller="Mods" asp-action="Edit" asp-route-id="@Model.ModId" style="color: white; text-decoration: none;">修改Mod資訊</a>
                     </button>
 
@@ -35,6 +35,12 @@
                         <button type="submit" class="btn btn-danger" onclick="return confirm('確定要刪除此Mod嗎？')">刪除Mod</button>
                     </form>
                 </div>
+            }
+            else
+            {
+                <button class="btn btn-primary mt-3" id="MessageButton">
+                    私訊作者
+                </button>
             }
             
         </div>
@@ -237,11 +243,77 @@
             });
         }
 
+        function MessageBtn() {
+            $("#MessageButton").on("click", () => {
+                $('#ChatBoxSpan').click();
+                var userEmail = '@Model.AuthorId';
+                var existingButton = $('.room-link[data-room="' + userEmail + '"]');
+                if (existingButton.length > 0) {
+                    // 如果已經在列表中，則觸發click事件
+                    existingButton.click();
+                } else {
+                    $.get('/Home/GetUserByEmail?email=' + userEmail)
+                        .done(function (data) {
+                            var roomElement = '<div class="sliderroom"><button class="room-link btn" data-room="' + userEmail + '">' + userEmail + '</button></div>';
+                            $('#chatList').prepend(roomElement);
+
+                            $(".room-link").click(function () {
+                                var receiverId = $(this).data("room");
+                                // 获取并显示聊天记录
+                                $.get('/Home/GetChatHistoryWithUser?receiverId=' + receiverId, function (data) {
+                                    // 清空之前的聊天记录
+                                    $("#messagesList").empty();
+                                    // 添加新的聊天记录
+                                    data.forEach(function (message) {
+                                        var encodedMsg = message.messageContent;
+                                        var li = document.createElement("li");
+                                        var div = document.createElement("div");
+
+                                        if (message.senderId == currentEmail) {
+                                            li.className = "messageli rightli";
+                                            div.className = "messages right";
+                                        }
+                                        else {
+                                            li.className = "messageli leftli";
+                                            div.className = "messages right";
+                                        }
+
+                                        div.textContent = encodedMsg;
+                                        li.appendChild(div);
+                                        document.getElementById("messagesList").appendChild(li);
+                                    });
+                                });
+
+                                // 移除所有按鈕的 'active' 類別
+                                $(".room-link").removeClass("active");
+                                $(".sliderroom").removeClass("active");
+
+                                // 為被點擊的按鈕添加 'active' 類別
+                                $(this).addClass("active");
+                                $(this).parent(".sliderroom").addClass("active");
+                            });
+
+                            $('.room-link[data-room="' + userEmail + '"]').click();
+                        })
+                        .fail(function (jqXHR) {
+                            if (jqXHR.status == 404) {
+                                // User not found. Show an error message.
+                                alert(jqXHR.responseJSON.message);
+                            } else {
+                                // Some other error occurred.
+                                console.log("Error: " + jqXHR.status);
+                            }
+                        });
+                }
+            })
+        }
+
         $(document).ready(function () {
             CommentSubmit();
             DeleteButton();
             LikeBtn();
             FavoriteBtn();
+            MessageBtn();
         });
     </script>
 }
