@@ -8,7 +8,13 @@ namespace GameModCrafters.ViewModels
         public List<Game> Games { get; set; }
         public List<ModViewModel> Mods { get; set; }
 
-        public int TotalPages { get; set; }
-        public int CurrentPage { get; set; }
+        public int ModTotalPages { get; set; }
+        public int ModCurrentPage { get; set; }
+
+        public int GameTotalPages { get; set; }
+        public int GameCurrentPage { get; set; }
+
+
+        public string SearchString { get; set; }
     }
 }

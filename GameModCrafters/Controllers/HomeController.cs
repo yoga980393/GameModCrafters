@@ -4,6 +4,7 @@ using GameModCrafters.Models;
 using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,7 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
+using MoreLinq;
 namespace GameModCrafters.Controllers
 {
     public class HomeController : Controller
@@ -121,106 +122,144 @@ namespace GameModCrafters.Controllers
         public async Task<IActionResult>AutoSearch(string keyword)
         {
             
-            List<AutoSearchViewModel> searchResults = await GetAutoSearchResults(keyword);
+            var searchResults = await GetAutoSearchResults(keyword);
 
             return PartialView("_AutoSearchResults", searchResults);
         }
         
-        private async Task<List<AutoSearchViewModel>> GetAutoSearchResults(string keyword)
+        private async Task<AutoSearchViewModel> GetAutoSearchResults(string keyword)
         {
-            var searchResults = await _context.Games
-                .Include(g => g.Mods)
-                    .ThenInclude(m=>m.Author)
-                .Where(g=>g.GameName.Contains(keyword) || g.Mods.Any(m => m.ModName.Contains(keyword)))
-                .SelectMany(g=>g.Mods.Select(m => new AutoSearchViewModel
+            var searchResultsGame = await _context.Games
+                .Where(g=>g.GameName.Contains(keyword))
+                .ToListAsync();
+            var searchResultMod = await _context.Mods
+                .Where(m => m.ModName.Contains(keyword))
+                .Where(m => m.IsDone)
+                .Include(m => m.Author)
+                .Include(m => m.Game)
+                .Include(m => m.ModLikes)
+                .Include(m => m.Favorite)
+                .Include(m => m.Downloaded)
+                .Include(m => m.ModTags)
+                    .ThenInclude(mt => mt.Tag)
+                .Select(m => new ModViewModel
                 {
-                    GameId = g.GameId,
-                    GameName = g.GameName,
                     ModId = m.ModId,
+                    Thumbnail = m.Thumbnail,
                     ModName = m.ModName,
                     Price = m.Price,
+                    GameName = m.Game.GameName,
                     AuthorName = m.Author.Username,
-                    ModThumbnail = m.Thumbnail,
-                    GameThumbnail = g.Thumbnail,
-                }))
+                    CreateTime = m.CreateTime,
+                    UpdateTime = m.UpdateTime,
+                    Description = m.Description,
+                    Capacity = 0,
+                    LikeCount = m.ModLikes.Count,
+                    FavoriteCount = m.Favorite.Count,
+                    DownloadCount = m.Downloaded.Count,
+                    TagNames = m.ModTags.Select(mt => mt.Tag.TagName).ToList()
+                })
                 .ToListAsync();
-            
-            return searchResults;
+            var vm = new AutoSearchViewModel()
+            {
+                Games = searchResultsGame,
+                Mods = searchResultMod,
+                Count = searchResultMod.Count + searchResultsGame.Count
+            };
+            return vm;
         }
 
 
 
         //搜尋按鈕按下1
-        //[HttpPost]
-        //public IActionResult SearchResult(string keyword)
-        //{
 
-        //    return View();
-        //}
         [HttpGet]
-        public async Task<IActionResult> SearchResult(string keyword)
+
+        public async Task<IActionResult> SearchResult(string keyword, int page = 1)
         {
-            var searchResults = await GetSearchResults(keyword);
-            var viewModel = new NavbarSearchResultViewmodel
+
+            int pageSize = 8;
+            var searchResults = await GetAutoSearchResults(keyword);
+            var pagedMods = searchResults.Mods
+              .Skip((page - 1) * pageSize)
+              .Take(pageSize)
+              .ToList();
+            var pagedGames = searchResults.Games
+              .Skip((page - 1) * pageSize)
+              .Take(pageSize)
+              .ToList();
+            var GametotalPages = (int)Math.Ceiling((double)searchResults.Games.Count / pageSize);
+            var ModtotalPages = (int)Math.Ceiling((double)searchResults.Mods.Count / pageSize);
+            var VM = new NavbarSearchResultViewmodel()
             {
-                Games = searchResults.Select(g => new Game
-                {
-                    GameId = g.GameId,
-                    GameName = g.GameName,
-                    Thumbnail = g.GameThumbnail
-                }).ToList(),
-                Mods = searchResults.Select(m => new ModViewModel
-                {
-                    ModId = m.ModId,
-                    Thumbnail = m.ModThumbnail,
-                    ModName = m.ModName,
-                    Price = m.Price,
-                    GameName = m.GameName,
-                    AuthorName = m.AuthorName,
-                    CreateTime = m.CreateTime,
-                    UpdateTime = m.UpdateTime,
-                    Description = m.Description,
-                   // Capacity = m.Capacity,
-                    LikeCount = m.LikeCount,
-                    FavoriteCount = m.FavoriteCount,
-                    DownloadCount = m.DownloadCount,
-                    TagNames = m.TagNames
-                }).ToList(),
-                TotalPages = 0 // Set the total pages value according to your implementation
+                Mods = pagedMods,
+                ModTotalPages = ModtotalPages,
+                GameTotalPages = GametotalPages,
+                ModCurrentPage = page,
+                Games = pagedGames,
+                SearchString = keyword
             };
+            return View(VM);
 
-            return View(viewModel);
+
         }
+        [HttpPost]
 
-        private async Task<List<AutoSearchViewModel>> GetSearchResults(string keyword)
+        public async Task<IActionResult> ModSearchResultPage(string keyword, int page = 1)
         {
-            var searchResults = await _context.Games
-                .Include(g => g.Mods)
-                .ThenInclude(m => m.Author)
-                .Where(g => g.GameName.Contains(keyword) || g.Mods.Any(m => m.ModName.Contains(keyword)))
-                .SelectMany(g => g.Mods.Select(m => new AutoSearchViewModel
-                {
-                    GameId = g.GameId,
-                    GameName = g.GameName,
-                    ModId = m.ModId,
-                    ModName = m.ModName,
-                    Price = m.Price,
-                    AuthorName = m.Author.Username,
-                    ModThumbnail = m.Thumbnail,
-                    GameThumbnail = g.Thumbnail,
-                    CreateTime = m.CreateTime,
-                    UpdateTime = m.UpdateTime,
-                    Description = m.Description,
-                    //Capacity = m.Capacity,
-                    LikeCount = m.ModLikes.Count,
-                    FavoriteCount = m.Favorite.Count,
-                    DownloadCount = m.Downloaded.Count,
-                    TagNames = m.ModTags.Select(t => t.Tag.TagName).ToList()
-                }))
-                .ToListAsync();
 
-            return searchResults;
+            int pageSize = 16;
+            var searchResults = await GetAutoSearchResults(keyword);
+            var pagedMods = searchResults.Mods
+              .Skip((page - 1) * pageSize)
+              .Take(pageSize)
+              .ToList();
+            //var pagedGames = searchResults.Games
+            //  .Skip((page - 1) * pageSize)
+            //  .Take(pageSize)
+            //  .ToList();
+            var totalPages = (int)Math.Ceiling((double)searchResults.Mods.Count / pageSize);
+            var VM = new NavbarSearchResultViewmodel()
+            {
+                Mods = pagedMods,
+                ModTotalPages = totalPages,
+                ModCurrentPage = page,
+               // Games = pagedGames,
+                SearchString = keyword
+            };
+            return PartialView("_SearchModListPartial", VM);
+
+
         }
+        [HttpPost]
+
+        public async Task<IActionResult> GameSearchResultPage(string keyword, int page = 1)
+        {
+
+            int pageSize = 2;
+            var searchResults = await GetAutoSearchResults(keyword);
+            //var pagedMods = searchResults.Mods
+            //  .Skip((page - 1) * pageSize)
+            //  .Take(pageSize)
+            //  .ToList();
+            var pagedGames = searchResults.Games
+              .Skip((page - 1) * pageSize)
+              .Take(pageSize)
+              .ToList();
+            var totalPages = (int)Math.Ceiling((double)searchResults.Games.Count / pageSize);
+            var VM = new NavbarSearchResultViewmodel()
+            {
+                //Mods = pagedMods,
+                GameTotalPages = totalPages,
+                GameCurrentPage = page,
+                Games = pagedGames,
+                SearchString = keyword
+            };
+            return PartialView("_SearchGameListPartial", VM);
+
+
+        }
+       
 
         [HttpGet]
         public IActionResult GetChatHistoryWithUser(string receiverId)
