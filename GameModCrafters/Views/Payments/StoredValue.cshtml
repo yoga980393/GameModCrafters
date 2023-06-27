@@ -1,0 +1,124 @@
+﻿
+@{
+    ViewData["Title"] = "StoredValue";
+}
+
+<h1>儲值Mod Coin</h1>
+
+<div class="vertical-button-group m-5" role="group" aria-label="Basic radio toggle button group">
+    <div class="single-button">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" value="30" checked>
+        <label class="btn btn-outline-primary CountBtn" for="btnradio1">儲值  1 個 Mod Coin   30元</label>
+    </div>
+
+    <div class="single-button">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" value="150">
+        <label class="btn btn-outline-primary CountBtn" for="btnradio2">儲值  5 個 Mod Coin  150元</label>
+    </div>
+
+    <div class="single-button">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" value="300">
+        <label class="btn btn-outline-primary CountBtn" for="btnradio3">儲值 10 個 Mod Coin  300元</label>
+    </div>
+
+    <div class="single-button CustomizeDiv">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off" value="0">
+        <label class="btn btn-outline-primary CustomizeBtn" for="btnradio4">自定義數量</label>
+        <input type="text" class="CustomizeInput" id="CustomizeInput" />
+    </div>
+</div>
+
+<div class="checkoutDiv mx-5 mb-3">
+    <p>價格： <span id="price">30</span> 元</p>
+    <button class="btn btn-primary">結帳</button>
+</div>
+
+@section css{
+    <style>
+        .vertical-button-group .single-button {
+            display: block; 
+            margin-bottom: 10px; 
+            width:300px;
+        }
+
+            .vertical-button-group .single-button:last-child {
+                margin-bottom: 0; 
+            }
+
+        .CountBtn{
+            width:100%;
+        }
+
+        .CustomizeBtn{
+            width:70%;
+        }
+
+        .CustomizeInput{
+            width:25%;
+        }
+
+        .CustomizeDiv{
+            display:flex;
+            align-content:center;
+            gap:5px;
+        }
+
+        .checkoutDiv{
+            width:100%;
+            display:flex;
+            flex-direction:column;
+            justify-content:end;
+        }
+
+        .checkoutDiv .btn{
+            width:100px;
+        }
+    </style>
+}
+
+@section js{
+    <script>
+        function CustomizePrice() {
+            $("#CustomizeInput").on("change", function () {
+                let inputVal = $(this).val();
+                let newVal = inputVal ? parseInt(inputVal) * 30 : 0;
+                $("#btnradio4").val(newVal);
+                if ($("#btnradio4").is(':checked')) {
+                    $("#price").html(newVal);
+                }
+            });
+        }
+
+        function SetPrice(){
+            $(".btn-check").on("click", function () {
+                $("#price").html($(this).val());
+            });
+        }
+
+        function CheckOut(){
+            $(".checkoutDiv button").on("click", function () {
+                // Get the value of the selected radio button
+                let selectedValue = $("input[name='btnradio']:checked").val();
+                // Get the quantity based on the selectedValue
+                let quantity = selectedValue / 30;
+                // Send the data to the server
+                $.ajax({
+                    url: '/Payments/CreatePayment',
+                    type: 'POST',
+                    data: { 'price': selectedValue, 'quantity': quantity },
+                    success: function (res) {
+                        // Redirect to the approval url
+                        window.location.href = res;
+                    }
+                });
+            });
+        }
+
+        $(() => {
+            CustomizePrice();
+            SetPrice();
+            CheckOut();
+        });
+    </script>
+}
+

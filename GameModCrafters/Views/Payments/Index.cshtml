@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container payments">
+    <div class="row my-5">
+        <div class="col-1"></div>
+        <div class="col-4 square" id="storedValueBtn">
+            <a href="@Url.Action("StoredValue", "Payments")">
+                <div class="content">
+                    <h3>儲值</h3>
+                    <p>獲得Mod Coin</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-4 square" id="withdrawMoneyBtn">
+            <div class="content">
+                <h3>提款</h3>
+                <p>將Mod Coin換成貨幣</p>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+</div>
+
+@section css{
+    <link rel="stylesheet" href="~/css/paymentsIndex.css" />
+}
+
