@@ -540,6 +540,21 @@ namespace GameModCrafters.Migrations
                         });
                 });
 
+            modelBuilder.Entity("GameModCrafters.Models.Tracking", b =>
+                {
+                    b.Property<string>("CommissionId")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("CommissionId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Trackings");
+                });
+
             modelBuilder.Entity("GameModCrafters.Models.Transaction", b =>
                 {
                     b.Property<string>("TransactionId")
@@ -862,6 +877,25 @@ namespace GameModCrafters.Migrations
                     b.Navigation("Receiver");
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("GameModCrafters.Models.Tracking", b =>
+                {
+                    b.HasOne("GameModCrafters.Models.Commission", "Commission")
+                        .WithMany()
+                        .HasForeignKey("CommissionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("GameModCrafters.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Commission");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Transaction", b =>

@@ -33,10 +33,18 @@
                 <input type="checkbox" class="Trashinput" asp-for="Trash" disabled>
             </div>*@
             <div class="btnCantaner">
-                @* <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />*@
+                @* <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />
                 <input type="submit" value="接受委託" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
-                @*<input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />*@
-                <input type="submit" value="聯繫委託人" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
+                <input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />
+                <input type="submit" value="聯繫委託人" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />*@
+
+                <button class="btn btn-primary mt-3" id="MessageButton">
+                    私訊作者
+                </button>
+
+                <button class="btn btn-primary mt-3" id="followCommission" onclick="return confirm('委託新增成功!')">
+                    追蹤委託
+                </button>
             </div>
         </form>
     </div>
@@ -55,6 +63,14 @@
 
         let myEditor;
 
+        $(document).ready(function () {
+
+            MessageBtn();
+
+            FollowCommission();
+
+        });
+
         ClassicEditor
             .create(document.querySelector('#editor'), {
                 // ...other configurations,
@@ -63,7 +79,6 @@
 
             .then(editor => {
                 myEditor = editor;
-                myEditor.isReadOnly = true;
             })
 
             .catch(error => {
@@ -108,6 +123,93 @@
             $('#CommissionDescription').val(myEditor.getData());
         });
 
+        function FollowCommission() {
+            // 綁定按鈕點擊事件
+            $("#followButton").click(function () {
+                // 發送AJAX請求
+                $.ajax({
+                    url: "/Commissions/AddCommissionTracking", // 請替換為實際的控制器和動作方法的路由
+                    type: "POST",
+                    data: {
+                        commissionId: "@Model.CommissionId" // 傳遞委託ID到後端
+                    },
+                    success: function (response) {
+                        // 請求成功後的處理程式碼
+                        console.log("委託追蹤新增成功");
+                        // 在此可以進行其他相關處理，例如更新頁面內容等
+                    },
+                    error: function (xhr, status, error) {
+                        // 請求失敗後的處理程式碼
+                        console.log("委託追蹤新增失敗");
+                        console.log(error);
+                    }
+                });
+            });
+        }
 
+        function MessageBtn() {
+            $("#MessageButton").on("click", () => {
+                $('#ChatBoxSpan').click();
+                var userEmail = '@Model.DelegatorId';
+                var existingButton = $('.room-link[data-room="' + userEmail + '"]');
+                if (existingButton.length > 0) {
+                    // 如果已經在列表中，則觸發click事件
+                    existingButton.click();
+                } else {
+                    $.get('/Home/GetUserByEmail?email=' + userEmail)
+                        .done(function (data) {
+                            var roomElement = '<div class="sliderroom"><button class="room-link btn" data-room="' + userEmail + '">' + userEmail + '</button></div>';
+                            $('#chatList').prepend(roomElement);
+
+                            $(".room-link").click(function () {
+                                var receiverId = $(this).data("room");
+                                // 获取并显示聊天记录
+                                $.get('/Home/GetChatHistoryWithUser?receiverId=' + receiverId, function (data) {
+                                    // 清空之前的聊天记录
+                                    $("#messagesList").empty();
+                                    // 添加新的聊天记录
+                                    data.forEach(function (message) {
+                                        var encodedMsg = message.messageContent;
+                                        var li = document.createElement("li");
+                                        var div = document.createElement("div");
+
+                                        if (message.senderId == currentEmail) {
+                                            li.className = "messageli rightli";
+                                            div.className = "messages right";
+                                        }
+                                        else {
+                                            li.className = "messageli leftli";
+                                            div.className = "messages right";
+                                        }
+
+                                        div.textContent = encodedMsg;
+                                        li.appendChild(div);
+                                        document.getElementById("messagesList").appendChild(li);
+                                    });
+                                });
+
+                                // 移除所有按鈕的 'active' 類別
+                                $(".room-link").removeClass("active");
+                                $(".sliderroom").removeClass("active");
+
+                                // 為被點擊的按鈕添加 'active' 類別
+                                $(this).addClass("active");
+                                $(this).parent(".sliderroom").addClass("active");
+                            });
+
+                            $('.room-link[data-room="' + userEmail + '"]').click();
+                        })
+                        .fail(function (jqXHR) {
+                            if (jqXHR.status == 404) {
+                                // User not found. Show an error message.
+                                alert(jqXHR.responseJSON.message);
+                            } else {
+                                // Some other error occurred.
+                                console.log("Error: " + jqXHR.status);
+                            }
+                        });
+                }
+            })
+        }
     </script>
 }

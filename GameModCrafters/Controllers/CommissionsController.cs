@@ -98,10 +98,60 @@ namespace GameModCrafters.Controllers
 
             return View(commission);
         }
+        //[Authorize]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Details(string id, [Bind("CommissionId,DelegatorId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
+        //{
+        //    if (id != commission.CommissionId)
+        //    {
+        //        return RedirectToAction(nameof(Index));
+        //    }
 
+
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            // 在適當的位置取得追蹤委託的相關資訊
+        //            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value; // 取得當前使用者的ID或識別符號
+        //            string commissionId = id; // 請根據實際情況取得委託的ID
+
+        //            // 建立新的CommissionTracking物件
+        //            var commissionTracking = new CommissionTracking
+        //            {
+        //                UserId = userId,
+        //                CommissionId = commissionId,
+        //                AddTime = DateTime.Now // 可以根據需要指定添加時間,
+
+        //            };
+
+        //            // 將CommissionTracking物件新增到資料庫中
+        //            _context.CommissionTrackings.Add(commissionTracking);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!CommissionExists(commission.CommissionId))
+        //            {
+        //                return RedirectToAction(nameof(Index));
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View();
+        //}
+
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Details(string id, [Bind("CommissionId,DelegatorId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
+        public async Task<IActionResult> AddCommissionTracking(string id, [Bind("CommissionId,DelegatorId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
             if (id != commission.CommissionId)
             {
@@ -114,8 +164,21 @@ namespace GameModCrafters.Controllers
             {
                 try
                 {
-                    commission.Trash = true;
-                    _context.Update(commission);
+                    // 在適當的位置取得追蹤委託的相關資訊
+                    var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value; // 取得當前使用者的ID或識別符號
+                    string commissionId = id; // 請根據實際情況取得委託的ID
+
+                    // 建立新的CommissionTracking物件
+                    var commissionTracking = new CommissionTracking
+                    {
+                        UserId = userId,
+                        CommissionId = commissionId,
+                        AddTime = DateTime.Now // 可以根據需要指定添加時間,
+
+                    };
+
+                    // 將CommissionTracking物件新增到資料庫中
+                    _context.CommissionTrackings.Add(commissionTracking);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -131,12 +194,8 @@ namespace GameModCrafters.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
-            ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
-            ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
-            return View();
+            return RedirectToAction(nameof(Index));
         }
-
 
 
         // GET: Commissions/Create
@@ -155,6 +214,7 @@ namespace GameModCrafters.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string gameid,[Bind("DelegatorId,CommissionId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
@@ -216,6 +276,7 @@ namespace GameModCrafters.Controllers
         }
 
         // GET: Commissions/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -238,6 +299,7 @@ namespace GameModCrafters.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("CommissionId,DelegatorId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
         {
@@ -301,6 +363,7 @@ namespace GameModCrafters.Controllers
 
         // POST: Commissions/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
