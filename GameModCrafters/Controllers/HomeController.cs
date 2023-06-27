@@ -13,7 +13,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using MoreLinq;
+using System.Xml.Linq;
+
 namespace GameModCrafters.Controllers
 {
     public class HomeController : Controller
@@ -70,10 +71,27 @@ namespace GameModCrafters.Controllers
                 .Take(4)
                 .ToList();
 
+            var AuthorList = _context.Users
+                .Include(u => u.Mods)
+                .Where(u => u.Mods != null)
+                .Select(u => new AuthorViewModel
+                {
+                    Name = u.Username,
+                    LikeCount = u.ModLikes.Count,
+                    WorkCount = u.Mods.Count,
+                    Avatar = u.Avatar,
+                    BackgroundImage = u.BackgroundImage,
+
+                })
+                .OrderByDescending(x => x.WorkCount)
+                .Take(4)
+                .ToList();
+
             var viewModel = new HomeIndexViewModel
             {
                 Games = gameList,
-                Mods = modList
+                Mods = modList,
+                Author = AuthorList
             };
 
             return View(viewModel);
@@ -299,5 +317,29 @@ namespace GameModCrafters.Controllers
             var emails = await _context.Users.Select(u => u.Email).ToListAsync();
             return Ok(emails);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkMessagesAsRead(string senderEmail)
+        {
+            // 從授權中獲取當前用戶的 Email
+            string receiverEmail = User.FindFirstValue(ClaimTypes.Email);
+
+            // 找到所有未讀的消息並標記為已讀
+            var unreadMessages = _context.PrivateMessages
+                .Where(m => m.Sender.Email == senderEmail && m.Receiver.Email == receiverEmail && m.IsRead == false);
+
+            if (unreadMessages.Any())
+            {
+                foreach (var message in unreadMessages)
+                {
+                    message.IsRead = true;
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
     }
 }
