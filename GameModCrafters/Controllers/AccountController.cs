@@ -447,7 +447,7 @@ namespace GameModCrafters.Controllers
         </div>
       </center>
     </body>
-        </html>";
+        </html>";//打開直接起飛
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);
             await _sendGridClient.SendEmailAsync(msg);
