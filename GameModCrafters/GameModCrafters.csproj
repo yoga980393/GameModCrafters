@@ -31,7 +31,7 @@
 
   <ItemGroup>
     <Reference Include="ECPay.Payment.Integration">
-      <HintPath>..\..\..\Users\wggis\OneDrive\桌面\ECPayAIO_Net-master\ECPay.Payment.Integration.dll</HintPath>
+      <HintPath>..\..\..\Users\wggis\OneDrive\�ୱ\ECPayAIO_Net-master\ECPay.Payment.Integration.dll</HintPath>
     </Reference>
   </ItemGroup>
 

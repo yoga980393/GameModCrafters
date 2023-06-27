@@ -1,130 +1,78 @@
 ﻿@{
     ViewData["Title"] = "SearchResult";
 }
-
+@model NavbarSearchResultViewmodel 
 @{
-    var gameNames = new List<string>();
+
 }
-
-@if (Model != null && Model.Mods.Count > 0)
-{
-   
-   
-   @* @foreach (var result in Model)
+<input type="hidden" name="keyword" id="inputkeyword"/>
+<div class="wraped">
+    @if (Model != null && Model.Mods.Count > 0)
     {
-        @if (result.GameName != null && !gameNames.Contains(result.GameName))
-        {
-            gameNames.Add(result.GameName);
-            <a href="@Url.Action("Details", "Games", new { id = result.GameId })">
-            <li class="list-group-item">
-                <div class="row">
-                    <div class="col-4">
-                        <img src="@result.GameThumbnail" alt="Thumbnail" style=" display: block; width: 100%;height: 100%;object-fit: scale-down;">
-                    </div>
-                    <div class="col-8">
-                        <h2>@result.GameName</h2>
-                    </div>
-                </div>
-            </li>
-            </a>
-            gameNames.Add(result.GameName);
-            <div class="col-12 col-md-3 mt-3">
-                <a href="@Url.Action("Details", "Games", new { id = result.GameId })">
-                    <div class="card">
-                        <div class="pic">
-                            <img src="@result.GameThumbnail" alt="Thumbnail" style=" display: block; width: 100%;height: 100%;object-fit: scale-down;">
-                        </div>
-                        <div class="text">
-                            <div class="name_price">
-                                <h2>@result.GameName</h2>
+        @await Html.PartialAsync("_SearchGameListPartial", Model)
+        @await Html.PartialAsync("_SearchModListPartial", Model)
 
-                            </div>
+    }
+    else
+    {
+        <div class="container my-4 mod">
+            <h3>搜尋結果：</h3>
+            <div class="row nofound" id="modCardRow"><p>找不到任何相關搜尋</p></div>
+        </div>
 
-                        </div>
 
-                    </div>
-                </a>
-            </div>
+    }
+</div>
+
+
+@section js{
+    <script>
+        function loadPageMod(pageNumber) {
+            console.log(pageNumber)
+            
+            $.ajax({
+                url: '@Url.Action("ModSearchResultPage")',
+                type: 'POST',
+                data: {
+                    keyword: '@Model.SearchString',
+                    page: pageNumber
+                },
+                success: function (result) {
+                    $('.container.my-4.mod.Mod').html(result);
+
+                    $('html, body').animate({
+                        scrollTop: $('.row.ModRow').offset().top
+                    }, 0);
+                }
+            });
+        }
+        function loadPageGame(pageNumber) {
+            console.log(pageNumber)
+
+            $.ajax({
+                url: '@Url.Action("GameSearchResultPage")',
+                type: 'POST',
+                data: {
+                    keyword: '@Model.SearchString',
+                    page: pageNumber
+                },
+                success: function (result) {
+                    $('.container.my-4.mod.Game').html(result);
+
+                    $('html, body').animate({
+                        scrollTop: $('.row.GameRow').offset().top
+                    }, 0);
+                }
+            });
         }
 
-    }*@
-   
-    <div class="container my-4 mod">
-        <h3>搜尋結果：</h3>
-        <div class="row" id="modCardRow">
-            @foreach (var game in Model.Games)
-            {
-                @if (game.GameName != null && !gameNames.Contains(game.GameName))
-                {
-                    gameNames.Add(game.GameName);
-                    <div class="col-12 col-md-3 mt-3">
-                        <a href="@Url.Action("Details", "Games", new { id = game.GameId })">
-                            <div class="card">
-                                <div class="pic">
-                                    <img src="@game.Thumbnail" alt="Thumbnail" style=" display: block; width: 100%;height: 100%;object-fit: scale-down;">
-                                </div>
-                                <div class="text">
-                                    <div class="name_price">
-                                        <h2>@game.GameName</h2>
 
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </a>
-                    </div>
-                }
-            }
-            @foreach (var mod in Model.Mods)
-            {
-                <div class="col-12 col-md-3 mt-3">
-                    <div class="card">
-                        <div class="pic">
-                            <a href="@Url.Action("Details", "Mods",new { id = mod.ModId })">
-                                <img src="@(mod.Thumbnail == null ? "https://picsum.photos/300/200/?random=10" : mod.Thumbnail)">
-                            </a>
-                        </div>
-                        <div class="text">
-                            <div class="name_price">
-                                <h3 class="name">@mod.ModName</h3>
-                                <h3 class="price">@(mod.Price == 0 ? "Free" : mod.Price + " NTD")</h3>
-                            </div>
-                            <div class="detail">
-                                <h2 class="tag" id="tag-id-@(mod.ModId)"><span class="badge bg-secondary" id="previewGame">@mod.GameName</span></h2>
-                                <h3 class="author"><span>作者：</span>@mod.AuthorName</h3>
-                                <h3 class="creatTime"><span>上傳日期：</span>@mod.CreateTime</h3>
-                                <h3 class="UpdateTime"><span>更新日期：</span>@mod.UpdateTime</h3>
-                                <p class="describe" id="describe-id-@(mod.ModId)">@mod.Description</p>
-                            </div>
-                        </div>
-                        <div class="data">
-                            <h3><span>容量：</span>@mod.Capacity</h3>
-                            <h3><span>點贊：</span>@mod.LikeCount</h3>
-                            <h3><span>收藏：</span>@mod.FavoriteCount</h3>
-                            <h3><span>下載：</span>@mod.DownloadCount</h3>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
+    </script>
 }
-else
-{
-    <div class="container my-4 mod">
-        <h3>搜尋結果：</h3>
-        <div class="row nofound" id="modCardRow"><p>找不到任何相關搜尋</p></div>
-    </div>
-    
-    
-}
-
-
 @section css{
     <link rel="stylesheet" href="~/css/GamePage_style.css" />
     <style>
-        #modCardRow {
+        .wraped {
             min-height: 100vh;
         }
         .nofound{

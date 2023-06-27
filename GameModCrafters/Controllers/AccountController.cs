@@ -315,6 +315,7 @@ namespace GameModCrafters.Controllers
             var commissions = await _context.Commissions
                .Where(c => c.DelegatorId == usermail)
                .Include(c => c.Delegator)
+               .Include(c => c.CommissionStatus)
                .Select(c => new CommissionViewModel
                {
                    CommissionId = c.CommissionId,
@@ -322,7 +323,8 @@ namespace GameModCrafters.Controllers
                    CommissionTitle = c.CommissionTitle,
                    Budget = c.Budget,
                    CreateTime = c.CreateTime,
-                   UpdateTime = c.UpdateTime
+                   UpdateTime = c.UpdateTime,
+                   Status = c.CommissionStatus.Status
                })
                .ToListAsync();
             if (commissions == null)
