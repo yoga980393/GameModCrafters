@@ -516,6 +516,7 @@
     <script src="https://cdn.bootcss.com/jquery/3.5.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
     <style>
+        <style >
         * {
             list-style: none;
             padding: 0;
@@ -575,8 +576,8 @@
             }
 
         /* .cropper-crop-box.activeradius, .cropper-view-box.activeradius {
-            border-radius: 50%;
-        } */
+                    border-radius: 50%;
+                } */
 
         /* ---------Modal */
         .ImgWrap button {
@@ -598,7 +599,7 @@
             .Cover .personal_pic img {
                 display: block;
                 /* width: 200px;
-            height: 200px; */
+                height: 200px; */
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
@@ -628,15 +629,15 @@
 
         .Cover_container {
             /* display: flex;
-            justify-content: space-between;
-            align-items: flex-end; */
+                    justify-content: space-between;
+                    align-items: flex-end; */
             padding: 20px 0 20px 0;
             border-bottom: gray solid 3px;
             /* position: absolute;
-            bottom: 25%;
-            left: 0%;
-            right: 0%;
-            z-index: 5; */
+                    bottom: 25%;
+                    left: 0%;
+                    right: 0%;
+                    z-index: 5; */
         }
 
             .Cover_container .Edit {
@@ -653,29 +654,25 @@
             align-items: center;
         }
         /* ---------------發布mod */
-        .row .text .describe {
-            text-indent: 3em;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 13px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-        }
-
-        .mod .data {
-            display: flex;
-            width: 100%;
-            padding: 5px 15px;
-            padding-top: 10px;
-            justify-content: space-between;
-            background-color: #ccc;
+        /*.row .text .describe {
+                    text-indent: 3em;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    font-size: 13px;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 3;
+                    -webkit-box-orient: vertical;
+                }*/
+        .mod img {
             vertical-align: top;
+            width: 100%;
         }
 
-            .mod .data h3 {
-                font-size: 13px;
-            }
+        .mod .card {
+            margin-bottom: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
 
         .mod .name_price {
             display: flex;
@@ -691,18 +688,22 @@
             font-size: 20px;
         }
 
-        .mod .detail h3 {
-            font-size: 15px;
+        .mod .detail {
+            height: 180px;
         }
 
-        .mod .detail h2 {
-            font-size: 20px;
-        }
-
-            .mod .detail h2 span {
-                margin-right: 5px;
-                color: white;
+            .mod .detail h3 {
+                font-size: 15px;
             }
+
+            .mod .detail h2 {
+                font-size: 20px;
+            }
+
+                .mod .detail h2 span {
+                    margin-right: 5px;
+                    color: white;
+                }
 
         .mod .tag {
             color: orange;
@@ -712,9 +713,40 @@
             color: gray;
         }
 
-        .mod .row .card {
-            margin: 10px 0;
+        .mod .describe {
+            font-size: 13px;
+            text-indent: 26px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 40px;
         }
+
+        .mod .data {
+            display: flex;
+            padding: 5px 15px;
+            padding-top: 10px;
+            justify-content: space-between;
+            background-color: #ccc;
+            vertical-align: top;
+        }
+
+            .mod .data h3 {
+                font-size: 13px;
+            }
+
+        .mod .emptyCrad {
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: gray;
+            font-size: 60px;
+        }
+
 
         .more-mod-Pagination {
             text-align: center;
@@ -733,8 +765,8 @@
             margin: 10px auto;
             padding: 10px 0;
             /* display: flex;
-            justify-content: center;
-            align-items: center; */
+                    justify-content: center;
+                    align-items: center; */
         }
 
         .entrust_link a {
@@ -805,55 +837,7 @@
             border-bottom: 3px solid gray;
         }
 
-        /* -------------footer */
-        .footer {
-            background-color: black;
-            width: 100%;
-            text-align: center;
-            color: white;
-            padding: 40px;
-        }
-
-            .footer .title h3 {
-                display: block;
-                margin: auto;
-            }
-
-        .wrap {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            font-size: 24px;
-            border-bottom: #ccc solid 1px;
-            padding: 10px;
-        }
-
-        .icon_img a {
-            padding: 0 10px;
-            color: white;
-        }
-
-        .wrap_bottom {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px 10px;
-        }
-
-        .menu {
-            display: flex;
-        }
-
-            .menu a {
-                color: white;
-                padding: 0 5px;
-            }
-
-                .menu a:first-child {
-                    border-right: #ccc solid 1px;
-                }
-
-        /* -------------footer */
+       
     </style>
 }
 
