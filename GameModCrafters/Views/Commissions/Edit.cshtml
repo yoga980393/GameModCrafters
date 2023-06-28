@@ -9,6 +9,7 @@
     <h1>委託修改</h1>
     <div class="row">
         <form method="post">
+            <input type="hidden" class="from-control" asp-for="DelegatorId" />
             <input type="hidden" class="form-control" asp-for="CommissionId">
             <div class="mb-3">
                 <label asp-for="CommissionTitle" class="form-label">委託標題:</label>

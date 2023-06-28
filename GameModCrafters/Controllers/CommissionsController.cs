@@ -52,7 +52,7 @@ namespace GameModCrafters.Controllers
 
         // GET: Commissions
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(List<CommissionViewModel> CommisionVM)
         {
             var usermail = User.FindFirstValue(ClaimTypes.Email);
             if (usermail == null)
@@ -60,22 +60,26 @@ namespace GameModCrafters.Controllers
                 return NotFound();
             }
             var applicationDbContext = _context.Commissions.Include(c => c.CommissionStatus).Include(c => c.Delegator).Include(c => c.Game);
-            var commissions = await _context.Commissions
-               .Where(c => c.DelegatorId == usermail)
-               .Include(c => c.Delegator)
-               .Include(c => c.CommissionStatus)
-               .Select(c => new CommissionViewModel
-               {
-                   CommissionId = c.CommissionId,
-                   DelegatorName = c.Delegator.Username,
-                   CommissionTitle = c.CommissionTitle,
-                   Budget = c.Budget,
-                   CreateTime = c.CreateTime,
-                   UpdateTime = c.UpdateTime,
-                   Status = c.CommissionStatus.Status
-               })
+
+                 CommisionVM = await _context.Commissions
+                .Where(c => c.DelegatorId == usermail)
+                .Include(c => c.Delegator)
+                .Include(c => c.CommissionStatus)
+                .Include(c => c.Game)
+                .Select(c => new CommissionViewModel
+                {
+                    CommissionId = c.CommissionId,
+                    GameID = c.Game.GameId,
+                    GameName = c.Game.GameName,
+                    DelegatorName = c.Delegator.Username,
+                    CommissionTitle = c.CommissionTitle,
+                    Budget = c.Budget,
+                    CreateTime = c.CreateTime,
+                    UpdateTime = c.UpdateTime,
+                    Status = c.CommissionStatus.Status
+                })
                .ToListAsync();
-            return View(commissions);
+            return View(CommisionVM);
         }
 
 
@@ -297,8 +301,8 @@ namespace GameModCrafters.Controllers
         {
             string loggedInUserEmail = User.FindFirstValue(ClaimTypes.Email);
             var commissions = await _context.Commissions
-                .Where(c => c.IsDone == true)
                 .Where(c => c.DelegatorId != loggedInUserEmail)
+                .Where(c => c.IsDone == true)
                 .Include(c => c.Delegator)
                 .Include(c => c.CommissionStatus)
                 .Include(c => c.Game)
@@ -356,7 +360,7 @@ namespace GameModCrafters.Controllers
             {
                 try
                 {
-                    
+                   
                     commission.UpdateTime = DateTime.Now;
                     _context.Update(commission);
                     await _context.SaveChangesAsync();
@@ -374,9 +378,7 @@ namespace GameModCrafters.Controllers
                 }
                 return RedirectToAction("PersonPage", "Account");
             }
-            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);
-            ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
-            ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
+           
             return View(commission);
         }
 

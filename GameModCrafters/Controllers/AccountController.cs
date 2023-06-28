@@ -495,21 +495,24 @@ namespace GameModCrafters.Controllers
             personVM.BackgroundImage = userCover;
 
             var commissions = await _context.Commissions
-               .Where(c => c.DelegatorId == usermail)
-               .Include(c => c.Delegator)
-               .Include(c => c.CommissionStatus)
-               .Select(c => new CommissionViewModel
-               {
-                   CommissionId = c.CommissionId,
-                   DelegatorName = c.Delegator.Username,
-                   CommissionTitle = c.CommissionTitle,
-                   Budget = c.Budget,
-                   CreateTime = c.CreateTime,
-                   UpdateTime = c.UpdateTime,
-                   Status = c.CommissionStatus.Status
-               })
+                .Where(c => c.DelegatorId == user.Email)
+                .Include(c => c.Delegator)
+                .Include(c => c.CommissionStatus)
+                .Include(c => c.Game)
+                .Select(c => new CommissionViewModel
+                {
+                    CommissionId = c.CommissionId,
+                    GameID = c.Game.GameId,
+                    GameName = c.Game.GameName,
+                    DelegatorName = c.Delegator.Username,
+                    CommissionTitle = c.CommissionTitle,
+                    Budget = c.Budget,
+                    CreateTime = c.CreateTime,
+                    UpdateTime = c.UpdateTime,
+                    Status = c.CommissionStatus.Status
+                })
                .ToListAsync();
-            if (commissions == null)
+            if (commissions.Count == 0)
             {
                 return NotFound();
             }
