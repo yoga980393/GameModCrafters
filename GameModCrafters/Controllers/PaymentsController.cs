@@ -1,4 +1,5 @@
 ﻿using GameModCrafters.Data;
+using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace GameModCrafters.Controllers
 {
@@ -21,8 +23,8 @@ namespace GameModCrafters.Controllers
             var config = new Dictionary<string, string>
             {
                 { "mode", "sandbox" },
-                { "clientId", "AUL-Ku1UaDTQLEwqFSwBsEY041alKdAOCneCel9ESJo2XyI2qdcGMcHtSk_3FhP-dkEeWw7CR84O4rMA" },
-                { "clientSecret", "EB39_sJHBx3UWDA_9Fcpkr8IFMI2QhMM4gsTUhU8zoijv2f1XX0ZSLdWSmUGm9xWFPF0at0hQEgGm7GW" }
+                { "clientId", "Aadk1LCLNrKsRBjTzdr2fMQb-N6ysUo75cq0fqVw-TdCNXXOLvzkaUHret6SvsJf-w6ZIralojS2whkg" },
+                { "clientSecret", "EKPCkHpefRADCGdPK5-eMhvI-Ih60XityKEaLyTuBFffrf1LrDndRFBMbEy4L0REyX_h3PFXd-UzoMw6" }
             };
 
             var accessToken = new OAuthTokenCredential(config).GetAccessToken();
@@ -51,7 +53,7 @@ namespace GameModCrafters.Controllers
                 {
                     description = "Transaction description.",
                     invoice_number = Guid.NewGuid().ToString(),
-                    amount = new Amount { currency = "TWD", total = price.ToString() },  // Convert the price from TWD to USD if necessary
+                    amount = new Amount { currency = "USD", total = price.ToString() },  // Convert the price from TWD to USD if necessary
                     item_list = new ItemList
                     {
                         items = new List<Item>
@@ -59,8 +61,8 @@ namespace GameModCrafters.Controllers
                             new Item
                             {
                                 name = " 個Mod Coin",
-                                currency = "TWD",
-                                price = "30", // Convert the price from TWD to USD if necessary
+                                currency = "USD",
+                                price = "1", // Convert the price from TWD to USD if necessary
                                 quantity = quantity.ToString(),
                                 sku = "sku"
                             }
@@ -118,6 +120,88 @@ namespace GameModCrafters.Controllers
         public IActionResult StoredValue()
         {
             return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ConvertModCoin([FromBody] ConvertModCoinViewModel model)
+        {
+            int amount = model.amount;
+
+            string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
+
+            // 驗證用戶和金額
+            if (user == null || user.ModCoin < amount)
+            {
+                return BadRequest();
+            }
+
+            // 扣除用戶的 Mod Coin
+            user.ModCoin -= amount;
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
+            // 使用 PayPal 沙盒賬戶模擬轉賬，以美元為例
+            var payout = new Payout
+            {
+                sender_batch_header = new PayoutSenderBatchHeader
+                {
+                    email_subject = "You have a Payout!",
+                },
+                items = new List<PayoutItem>
+                {
+                    new PayoutItem
+                    {
+                        recipient_type = PayoutRecipientType.EMAIL,
+                        amount = new Currency
+                        {
+                            value = (amount).ToString(), 
+                            currency = "USD"  
+                        },
+                        receiver = user.PayPalAccounts,  
+                        note = "Thank you for your business!",
+                        sender_item_id = "item_id_" + Guid.NewGuid().ToString(),
+                    }
+                }
+            };
+
+            var createdPayout = payout.Create(apiContext, false);
+
+            if (createdPayout.batch_header.payout_batch_id != null)
+            {
+                TempData["TransferAmount"] = amount;
+                TempData["RemainingModCoins"] = user.ModCoin;
+                return Json("success");
+            }
+            else
+            {
+                // 還原 Mod Coin
+                user.ModCoin += amount;
+                _context.Users.Update(user);
+                _context.SaveChanges();
+
+                return Json("fail");
+            }
+        }
+
+        [Authorize]
+        public IActionResult TransferMoneySuccess(int amount)
+        {
+            string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
+            ViewBag.CoinCount = user.ModCoin;
+
+            return View(amount);
+        }
+
+        [Authorize]
+        public IActionResult TransferMoney()
+        {
+            string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
+
+            return View(user.ModCoin);
         }
     }
 }

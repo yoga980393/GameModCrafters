@@ -8,17 +8,17 @@
 <div class="vertical-button-group m-5" role="group" aria-label="Basic radio toggle button group">
     <div class="single-button">
         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" value="30" checked>
-        <label class="btn btn-outline-primary CountBtn" for="btnradio1">儲值  1 個 Mod Coin   30元</label>
+        <label class="btn btn-outline-primary CountBtn" for="btnradio1">儲值  1 個 Mod Coin 1 USD</label>
     </div>
 
     <div class="single-button">
         <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" value="150">
-        <label class="btn btn-outline-primary CountBtn" for="btnradio2">儲值  5 個 Mod Coin  150元</label>
+        <label class="btn btn-outline-primary CountBtn" for="btnradio2">儲值  5 個 Mod Coin 5 USD</label>
     </div>
 
     <div class="single-button">
         <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" value="300">
-        <label class="btn btn-outline-primary CountBtn" for="btnradio3">儲值 10 個 Mod Coin  300元</label>
+        <label class="btn btn-outline-primary CountBtn" for="btnradio3">儲值 10 個 Mod Coin 10 USD</label>
     </div>
 
     <div class="single-button CustomizeDiv">
@@ -29,7 +29,7 @@
 </div>
 
 <div class="checkoutDiv mx-5 mb-3">
-    <p>價格： <span id="price">30</span> 元</p>
+    <p>價格： <span id="price">1</span> USD</p>
     <button class="btn btn-primary">結帳</button>
 </div>
 
@@ -81,7 +81,7 @@
         function CustomizePrice() {
             $("#CustomizeInput").on("change", function () {
                 let inputVal = $(this).val();
-                let newVal = inputVal ? parseInt(inputVal) * 30 : 0;
+                let newVal = inputVal ? parseInt(inputVal) : 0;
                 $("#btnradio4").val(newVal);
                 if ($("#btnradio4").is(':checked')) {
                     $("#price").html(newVal);
@@ -100,7 +100,7 @@
                 // Get the value of the selected radio button
                 let selectedValue = $("input[name='btnradio']:checked").val();
                 // Get the quantity based on the selectedValue
-                let quantity = selectedValue / 30;
+                let quantity = selectedValue;
                 // Send the data to the server
                 $.ajax({
                     url: '/Payments/CreatePayment',
