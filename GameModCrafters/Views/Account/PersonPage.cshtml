@@ -110,7 +110,7 @@
                         <div class="col-sm-5">
                             <label for="inputAccount" class="visually-hidden">PayPal帳號</label>
                             <input type="text" class="form-control" id="inputAccount" placeholder="PayPal帳號">
-
+                            <span id="AccountError" class="text-danger"></span>
                         </div>
                         <div class="col-sm">
                             <button type="button" class="btn btn-primary btn-sm " id="confirm_PayPalAccount_btn">確認</button>
@@ -239,40 +239,9 @@
 
     <script>
 
-
-        $("#confirm_Name_btn").click(function () {
-            var username = $("#inputUsername").val();
-            $.post('/Account/IsUsernameInUse', { username: username }, function (data) {
-                if (data == "更改成功") {
-                    // 顯示成功訊息
-                    $("#usernameError").text(data).removeClass("text-danger").addClass("text-success");
-                    $("#navbarname").text(username);
-                } else {
-                    // 顯示錯誤訊息
-                    $("#usernameError").text(data).removeClass("text-success").addClass("text-danger");
-                }
-            });
-        });
-
-
-    </script>
-
-    <script>
-
-
-        window.onload = function () {
-
-            // uploadCoverImg()
-            // CropCoverImg()
-
-            handleCoverImg()
-            handlePersonImg()
-            // uploadPersonImg()
-            // CropPersonImg()
-            Edit_Name()
-            PayPalAccountSetting()
-            favorite_star()
-        }
+        let cropperperson
+        let cropBoxes = [];
+        let croppercover; // 定義全局變量 croppercover
 
         function favorite_star() {
             let star_icons = document.querySelectorAll('.star_icon');
@@ -304,6 +273,7 @@
 
             })
         }
+
         function PayPalAccountSetting() {
             let form = document.querySelector('.PayPalform')
             let confirm_btn = document.getElementById("confirm_PayPalAccount_btn")
@@ -320,7 +290,7 @@
             })
 
         }
-        let cropperperson
+
         function handlePersonImg() {
             let editbtn = document.getElementById('Edit_Profile')
             let preview_person_pic = document.getElementById('preview_person_pic')
@@ -342,7 +312,7 @@
                 })
             })
         }
-        let cropBoxes = [];
+
         function initCropPersonImg() {
             let cropButton = document.getElementById("croppersonButton");
             let personal_pic = document.getElementById("personal_pic");
@@ -427,9 +397,6 @@
             });
         }
 
-
-
-        let croppercover; // 定義全局變量 croppercover
         function handleCoverImg() {
             let editbtn = document.getElementById('Edit_pic');
             let cropButton = document.getElementById('cropcoverButton');
@@ -500,8 +467,49 @@
                 }, 'image/jpeg');
 
                 cropperperson.destroy(); // 清除緩存
+                $("#preview_person_pic").arrr("");
             });
         }
+
+        function ChangName() {
+            $("#confirm_Name_btn").click(function () {
+                var username = $("#inputUsername").val();
+                $.post('/Account/IsUsernameInUse', { username: username }, function (data) {
+                    if (data == "更改成功") {
+                        // 顯示成功訊息
+                        $("#usernameError").text(data).removeClass("text-danger").addClass("text-success");
+                        $("#navbarname").text(username);
+                    } else {
+                        // 顯示錯誤訊息
+                        $("#usernameError").text(data).removeClass("text-success").addClass("text-danger");
+                    }
+                });
+            });
+        }
+
+        function SetPayPalAccount(){
+            $("#confirm_PayPalAccount_btn").on("click", () => {
+                var account = $("#inputAccount").val();
+                $.post('/Account/SetPayPalAccount', { account: account }, function(data){
+                    if (data == "更改成功"){
+                        $("#AccountError").text(data).removeClass("text-danger").addClass("text-success");
+                    }
+                    else{
+                        $("#AccountError").text("錯誤").removeClass("text-success").addClass("text-danger");
+                    }
+                })
+            })
+        }
+
+        $(() => {
+            handleCoverImg();
+            handlePersonImg();
+            Edit_Name();
+            PayPalAccountSetting();
+            favorite_star();
+            ChangName();
+            SetPayPalAccount();
+        });
 
     </script>
 }

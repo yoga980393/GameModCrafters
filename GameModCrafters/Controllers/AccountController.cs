@@ -1049,5 +1049,17 @@ namespace GameModCrafters.Controllers
             return Ok(user);
         }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SetPayPalAccount(string account)
+        {
+            var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == currentUserEmail);
+
+            user.PayPalAccounts = account;
+            await _context.SaveChangesAsync();
+
+            return Json("更改成功");
+        }
     }
 }

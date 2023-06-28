@@ -185,6 +185,7 @@ namespace GameModCrafters.Controllers
             }
         }
 
+        [Authorize]
         public IActionResult TransferMoneySuccess(int amount)
         {
             string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
@@ -194,6 +195,7 @@ namespace GameModCrafters.Controllers
             return View(amount);
         }
 
+        [Authorize]
         public IActionResult TransferMoney()
         {
             string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
