@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewData["Title"] = "TransferMoneySuccess";
+}
+
+<div id="success">
+    <h1>提款成功</h1>
+
+    <p>成功提取 @Model USD</p>
+    <p>請到信箱中查看匯款郵件</p>
+    <p>你的帳戶中還剩餘 ViewBag.CoinCount 個Mod Coin</p>
+
+</div>
+
+@section css{
+    <style>
+        #success {
+            min-height: 60vh;
+        }
+    </style>
+}
