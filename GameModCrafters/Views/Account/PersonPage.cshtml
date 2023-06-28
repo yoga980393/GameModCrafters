@@ -104,7 +104,19 @@
 
                     <button type="button" class="btn btn-secondary btn-sm " id="Edit_Profile">上傳照片</button>
 
+                    <button type="button" class="btn btn-secondary btn-sm " id="PayPalSetting_btn">設定PayPal帳戶</button>
+                    <form class="row g-3 PayPalform d-none">
+                        <!-- d-none-->
+                        <div class="col-sm-5">
+                            <label for="inputAccount" class="visually-hidden">PayPal帳號</label>
+                            <input type="text" class="form-control" id="inputAccount" placeholder="PayPal帳號">
 
+                        </div>
+                        <div class="col-sm">
+                            <button type="button" class="btn btn-primary btn-sm " id="confirm_PayPalAccount_btn">確認</button>
+                        </div>
+                    </form>
+                    
 
                 </div>
                 <!-- <div class="modal-body">
@@ -134,7 +146,7 @@
 
     </div>
     <div class="container text-center mod-list">
-        <div class="row align-items-start">
+        <div class="row align-items-start rowwrap">
             <div class="col-6 title">
                 Title
             </div>
@@ -153,7 +165,7 @@
         </div>
         @foreach (var item in commssions)
         {
-            <div class="row align-items-start">
+            <div class="row align-items-start rowwrap">
                 <div class="col-6 title">
                     <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
                         @item.CommissionTitle
@@ -258,6 +270,7 @@
             // uploadPersonImg()
             // CropPersonImg()
             Edit_Name()
+            PayPalAccountSetting()
             favorite_star()
         }
 
@@ -291,7 +304,22 @@
 
             })
         }
+        function PayPalAccountSetting() {
+            let form = document.querySelector('.PayPalform')
+            let confirm_btn = document.getElementById("confirm_PayPalAccount_btn")
+            let inputAccount = document.getElementById("inputAccount")
+            let PayPalSetting_btn = document.getElementById("PayPalSetting_btn")
 
+            PayPalSetting_btn.addEventListener('click', function () {
+                if (form.classList.contains('d-none')) {
+                    form.classList.remove('d-none')
+                }
+                else {
+                    form.classList.add('d-none')
+                }
+            })
+
+        }
         let cropperperson
         function handlePersonImg() {
             let editbtn = document.getElementById('Edit_Profile')
@@ -508,14 +536,14 @@
             /* position: relative; */
         }
 
-        .ImgWrap .Img_cover {
-            object-fit: cover;
-            width: 100%;
-            display: block;
-            margin: auto;
-            height: 30h;
-            /* position: relative; */
-        }
+            .ImgWrap .Img_cover {
+                object-fit: cover;
+                width: 100%;
+                display: block;
+                margin: auto;
+                height: 30h;
+                /* position: relative; */
+            }
 
         /* ---------Modal */
         .modal_img {
@@ -525,12 +553,12 @@
             text-align: center;
         }
 
-        .modal_img img {
-            object-fit: cover;
-            width: 100%;
-            height: auto;
-            position: relative;
-        }
+            .modal_img img {
+                object-fit: cover;
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
 
         #Edit_Profile_modal .person {
             display: flex;
@@ -538,13 +566,13 @@
             gap: 10px;
         }
 
-        #Edit_Profile_modal .person button {
-            width: 100px;
-        }
+            #Edit_Profile_modal .person button {
+                width: 150px;
+            }
 
-        #Edit_Profile_modal .person .form-text {
-            color: red;
-        }
+            #Edit_Profile_modal .person .form-text {
+                color: red;
+            }
 
         /* .cropper-crop-box.activeradius, .cropper-view-box.activeradius {
             border-radius: 50%;
@@ -567,17 +595,17 @@
             /* position: absolute; */
         }
 
-        .Cover .personal_pic img {
-            display: block;
-            /* width: 200px;
-        height: 200px; */
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-            /* background-size: cover; */
-            /* background-position: center; */
-        }
+            .Cover .personal_pic img {
+                display: block;
+                /* width: 200px;
+            height: 200px; */
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 50%;
+                /* background-size: cover; */
+                /* background-position: center; */
+            }
 
         .Cover .pic_name {
             display: flex;
@@ -611,18 +639,21 @@
             z-index: 5; */
         }
 
-        .Cover_container .Edit {
-            display: flex;
-            justify-content: end;
-            /* background-color: aqua; */
-        }
+            .Cover_container .Edit {
+                display: flex;
+                justify-content: end;
+                /* background-color: aqua; */
+            }
 
-        .Cover_container .Edit button {
-            margin: 10px;
-        }
+                .Cover_container .Edit button {
+                    margin: 10px;
+                }
 
+        .person .nameform, .person .PayPalform {
+            align-items: center;
+        }
         /* ---------------發布mod */
-        /*.row .text .describe {
+        .row .text .describe {
             text-indent: 3em;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -630,17 +661,21 @@
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
-        }*/
-        .mod img {
-            vertical-align: top;
-            width: 100%;
         }
 
-        .mod .card {
-            margin-bottom: 10px;
-            border-radius: 5px;
-            overflow: hidden;
+        .mod .data {
+            display: flex;
+            width: 100%;
+            padding: 5px 15px;
+            padding-top: 10px;
+            justify-content: space-between;
+            background-color: #ccc;
+            vertical-align: top;
         }
+
+            .mod .data h3 {
+                font-size: 13px;
+            }
 
         .mod .name_price {
             display: flex;
@@ -656,22 +691,18 @@
             font-size: 20px;
         }
 
-        .mod .detail {
-            height: 180px;
+        .mod .detail h3 {
+            font-size: 15px;
         }
 
-            .mod .detail h3 {
-                font-size: 15px;
-            }
+        .mod .detail h2 {
+            font-size: 20px;
+        }
 
-            .mod .detail h2 {
-                font-size: 20px;
+            .mod .detail h2 span {
+                margin-right: 5px;
+                color: white;
             }
-
-                .mod .detail h2 span {
-                    margin-right: 5px;
-                    color: white;
-                }
 
         .mod .tag {
             color: orange;
@@ -681,49 +712,18 @@
             color: gray;
         }
 
-        .mod .describe {
-            font-size: 13px;
-            text-indent: 26px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            min-height: 40px;
+        .mod .row .card {
+            margin: 10px 0;
         }
-
-        .mod .data {
-            display: flex;
-            padding: 5px 15px;
-            padding-top: 10px;
-            justify-content: space-between;
-            background-color: #ccc;
-            vertical-align: top;
-        }
-
-            .mod .data h3 {
-                font-size: 13px;
-            }
-
-        .mod .emptyCrad{
-            width:100%;
-            height:100px;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            color:gray;
-            font-size:60px;
-        }
-
 
         .more-mod-Pagination {
             text-align: center;
             padding: 10px;
         }
 
-        .more-mod-Pagination nav {
-            display: inline-block;
-        }
+            .more-mod-Pagination nav {
+                display: inline-block;
+            }
         /* ---------委託的mod--------- */
         .Release_Area_Wrap {
             background-color: #bdbcbc;
@@ -748,11 +748,11 @@
 
 
 
-        .row:nth-child(even) {
+        .rowwrap:nth-child(even) {
             background: linear-gradient(to right, #f6f6f6, #e9e9e9);
         }
 
-        .row:nth-child(odd) {
+        .rowwrap:nth-child(odd) {
             background: linear-gradient(to right, #e9e9e9, #f6f6f6);
         }
 
@@ -769,21 +769,21 @@
             position: relative;
         }
 
-        .favorite_mod .card .favorite_icon {
-            position: absolute;
-            background-color: red;
-            padding: 5px;
-            width: fit-content;
-            box-shadow: 2px 2px 10px 2px #888;
-            top: 0;
-            left: 5px;
-        }
+            .favorite_mod .card .favorite_icon {
+                position: absolute;
+                background-color: red;
+                padding: 5px;
+                width: fit-content;
+                box-shadow: 2px 2px 10px 2px #888;
+                top: 0;
+                left: 5px;
+            }
 
-        .favorite_mod .card .favorite_icon .star_icon {
-            /* font-size: 30px; */
-            cursor: pointer;
-            color: gold;
-        }
+                .favorite_mod .card .favorite_icon .star_icon {
+                    /* font-size: 30px; */
+                    cursor: pointer;
+                    color: gold;
+                }
 
         .triangle {
             width: 0;
@@ -814,10 +814,10 @@
             padding: 40px;
         }
 
-        .footer .title h3 {
-            display: block;
-            margin: auto;
-        }
+            .footer .title h3 {
+                display: block;
+                margin: auto;
+            }
 
         .wrap {
             width: 100%;
@@ -844,14 +844,14 @@
             display: flex;
         }
 
-        .menu a {
-            color: white;
-            padding: 0 5px;
-        }
+            .menu a {
+                color: white;
+                padding: 0 5px;
+            }
 
-        .menu a:first-child {
-            border-right: #ccc solid 1px;
-        }
+                .menu a:first-child {
+                    border-right: #ccc solid 1px;
+                }
 
         /* -------------footer */
     </style>
