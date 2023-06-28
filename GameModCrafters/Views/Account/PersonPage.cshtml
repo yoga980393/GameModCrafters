@@ -433,7 +433,7 @@
         function handleCoverImg() {
             let editbtn = document.getElementById('Edit_pic');
             let cropButton = document.getElementById('cropcoverButton');
-
+            let preview_cover_pic = document.getElementById('preview_cover_pic');
             editbtn.addEventListener('click', function () {
                 let input = document.createElement('input');
                 input.type = 'file';
@@ -446,6 +446,7 @@
                         preview_cover_pic.src = reader.result;
                         if (croppercover) {
                             croppercover.destroy(); // 如果有，清除緩存
+                        
                         }
                         initCoverCropper(); // 初始化新的 cropper 實例
                     });
@@ -493,6 +494,8 @@
                             // 根據需要進行處理回傳的數據
                             console.log(data);
                             Cover_pic.src = data.fileUrl;
+                            croppercover.destroy();
+                            preview_cover_pic.src = '';
                         })
                         .catch(error => {
                             console.error('Error:', error);
