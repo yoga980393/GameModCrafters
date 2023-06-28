@@ -1,4 +1,4 @@
-using GameModCrafters.Data;
+ï»¿using GameModCrafters.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -17,6 +17,7 @@ using SendGrid;
 using GameModCrafters.Services;
 using GameModCrafters.Hubs;
 
+
 namespace GameModCrafters
 {
     public class Startup
@@ -34,27 +35,32 @@ namespace GameModCrafters
             services.AddControllersWithViews();
 
             services.AddDistributedMemoryCache();
-            services.AddSession(); // ²K¥[SessionªA°È
-            services.AddSingleton<IHashService, HashService>();//¥[±K
-            // ³]©w SendGrid ªA°È
+            services.AddSession(); // æ·»åŠ Sessionæœå‹™
+            services.AddSingleton<IHashService, HashService>();//åŠ å¯†
+            // è¨­å®š SendGrid æœå‹™
             services.AddTransient<ISendGridClient>(x => new SendGridClient(Configuration["SendGrid:ApiKey"]));
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)//¥[¤JCookieÅçÃÒ, ¦P®É³]©w¿ï¶µ
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)//åŠ å…¥Cookieé©—è­‰, åŒæ™‚è¨­å®šé¸é …
             .AddCookie(options =>
             {
-                //¹w³]µn¤JÅçÃÒºô§}¬°Account/Login, ­Y·QÅÜ§ó¤~»İ­n³]©wLoginPath
+                //é è¨­ç™»å…¥é©—è­‰ç¶²å€ç‚ºAccount/Login, è‹¥æƒ³è®Šæ›´æ‰éœ€è¦è¨­å®šLoginPath
                 
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(100);
                 options.SlidingExpiration = true;
                 options.LoginPath = new PathString("/Account/LoginPage/");
-                //options.AccessDeniedPath = "/Account/Forbidden/";  //©Úµ´³X°İ!
+                //options.AccessDeniedPath = "/Account/Forbidden/";  //æ‹’çµ•è¨ªå•!
             });
             services.AddAuthorization();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
             Configuration.GetConnectionString("ApplicationDbContext")));
-
+            
             services.AddTransient<ModService>();
+      
 
+
+          
             services.AddSignalR();
+
+
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,14 +78,13 @@ namespace GameModCrafters
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-           
 
-             
-            app.UseSession(); // ±Ò¥ÎSession
+
+            app.UseSession(); // å•Ÿç”¨Session
 
             app.UseRouting();
-            app.UseAuthentication(); //ÅçÃÒ
-            app.UseAuthorization(); //±ÂÅv
+            app.UseAuthentication(); //é©—è­‰
+            app.UseAuthorization(); //æˆæ¬Š
 
             app.UseEndpoints(endpoints =>
             {

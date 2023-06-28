@@ -4,14 +4,16 @@ using GameModCrafters.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GameModCrafters.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230627071033_ModCoin")]
+    partial class ModCoin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -540,21 +542,6 @@ namespace GameModCrafters.Migrations
                         });
                 });
 
-            modelBuilder.Entity("GameModCrafters.Models.Tracking", b =>
-                {
-                    b.Property<string>("CommissionId")
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("CommissionId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Trackings");
-                });
-
             modelBuilder.Entity("GameModCrafters.Models.Transaction", b =>
                 {
                     b.Property<string>("TransactionId")
@@ -628,9 +615,6 @@ namespace GameModCrafters.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PayPalAccounts")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
@@ -886,25 +870,6 @@ namespace GameModCrafters.Migrations
                     b.Navigation("Receiver");
 
                     b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("GameModCrafters.Models.Tracking", b =>
-                {
-                    b.HasOne("GameModCrafters.Models.Commission", "Commission")
-                        .WithMany()
-                        .HasForeignKey("CommissionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("GameModCrafters.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Commission");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Transaction", b =>

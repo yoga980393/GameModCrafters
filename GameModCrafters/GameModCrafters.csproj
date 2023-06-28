@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\css\emailvaild.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.17">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,7 +21,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
-    <PackageReference Include="MoreLINQ" Version="3.4.2" />
+    <PackageReference Include="PayPal" Version="1.9.1" />
     <PackageReference Include="SendGrid" Version="9.28.1" />
   </ItemGroup>
 
@@ -27,6 +31,12 @@
     <Folder Include="wwwroot\GameImages\" />
     <Folder Include="wwwroot\GameArchive\" />
     <Folder Include="wwwroot\ModDescriptionImages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ECPay.Payment.Integration">
+      <HintPath>..\..\..\Users\wggis\OneDrive\�ୱ\ECPayAIO_Net-master\ECPay.Payment.Integration.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

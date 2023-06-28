@@ -1,0 +1,89 @@
+﻿@model int
+@{
+    ViewData["Title"] = "TransferMoney";
+}
+
+<div class="container myContainer" id="transferMoney">
+    <h1 class="mt-3">提取Mod Coin</h1>
+
+    <p>你現在擁有 @Model 個Mod Coin</p>
+    <p>每個Mod Coin可以兌現1 USD</p>
+
+    <div class="amountDiv">
+        <p>你要兌換</p>
+        <input id="coin-input" type="text" />
+        <p>個Mod Coin</p>
+    </div>
+
+    <div class="btnDiv">
+        <button id="submit-button" class="btn btn-primary">確定</button>
+    </div>
+</div>
+
+
+@section css{
+    <style>
+        .amountDiv{
+            display:flex;
+            align-items: flex-start;
+            gap:3px;
+        }
+
+        #transferMoney {
+            min-height: 53vh;
+        }
+
+        .btnDiv{
+            width:30%;
+            height:130px;
+            display:flex;
+            justify-content:flex-end;
+            align-items:flex-end;
+        }
+
+        .btnDiv button{
+            height:35px;
+        }
+
+        .myContainer{
+            margin-top:40px
+        }
+    </style>
+}
+
+@section js{
+    <script>
+        $(function () {
+            $("#submit-button").on("click", function () {
+                var coinAmount = $("#coin-input").val();
+                var totalCoins = @Model;
+
+                if (!coinAmount || coinAmount === "0") {
+                    alert("請輸入要兌換的Mod Coin數量");
+                    return;
+                }
+
+                if (parseInt(coinAmount) > totalCoins) {
+                    alert("您的 Mod Coin 餘額不足");
+                    return;
+                }
+
+                // 如果输入的值是合法的，发出 AJAX 请求
+                $.ajax({
+                    url: '/Payments/ConvertModCoin/',
+                    type: 'POST',
+                    contentType: 'application/json',  // 加上這一行
+                    data: JSON.stringify({ 'amount': parseInt(coinAmount) }),   // 將數據轉換為 JSON 格式
+                    success: function (data) {
+                        console.log(data);
+                        window.location.href = '/Payments/TransferMoneySuccess?amount=' + coinAmount;
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log("失敗");
+                        console.log(jqXHR.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}

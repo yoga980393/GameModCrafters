@@ -38,6 +38,9 @@ namespace GameModCrafters.Models
 
         [MaxLength(255),Display(Name = "email確認碼")]
         public string ConfirmationCode { get; set; }
+
+        public int ModCoin { get; set; }
+        public string PayPalAccounts { get; set; }
         // Navigation property
         public ICollection<Mod> Mods { get; set; }
 
