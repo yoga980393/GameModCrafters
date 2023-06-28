@@ -7,7 +7,7 @@
 <div class="container  Entrustcontainer">
     <h1>委託修改</h1>
     <div class="row">
-        <form method="post">
+        <form method="get">
             <label asp-for="DelegatorId">委託人</label>
             <select asp-for="DelegatorId" class="form-control" asp-items="@ViewBag.DelegatorId" disabled></select>
             <input type="hidden" class="form-control" asp-for="CommissionId" disabled>
@@ -28,115 +28,65 @@
                 <label asp-for="Budget">預算:</label>
                 <input type="text" class="budgetinput" asp-for="Budget" disabled>
             </div>
-            @*<div class="mb-3">
-                <label asp-for="Trash">是否放入暫存匣:</label>
-                <input type="checkbox" class="Trashinput" asp-for="Trash" disabled>
-            </div>*@
             <div class="btnCantaner">
-                @* <input type="submit" value="發布" asp-controller="Commissions" asp-action="Create" class="btn btn-primary form-control" />
-                <input type="submit" value="接受委託" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />
-                <input type="submit" value="儲存草稿" asp-controller="Commissions" asp-action="Details" class="btn btn-primary form-control" />
-                <input type="submit" value="聯繫委託人" asp-controller="Commissions" asp-action="Edit" class="btn btn-primary form-control" />*@
-
-                <button class="btn btn-primary mt-3" id="MessageButton">
+               
+                <button class="btn btn-primary mt-3" id="MessageButton" type="button">
                     私訊作者
                 </button>
-
-                <button class="btn btn-primary mt-3" id="followCommission" onclick="return confirm('委託新增成功!')">
-                    追蹤委託
+                <button class="btn btn-primary mt-3" id="followButton" type="button" >
+                    @(ViewBag.TraEX ? "取消追蹤" : "追蹤委託")
                 </button>
+
             </div>
         </form>
     </div>
 </div>
+@Html.AntiForgeryToken()
 
 @section css {
     <link rel="stylesheet" href="~/css/CommissionsDetails.css" />
 }
 
 @section js {
-
-
-    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
-
     <script>
 
-        let myEditor;
-
-        $(document).ready(function () {
-
+        $(() => {
             MessageBtn();
 
             FollowCommission();
+        })
 
-        });
-
-        ClassicEditor
-            .create(document.querySelector('#editor'), {
-                // ...other configurations,
-                extraPlugins: [Base64UploadAdapterPlugin]
-            })
-
-            .then(editor => {
-                myEditor = editor;
-            })
-
-            .catch(error => {
-                console.error(error);
-            });
-
-        function Base64UploadAdapterPlugin(editor) {
-            editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
-                return new Base64UploadAdapter(loader);
-            };
-        }
-
-        $(document).ready(function () {
-            myEditor.setData($("#CommissionDescription").val());
-        });
-
-        class Base64UploadAdapter {
-            constructor(loader) {
-                this.loader = loader;
-            }
-
-            upload() {
-                return this.loader.file
-                    .then(file => new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                            resolve({ default: reader.result });
-                        };
-                        reader.onerror = error => {
-                            reject(error);
-                        };
-                        reader.readAsDataURL(file);
-                    }));
-            }
-
-            abort() { }
-        }
-
-
-        $('form').on('submit', function (e) {
-            // 在表單提交時，手動更新隱藏的 input 欄位的值
-            $('#CommissionDescription').val(myEditor.getData());
-        });
+       
 
         function FollowCommission() {
             // 綁定按鈕點擊事件
             $("#followButton").click(function () {
+                console.log("@Url.Action("AddCommissionTracking", "Commissions")")
                 // 發送AJAX請求
                 $.ajax({
-                    url: "/Commissions/AddCommissionTracking", // 請替換為實際的控制器和動作方法的路由
+                    headers: {
+                        RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    url: '@Url.Action("AddCommissionTracking", "Commissions")', // 請替換為實際的控制器和動作方法的路由
                     type: "POST",
                     data: {
-                        commissionId: "@Model.CommissionId" // 傳遞委託ID到後端
+                        comId: "@Model.CommissionId" // 傳遞委託ID到後端
                     },
                     success: function (response) {
                         // 請求成功後的處理程式碼
                         console.log("委託追蹤新增成功");
                         // 在此可以進行其他相關處理，例如更新頁面內容等
+
+                        if (response == '新增成功') {
+                            // 如果是新增追蹤，將按鈕文字設定為「取消追蹤委託」
+                            alert('追蹤成功');
+                            $("#followButton").text("取消追蹤");
+                        } else {
+                            alert('取消追蹤成功');
+                            // 如果是刪除追蹤，將按鈕文字設定為「追蹤委託」
+                            $("#followButton").text("追蹤委託");
+                        }
+                        
                     },
                     error: function (xhr, status, error) {
                         // 請求失敗後的處理程式碼

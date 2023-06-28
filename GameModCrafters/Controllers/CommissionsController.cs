@@ -17,6 +17,8 @@ using GameModCrafters.Services;
 using SendGrid;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 namespace GameModCrafters.Controllers
 {
@@ -40,6 +42,11 @@ namespace GameModCrafters.Controllers
             _sendGridClient = sendGridClient;
             _modService = modService;
             _logger = logger;
+        }
+
+        private bool CommissionExists(string id)
+        {
+            return _context.Commissions.Any(e => e.CommissionId == id);
         }
 
 
@@ -71,6 +78,7 @@ namespace GameModCrafters.Controllers
             return View(commissions);
         }
 
+
         //GET: Commissions/Details/5
         public async Task<IActionResult> Details(string id)
         {
@@ -78,6 +86,7 @@ namespace GameModCrafters.Controllers
             {
                 return NotFound();
             }
+            ViewBag.TrackingEX = false;
 
             var commission = await _context.Commissions
                 .Include(c => c.CommissionStatus)
@@ -93,9 +102,17 @@ namespace GameModCrafters.Controllers
             {
                 return NotFound();
             }
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-
-
+            var existingTracking = _context.CommissionTrackings.FirstOrDefault(m => m.CommissionId == id && m.UserId == userId);
+            if (existingTracking != null)
+            {
+                ViewBag.TraEX = true;
+            }
+            else
+            {
+                ViewBag.TraEX = false;
+            }
             return View(commission);
         }
         //[Authorize]
@@ -151,50 +168,51 @@ namespace GameModCrafters.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddCommissionTracking(string id, [Bind("CommissionId,DelegatorId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
+        public async Task<IActionResult> AddCommissionTracking(string comId)
         {
-            if (id != commission.CommissionId)
+            try
             {
-                return RedirectToAction(nameof(Index));
-            }
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (string.IsNullOrEmpty(userId))
                 {
-                    // 在適當的位置取得追蹤委託的相關資訊
-                    var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value; // 取得當前使用者的ID或識別符號
-                    string commissionId = id; // 請根據實際情況取得委託的ID
+                    return Json(new { success = false, errorMessage = "User is not authenticated." });
+                }
 
-                    // 建立新的CommissionTracking物件
-                    var commissionTracking = new CommissionTracking
+                // 確認該用戶是否已經追蹤
+                var existingTracking = _context.CommissionTrackings.FirstOrDefault(m => m.CommissionId == comId && m.UserId == userId);
+             
+                if (existingTracking == null)
+                {
+                    // 如果還沒點過讚，就建立新的 ModLike
+                    var newCommissionTracking = new CommissionTracking
                     {
+                        CommissionId = comId,
                         UserId = userId,
-                        CommissionId = commissionId,
-                        AddTime = DateTime.Now // 可以根據需要指定添加時間,
-
+                        AddTime = DateTime.Now
                     };
+                    _context.CommissionTrackings.Add(newCommissionTracking);
 
-                    // 將CommissionTracking物件新增到資料庫中
-                    _context.CommissionTrackings.Add(commissionTracking);
+
+
                     await _context.SaveChangesAsync();
+                    return Json("新增成功");
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!CommissionExists(commission.CommissionId))
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    // 如果已經追蹤過，就刪除該筆記錄
+                    _context.CommissionTrackings.Remove(existingTracking);
+
+                    await _context.SaveChangesAsync();
+                    return Json("刪除成功");
                 }
-                return RedirectToAction(nameof(Index));
+              
             }
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                // 發生錯誤時，回傳錯誤訊息
+                return Json(new { success = false, errorMessage = ex.Message });
+            }
         }
 
 
@@ -273,6 +291,32 @@ namespace GameModCrafters.Controllers
                 return RedirectToAction(nameof(Index));
             }
             
+        }
+
+        public async Task<IActionResult> GetAllCommission()
+        {
+            string loggedInUserEmail = User.FindFirstValue(ClaimTypes.Email);
+            var commissions = await _context.Commissions
+                .Where(c => c.IsDone == true)
+                .Where(c => c.DelegatorId != loggedInUserEmail)
+                .Include(c => c.Delegator)
+                .Include(c => c.CommissionStatus)
+                .Include(c => c.Game)
+                .Select(c => new CommissionViewModel
+              {
+                    CommissionId = c.CommissionId,
+                    GameID = c.Game.GameId,
+                    GameName = c.Game.GameName,
+                    DelegatorName = c.Delegator.Username,
+                    CommissionTitle = c.CommissionTitle,
+                    Budget = c.Budget,
+                    CreateTime = c.CreateTime,
+                    UpdateTime = c.UpdateTime,
+                    Status = c.CommissionStatus.Status
+               })
+               .ToListAsync();
+
+            return View(commissions);
         }
 
         // GET: Commissions/Edit/5
@@ -374,10 +418,7 @@ namespace GameModCrafters.Controllers
         }
 
 
-        private bool CommissionExists(string id)
-        {
-            return _context.Commissions.Any(e => e.CommissionId == id);
-        }
+       
 
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file)
