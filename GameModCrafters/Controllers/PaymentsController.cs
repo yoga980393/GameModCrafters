@@ -3,6 +3,7 @@ using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PayPal.Api;
 using System;
 using System.Collections.Generic;
@@ -129,7 +130,7 @@ namespace GameModCrafters.Controllers
             int amount = model.amount;
 
             string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
 
             // 驗證用戶和金額
             if (user == null || user.ModCoin < amount)
@@ -140,7 +141,7 @@ namespace GameModCrafters.Controllers
             // 扣除用戶的 Mod Coin
             user.ModCoin -= amount;
             _context.Users.Update(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // 使用 PayPal 沙盒賬戶模擬轉賬，以美元為例
             var payout = new Payout

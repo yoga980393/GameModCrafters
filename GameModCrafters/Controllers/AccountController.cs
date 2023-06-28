@@ -120,7 +120,7 @@ namespace GameModCrafters.Controllers
             if (ModelState.IsValid)
             {
                
-                bool isUsernameExists = _context.Users.Any(m => m.Username == register.Username);
+                bool isUsernameExists = await _context.Users.AnyAsync(m => m.Username == register.Username);
                 if (isUsernameExists)
                 {
                     ModelState.AddModelError("Username", "該 Username 已被使用。");
@@ -206,9 +206,8 @@ namespace GameModCrafters.Controllers
             return View("RegisterEmailPage"); // 失敗
         }
         [AllowAnonymous]
-        public async Task<IActionResult> WaitConfirmEmail()
+        public IActionResult WaitConfirmEmail()
         {
-
             return View();
         }
         [AllowAnonymous]
@@ -662,12 +661,14 @@ namespace GameModCrafters.Controllers
                 return Json($"名字已有人使用");
             }
         }
+
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> PayPalAccountSetting()
+        public IActionResult PayPalAccountSetting()
         {
             return View();
         }
+
         [HttpGet]
         public async Task<IActionResult> RestPassword(string email, string confirmationCode)
         {
@@ -731,10 +732,11 @@ namespace GameModCrafters.Controllers
 
         }
         [HttpGet]
-        public async Task<IActionResult> ForgotPasswordEmailPage()
+        public IActionResult ForgotPasswordEmailPage()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> ForgotPasswordEmailPage(string email)
         {
