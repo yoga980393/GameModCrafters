@@ -15,7 +15,7 @@ namespace GameModCrafters.ViewModels
         public int LikeCount { get; set; }
         public int FavoriteCount { get; set; }
         public int DownloadCount { get; set; }
-        public decimal? Price { get; set; }
+        public int? Price { get; set; }
         public string AuthorName { get; set; }
         public string AuthorId { get; set; }
         public int AuthorWorkCount { get; set; } // 作者作品數量

@@ -8,7 +8,7 @@ namespace GameModCrafters.ViewModels
         public string ModId { get; set; }
         public string Thumbnail { get; set; }
         public string ModName { get; set; }
-        public decimal? Price { get; set; }
+        public int? Price { get; set; }
         public string GameName { get; set; }
         public string AuthorName { get; set; }
         public DateTime? CreateTime { get; set; }
