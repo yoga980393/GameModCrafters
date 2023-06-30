@@ -63,7 +63,12 @@
                     </div>
                 </div>
                 <div class="introduction active" id="Description"></div>
-                <div class="introduction" id="InstallationInstructions"></div>
+                <div class="introduction" id="InstallationInstructions">
+                    <div id="purchasePrompt" class="purchase-prompt">
+                        <p>您目前尚未擁有此Mod。這款Mod的售價為 <span id="modPrice"></span> 個 Mod Coins。確認購買並立即享有此Mod的完整體驗嗎?</p>
+                        <button id="purchaseButton" class="purchase-button">確認購買</button>
+                    </div>
+                </div>
                 <div class="introduction">
                     <div id="comments-section">
                         @await Html.PartialAsync("_CommentsPartial", Model)
@@ -174,7 +179,19 @@
 
             $("#Description").html('@Html.Raw(Model.Description)');
 
-            $("#InstallationInstructions").html("@Html.Raw(Model.InstallationInstructions)");
+            var userHasPurchased = '@Model.UserHasPurchased';
+            var authorId = '@Model.AuthorId';
+            var userId = '@User.FindFirstValue(ClaimTypes.Email)';  // 從 Razor 中取得用戶ID
+
+            if (userHasPurchased == 'True' || authorId == userId) {
+                // 如果用戶已經購買了該 mod 或用戶就是作者，則顯示安裝說明
+                $("#InstallationInstructions").html("@Html.Raw(Model.InstallationInstructions)");
+                $('#purchasePrompt').hide();  // 隱藏購買提示
+            } else {
+                // 否則，顯示購買提示
+                $('#modPrice').text('@Model.Price');  // 將 mod 的價格放入提示框
+                $('#purchasePrompt').show();  // 顯示購買提示
+            }
 
             AddTag();
         });

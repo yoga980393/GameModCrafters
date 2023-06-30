@@ -26,5 +26,6 @@ namespace GameModCrafters.ViewModels
         public bool UserHasFavorite { get; set; }
         public string userAtavar { get; set; }
         public string userCover { get; set; }
+        public bool UserHasPurchased { get; set; }
     }
 }

@@ -177,7 +177,8 @@ namespace GameModCrafters.Controllers
                 UserHasLiked = userHasLiked,
                 UserHasFavorite = userHasFavorite,
                 userAtavar = mod.Author.Avatar,
-                userCover = mod.Author.BackgroundImage
+                userCover = mod.Author.BackgroundImage,
+                UserHasPurchased = _context.PurchasedMods.Any(pm => pm.UserId == userId && pm.ModId == mod.ModId)
             };
 
             return View(modDetailViewModel);

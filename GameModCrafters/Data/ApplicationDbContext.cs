@@ -31,6 +31,7 @@ namespace GameModCrafters.Data
         public DbSet<ContactUs> ContactUsMessages { get; set; }
         public DbSet<CommissionTracking> CommissionTrackings { get; set; }
         public DbSet<Counter> Counters { get; set; }
+        public DbSet<PurchasedMod> PurchasedMods { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,6 +59,9 @@ namespace GameModCrafters.Data
 
             modelBuilder.Entity<ModTag>()
                 .HasKey(ct => new { ct.TagId, ct.ModId });
+
+            modelBuilder.Entity<PurchasedMod>()
+                .HasKey(ct => new { ct.UserId, ct.ModId });
 
             modelBuilder.Entity<PrivateMessage>()
                 .HasOne(pm => pm.Sender)

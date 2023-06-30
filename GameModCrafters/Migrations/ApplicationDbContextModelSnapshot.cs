@@ -477,6 +477,26 @@ namespace GameModCrafters.Migrations
                     b.ToTable("PrivateMessages");
                 });
 
+            modelBuilder.Entity("GameModCrafters.Models.PurchasedMod", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ModId")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("AddTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "ModId");
+
+                    b.HasIndex("ModId");
+
+                    b.ToTable("PurchasedMods");
+                });
+
             modelBuilder.Entity("GameModCrafters.Models.Tag", b =>
                 {
                     b.Property<string>("TagId")
@@ -538,21 +558,6 @@ namespace GameModCrafters.Migrations
                             TagId = "t009",
                             TagName = "其他"
                         });
-                });
-
-            modelBuilder.Entity("GameModCrafters.Models.Tracking", b =>
-                {
-                    b.Property<string>("CommissionId")
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("CommissionId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Trackings");
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Transaction", b =>
@@ -888,11 +893,11 @@ namespace GameModCrafters.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("GameModCrafters.Models.Tracking", b =>
+            modelBuilder.Entity("GameModCrafters.Models.PurchasedMod", b =>
                 {
-                    b.HasOne("GameModCrafters.Models.Commission", "Commission")
-                        .WithMany()
-                        .HasForeignKey("CommissionId")
+                    b.HasOne("GameModCrafters.Models.Mod", "Mod")
+                        .WithMany("PurchasedMod")
+                        .HasForeignKey("ModId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -902,7 +907,7 @@ namespace GameModCrafters.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Commission");
+                    b.Navigation("Mod");
 
                     b.Navigation("User");
                 });
@@ -966,6 +971,8 @@ namespace GameModCrafters.Migrations
                     b.Navigation("ModLikes");
 
                     b.Navigation("ModTags");
+
+                    b.Navigation("PurchasedMod");
                 });
 
             modelBuilder.Entity("GameModCrafters.Models.Tag", b =>

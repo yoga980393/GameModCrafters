@@ -41,6 +41,7 @@ namespace GameModCrafters.Models
 
         public int ModCoin { get; set; }
         public string PayPalAccounts { get; set; }
+
         // Navigation property
         public ICollection<Mod> Mods { get; set; }
 

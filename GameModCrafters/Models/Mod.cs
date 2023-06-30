@@ -64,5 +64,7 @@ namespace GameModCrafters.Models
         public ICollection<Log> Log { get; set; }
 
         public ICollection<Downloaded> Downloaded { get; set; }
+
+        public ICollection<PurchasedMod> PurchasedMod { get; set; }
     }
 }
