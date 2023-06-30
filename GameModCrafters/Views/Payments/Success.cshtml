@@ -6,6 +6,10 @@
 <div id="success">
     <h1>付款成功</h1>
     <p>你現在擁有 @Model 個Mod Coin</p>
+
+    <div class="mt-5 ms-5" id="redirectSection" style="display: none;">
+        <button id="redirectToMod">回到欲購買的mod</button>
+    </div>
 </div>
 
 @section css{
@@ -14,5 +18,23 @@
             min-height: 60vh;
         }
     </style>
+}
+
+@section js {
+    <script>
+        $(document).ready(function () {
+            var redirectUrl = sessionStorage.getItem('redirectUrl');
+
+            if (redirectUrl) {
+                // 如果 sessionStorage 有 redirectUrl 則顯示按鈕並設定其點擊事件
+                $('#redirectSection').show();
+                $('#redirectToMod').on('click', function () {
+                    // 導向到 Mod 頁面並清除 sessionStorage
+                    location.href = redirectUrl;
+                    sessionStorage.removeItem('redirectUrl');
+                });
+            }
+        });
+    </script>
 }
 

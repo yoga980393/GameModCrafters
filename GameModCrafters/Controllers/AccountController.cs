@@ -1066,5 +1066,12 @@ namespace GameModCrafters.Controllers
 
             return Json("更改成功");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserModCoin()
+        {
+            var modCoin = await _context.Users.Where(u => u.Email == User.FindFirstValue(ClaimTypes.Email)).Select(u => u.ModCoin).FirstOrDefaultAsync();
+            return Ok(modCoin);
+        }
     }
 }

@@ -94,6 +94,25 @@
     </div>
 </div>
 
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="purchaseModal" tabindex="-1" role="dialog" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="purchaseModalLabel">購買確認</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="purchaseMessage">正在加載...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelPurchase" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirmPurchase">確認購買</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section css{
     <link href="~/css/moddetailstyle.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
@@ -204,6 +223,67 @@
                 spanElement.className = "badge bg-secondary";
                 spanElement.textContent = tagName;
                 tagContainer.append(spanElement); 
+            });
+        }
+    </script>
+
+    <script>
+        function PurchaseEvent() {
+            $(document).ready(function () {
+                // 點擊購買按鈕時的事件處理器
+                $('#purchaseButton').on('click', function () {
+                    // 使用 AJAX 從服務器獲取用戶的 ModCoin 餘額和 mod 的價格
+                    $.get('/Account/GetUserModCoin', function (data) {
+                        // 購買提示訊息
+                        var purchaseMessage = '';
+                        if (data >= '@Model.Price') {
+                            purchaseMessage = '該Mod的價格為 ' + '@Model.Price' + ' Mod Coins，您當前的餘額為 ' + data + ' Mod Coins，餘額充足。';
+                            $('#confirmPurchase').on('click', function () {
+                                $.ajax({
+                                    url: '/Mods/PurchaseMod',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({ ModId: '@Model.ModId' }),
+                                    success: function (data) {
+                                        // 購買成功，更新模態視窗的文字並再次顯示
+                                        var successMessage = '購買成功\n你的帳戶中剩餘 ' + data.newModCoin + ' 個Mod Coin';
+                                        $('#purchaseMessage').text(successMessage);
+                                        $('#purchaseModal').modal('show');
+
+                                        // 更新按鈕的行為
+                                        $('#confirmPurchase').attr('onclick', '').unbind('click');
+                                        $('#cancelPurchase').hide();
+                                        $('#confirmPurchase').text("關閉視窗");
+                                        $('#confirmPurchase').on('click', function () {
+                                            $('#purchaseModal').modal('hide');
+                                            $("#InstallationInstructions").html("@Html.Raw(Model.InstallationInstructions)");
+                                            $('#purchasePrompt').hide();
+                                        });
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        // 購買失敗，顯示錯誤訊息
+                                        alert(jqXHR.responseText || textStatus || errorThrown);
+                                    }
+                                });
+                            });
+                        } else {
+                            purchaseMessage = '該Mod的價格為 ' + '@Model.Price' + ' Mod Coins，您當前的餘額為 ' + data + ' Mod Coins，餘額不足，請儲值。';
+                            // 將 "確認購買" 按鈕連接到儲值頁面
+                            $('#confirmPurchase').on('click', function () {
+                                // 將當前頁面的 URL 存儲到 sessionStorage
+                                sessionStorage.setItem('redirectUrl', window.location.href);
+
+                                // 然後導向到儲值頁面
+                                location.href = "/Payments/StoredValue";
+                            });
+                            $('#confirmPurchase').text("前往儲值");
+                        }
+                        // 將購買提示訊息顯示在 Modal 中
+                        $('#purchaseMessage').text(purchaseMessage);
+                        // 顯示 Modal
+                        $('#purchaseModal').modal('show');
+                    });
+                });
             });
         }
     </script>
@@ -331,6 +411,7 @@
             LikeBtn();
             FavoriteBtn();
             MessageBtn();
+            PurchaseEvent();
         });
     </script>
 }

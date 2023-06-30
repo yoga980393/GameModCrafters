@@ -690,5 +690,67 @@ namespace GameModCrafters.Controllers
                 return Json(new { success = false, errorMessage = ex.Message });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> PurchaseMod([FromBody] PurchaseRequest request)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == User.FindFirstValue(ClaimTypes.Email));
+                    var mod = await _context.Mods.SingleOrDefaultAsync(m => m.ModId == request.ModId);
+                    if (user == null || mod == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // 驗證用戶的ModCoin餘額是否足夠
+                    if (user.ModCoin < mod.Price)
+                    {
+                        return BadRequest("ModCoin不足");
+                    }
+
+                    // 扣除用戶的ModCoin
+                    user.ModCoin -= (int)mod.Price;
+
+                    // 獲取Mod的作者
+                    var author = await _context.Users.SingleOrDefaultAsync(u => u.Email == mod.AuthorId);
+
+                    // 將Mod的價格添加到作者的ModCoin
+                    author.ModCoin += (int)mod.Price;
+
+                    // 在PurchasedMod表中添加一條新的紀錄
+                    var purchasedMod = new PurchasedMod
+                    {
+                        UserId = user.Email,
+                        ModId = mod.ModId,
+                        AddTime = DateTime.UtcNow
+                    };
+                    _context.PurchasedMods.Add(purchasedMod);
+
+                    // 儲存變更
+                    await _context.SaveChangesAsync();
+
+                    // 提交事務
+                    transaction.Commit();
+
+                    return Ok(new { newModCoin = user.ModCoin });
+                }
+                catch (Exception ex)
+                {
+                    // 事務回滾
+                    transaction.Rollback();
+
+                    // 返回錯誤訊息
+                    return BadRequest(ex.Message);
+                }
+            }
+        }
+
+        public class PurchaseRequest
+        {
+            public string ModId { get; set; }
+        }
     }
 }
