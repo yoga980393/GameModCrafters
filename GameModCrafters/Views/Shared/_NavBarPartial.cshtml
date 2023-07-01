@@ -51,15 +51,10 @@
                 {
                     <li class="nav-item">
                         <a class="nav-link active" id="notification-link" href="#">
-                            <i class="fa fa-bell"></i>
+                            <i class="fa fa-bell" id="bell"></i>
                             <span id="notification-count" class="badge badge-light">0</span>
                         </a>
-                        <ul id="notification-list" class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li id="no-notifications" class="dropdown-item">無未讀的通知</li>
-                            <!-- 其他通知項目 -->
-                            <li class="dropdown-divider"></li> 
-                            <li id="view-all-notifications" class="dropdown-item">檢視歷史通知</li>
-                        </ul>
+                        <ul id="notification-list" class="dropdown-menu" aria-labelledby="navbarDropdown"></ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="PersonPage">個人專區</a>

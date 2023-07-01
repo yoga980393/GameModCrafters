@@ -321,6 +321,8 @@
                             var $notificationItem = $('<li class="dropdown-item"></li>').html(notification.content);
                             $notificationList.append($notificationItem);
                         });
+
+                        $('#bell').css('color', 'red');
                     }
 
                     // 添加“查看所有通知”的按钮
@@ -346,7 +348,7 @@
                         // 重置未讀通知的數量
                         $('#notification-count').text(0);
 
-                        // 可能需要對通知圖標進行其他處理，例如移除高亮
+                        $('#bell').css('color', '');
                     }
                 });
             });
