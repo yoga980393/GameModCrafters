@@ -32,6 +32,7 @@ namespace GameModCrafters.Data
         public DbSet<CommissionTracking> CommissionTrackings { get; set; }
         public DbSet<Counter> Counters { get; set; }
         public DbSet<PurchasedMod> PurchasedMods { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -72,6 +73,16 @@ namespace GameModCrafters.Data
                 .HasOne(pm => pm.Receiver)
                 .WithMany(u => u.ReceivedMessages)
                 .HasForeignKey(pm => pm.ReceiverId);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Notifier)
+                .WithMany(u => u.SentNotifications)
+                .HasForeignKey(n => n.NotifierId);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Recipient)
+                .WithMany(u => u.ReceivedNotifications)
+                .HasForeignKey(n => n.RecipientId);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Payer)

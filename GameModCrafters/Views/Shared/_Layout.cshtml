@@ -15,6 +15,7 @@
     <link href="~/css/AutoSearch.css" rel="stylesheet" />
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css'>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
     @await RenderSectionAsync("css", required: false)
    
 </head>
@@ -298,12 +299,94 @@
             });
         }
 
+        function updateNotifications() {
+            $.ajax({
+                url: '/Home/GetUnreadNotifications',  
+                type: 'GET',
+                success: function (data) {
+                    var $notificationList = $('#notification-list');
+                    notifications = data.notifications;
+                    // 更新未讀通知的數量
+                    $('#notification-count').text(data.unreadCount);
+
+                    // 清空通知列表
+                    $notificationList.empty();
+
+                    if (notifications.length === 0) {
+                        // 如果没有通知，就添加一条消息
+                        $notificationList.append('<li id="no-notifications" class="dropdown-item">無未讀的通知</li>');
+                    } else {
+                        // 否则，为每条通知添加一个元素
+                        notifications.forEach(function (notification) {
+                            var $notificationItem = $('<li class="dropdown-item"></li>').html(notification.content);
+                            $notificationList.append($notificationItem);
+                        });
+                    }
+
+                    // 添加“查看所有通知”的按钮
+                    $notificationList.append('<li class="dropdown-divider"></li>');
+                    $notificationList.append('<li id="view-all-notifications" class="dropdown-item">檢視歷史通知</li>');
+                    ViewAllNotifications();
+                }
+            });
+        }
+
+        function NotificationBtn(){
+            $('#notification-link').on('click', function (e) {
+                e.preventDefault();
+
+                // 切換通知列表的可見性
+                $('#notification-list').toggleClass('show');
+
+                // 標記通知為已讀
+                $.ajax({
+                    url: '/Home/MarkNotificationsAsRead',  
+                    type: 'POST',
+                    success: function () {
+                        // 重置未讀通知的數量
+                        $('#notification-count').text(0);
+
+                        // 可能需要對通知圖標進行其他處理，例如移除高亮
+                    }
+                });
+            });
+        }
+
+        function ViewAllNotifications(){
+            $('#view-all-notifications').click(function () {
+                $.ajax({
+                    url: '/Home/GetAllNotifications', 
+                    type: 'GET',
+                    success: function (data) {
+                        var $notificationList = $('#notification-list');
+
+                        // 清空通知列表
+                        $notificationList.empty();
+
+                        if (data.length === 0) {
+                            // 如果没有通知，就添加一条消息
+                            $notificationList.append('<li id="no-notifications" class="dropdown-item">無通知</li>');
+                        } else {
+                            // 否则，为每条通知添加一个元素
+                            data.forEach(function (notification) {
+                                var $notificationItem = $('<li class="dropdown-item"></li>').html(notification.content);
+                                $notificationList.append($notificationItem);
+                            });
+                        }
+                    }
+                });
+            });
+        }
+
         $(() => {
             Connection();
             ConversationRecord();
             SendButton();
             SearchUser();
             ChatBoxPopUp();
+            updateNotifications();
+            setInterval(updateNotifications, 10000);
+            NotificationBtn();
         });
 
     </script>

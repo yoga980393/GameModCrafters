@@ -1,5 +1,6 @@
 ﻿using GameModCrafters.Data;
 using GameModCrafters.Models;
+using GameModCrafters.Services;
 using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +21,13 @@ namespace GameModCrafters.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly NotificationService _notification;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, NotificationService notification)
         {
             _logger = logger;
             _context = context;
+            _notification = notification;
         }
 
         public IActionResult Index()
@@ -340,5 +343,29 @@ namespace GameModCrafters.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetUnreadNotifications()
+        {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.Email); // assuming the email is used as user identifier
+            var notificationInfo = await _notification.GetUnreadNotificationsAsync(userId);
+            return Ok(notificationInfo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkNotificationsAsRead()
+        {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.Email); // assuming the email is used as user identifier
+            await _notification.MarkNotificationsAsReadAsync(userId);
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllNotifications()
+        {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.Email);
+            var notifications = await _notification.GetAllNotificationsAsync(userId);
+
+            return Ok(notifications);
+        }
     }
 }

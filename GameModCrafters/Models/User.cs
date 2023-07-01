@@ -64,6 +64,9 @@ namespace GameModCrafters.Models
         public ICollection<ContactUs> ContactMessages { get; set; }
 
         public ICollection<CommissionTracking> CommissionTrackings { get; set; }
+
+        public ICollection<Notification> SentNotifications { get; set; }
+        public ICollection<Notification> ReceivedNotifications { get; set; }
     }
 
 }

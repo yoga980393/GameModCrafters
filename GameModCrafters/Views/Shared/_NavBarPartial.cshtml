@@ -47,34 +47,21 @@
             </ul>
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                @*@if(email!="")
-                {
-                   
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="LoginPage">個人專區</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-light">Hello @email</a>
-                        
-                    </li>
-                }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="LoginPage">登入</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="RegisterPage">註冊</a>
-                    </li>
-                }*@
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li class="nav-item">
-                       @* <div class="personal_pic" style=" width: 50px;height: 50px;overflow: hidden;">
-                            <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="PersonPage">
-                                <img src="@userAtavar" id="personal_pic" style=" display: block; width: 100%;height: 100%;object-fit: cover;border-radius: 50%;">
-                            </a>
-                        </div>*@
+                        <a class="nav-link active" id="notification-link" href="#">
+                            <i class="fa fa-bell"></i>
+                            <span id="notification-count" class="badge badge-light">0</span>
+                        </a>
+                        <ul id="notification-list" class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li id="no-notifications" class="dropdown-item">無未讀的通知</li>
+                            <!-- 其他通知項目 -->
+                            <li class="dropdown-divider"></li> 
+                            <li id="view-all-notifications" class="dropdown-item">檢視歷史通知</li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="PersonPage">個人專區</a>
                     </li>
                     <li class="nav-item">
@@ -100,11 +87,7 @@
                         <a class="nav-link" asp-controller="Account" asp-action="RegisterPage">註冊</a>
                     </li>
                 }
-
             </ul>
         </div>
     </div>
 </nav>
-@section js {
-    
-}

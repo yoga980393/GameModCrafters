@@ -54,13 +54,9 @@ namespace GameModCrafters
             Configuration.GetConnectionString("ApplicationDbContext")));
             
             services.AddTransient<ModService>();
-      
+            services.AddTransient<NotificationService>();
 
-
-          
             services.AddSignalR();
-
-
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

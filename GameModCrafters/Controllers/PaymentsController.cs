@@ -1,4 +1,6 @@
 ﻿using GameModCrafters.Data;
+using GameModCrafters.Models;
+using GameModCrafters.Services;
 using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Transaction = PayPal.Api.Transaction;
 
 namespace GameModCrafters.Controllers
 {
@@ -18,8 +21,9 @@ namespace GameModCrafters.Controllers
         private APIContext apiContext;
 
         private readonly ApplicationDbContext _context;
+        private readonly NotificationService _notification;
 
-        public PaymentsController(ApplicationDbContext context)
+        public PaymentsController(ApplicationDbContext context, NotificationService notification)
         {
             var config = new Dictionary<string, string>
             {
@@ -32,6 +36,7 @@ namespace GameModCrafters.Controllers
             apiContext = new APIContext(accessToken);
 
             _context = context;
+            _notification = notification;
         }
 
         [Authorize]
@@ -103,6 +108,12 @@ namespace GameModCrafters.Controllers
 
                 user.ModCoin += (int)purchasedModCoins;
                 CoinCount = user.ModCoin;
+
+                var notifierId = userEmail;
+                var recipientId = userEmail;
+                var content = $"你儲值了 {(int)purchasedModCoins} 個Mod Coin<br>你的帳戶中有 {CoinCount} 個 Mod Coin";
+
+                _notification.CreateNotification(notifierId, recipientId, content);
 
                 _context.Users.Update(user);
                 _context.SaveChanges();

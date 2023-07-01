@@ -1,5 +1,6 @@
 ﻿using GameModCrafters.Data;
 using GameModCrafters.Models;
+using GameModCrafters.Services;
 using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,11 +23,13 @@ namespace GameModCrafters.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
+        private readonly NotificationService _notification;
 
-        public ModsController(ApplicationDbContext context, ILogger<ModsController> logger)
+        public ModsController(ApplicationDbContext context, ILogger<ModsController> logger, NotificationService notification)
         {
             _context = context;
             _logger = logger;
+            _notification = notification;
         }
 
         // GET: Mods
@@ -728,9 +731,14 @@ namespace GameModCrafters.Controllers
                         AddTime = DateTime.UtcNow
                     };
                     _context.PurchasedMods.Add(purchasedMod);
-
                     // 儲存變更
                     await _context.SaveChangesAsync();
+
+                    var notifierId = user.Email;
+                    var recipientId = mod.AuthorId;
+                    var content = $"{User.FindFirstValue(ClaimTypes.Name)} 購買了你的Mod({mod.ModName})";
+
+                    await _notification.CreateNotificationAsync(notifierId, recipientId, content);
 
                     // 提交事務
                     transaction.Commit();
