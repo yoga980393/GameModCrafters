@@ -78,7 +78,7 @@
                     <div class="text">
                         <div class="name_price">
                             <h3 class="name">@mod.ModName</h3>
-                            <h3 class="price">@(mod.Price == 0 ? "Free" : mod.Price + " NTD")</h3>
+                            <h3 class="price">@(mod.Price == 0 ? "Free" : mod.Price + " Mod Coin")</h3>
                         </div>
                         <div class="detail">
                             <h2 class="tag" id="tag-id-@(mod.ModId)"><span class="badge bg-secondary" id="previewGame">@mod.GameName</span></h2>
@@ -89,7 +89,7 @@
                         </div>
                     </div>
                     <div class="data">
-                        <h3><span>容量：</span>@mod.Capacity</h3>
+                        <h3><span>容量：</span>@mod.Capacity KB</h3>
                         <h3><span>點贊：</span>@mod.LikeCount</h3>
                         <h3><span>收藏：</span>@mod.FavoriteCount</h3>
                         <h3><span>下載：</span>@mod.DownloadCount</h3>

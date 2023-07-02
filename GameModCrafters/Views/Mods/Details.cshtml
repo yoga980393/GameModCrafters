@@ -202,8 +202,28 @@
             var userId = '@User.FindFirstValue(ClaimTypes.Email)';  // 從 Razor 中取得用戶ID
 
             if (userHasPurchased == 'True' || authorId == userId) {
-                // 如果用戶已經購買了該 mod 或用戶就是作者，則顯示安裝說明
-                $("#InstallationInstructions").html("@Html.Raw(Model.InstallationInstructions)");
+                // 如果用戶已經購買了該 mod 或用戶就是作者，則顯示安裝說明以及下載連結
+                let installationInstructions = "@Html.Raw(Model.InstallationInstructions)";
+                let downloadLink = "@Html.Raw(Model.DownloadLink)";
+                let content = installationInstructions + "<hr/> 下載連結：<a id='downloadLink' href='" + downloadLink + "'>點我下載</a>";
+
+                $("#InstallationInstructions").html(content);
+
+                $('#downloadLink').on('click', function (e) {
+                    e.preventDefault();  // 防止默認的鏈接行為
+
+                    $.ajax({
+                        url: '/Mods/DownloadMod',
+                        type: 'POST',
+                        data: {
+                            modId: '@Model.ModId'  // 你需要將此處替換為實際的 modId
+                        },
+                        success: function (response) {
+                            // 在成功的回應後，直接導航到下載鏈接
+                            window.location.href = downloadLink;
+                        }
+                    });
+                });
                 $('#purchasePrompt').hide();  // 隱藏購買提示
             } else {
                 // 否則，顯示購買提示
@@ -255,7 +275,27 @@
                                         $('#confirmPurchase').text("關閉視窗");
                                         $('#confirmPurchase').on('click', function () {
                                             $('#purchaseModal').modal('hide');
-                                            $("#InstallationInstructions").html("@Html.Raw(Model.InstallationInstructions)");
+                                            let installationInstructions = "@Html.Raw(Model.InstallationInstructions)";
+                                            let downloadLink = "@Html.Raw(Model.DownloadLink)";
+                                            let content = installationInstructions + "<hr/> 下載連結：<a id='downloadLink' href='" + downloadLink + "'>點我下載</a>";
+
+                                            $("#InstallationInstructions").html(content);
+
+                                            $('#downloadLink').on('click', function (e) {
+                                                e.preventDefault();  // 防止默認的鏈接行為
+
+                                                $.ajax({
+                                                    url: '/Mods/DownloadMod',
+                                                    type: 'POST',
+                                                    data: {
+                                                        modId: '@Model.ModId'  // 你需要將此處替換為實際的 modId
+                                                    },
+                                                    success: function (response) {
+                                                        // 在成功的回應後，直接導航到下載鏈接
+                                                        window.location.href = downloadLink;
+                                                    }
+                                                });
+                                            });
                                             $('#purchasePrompt').hide();
                                         });
                                     },

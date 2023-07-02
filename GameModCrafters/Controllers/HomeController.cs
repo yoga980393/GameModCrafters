@@ -2,10 +2,12 @@
 using GameModCrafters.Models;
 using GameModCrafters.Services;
 using GameModCrafters.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -22,12 +24,14 @@ namespace GameModCrafters.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly NotificationService _notification;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, NotificationService notification)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, NotificationService notification, IWebHostEnvironment webHostEnvironment)
         {
             _logger = logger;
             _context = context;
             _notification = notification;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -52,26 +56,40 @@ namespace GameModCrafters.Controllers
                 .Include(m => m.Downloaded)
                 .Include(m => m.ModTags)
                     .ThenInclude(mt => mt.Tag)
-                .Select(m => new ModViewModel
+                .ToList()
+                .Select(m =>
                 {
-                    ModId = m.ModId,
-                    Thumbnail = m.Thumbnail,
-                    ModName = m.ModName,
-                    Price = (int)m.Price,
-                    GameName = m.Game.GameName,
-                    AuthorName = m.Author.Username,
-                    CreateTime = m.CreateTime,
-                    UpdateTime = m.UpdateTime,
-                    Description = m.Description,
-                    Capacity = 0,
-                    LikeCount = m.ModLikes.Count,
-                    FavoriteCount = m.Favorite.Count,
-                    DownloadCount = m.Downloaded.Count,
-                    TagNames = m.ModTags.Select(mt => mt.Tag.TagName).ToList()
+                    double roundedFileSizeInKB = 0;
+
+                    IFileInfo fileInfo = _webHostEnvironment.WebRootFileProvider.GetFileInfo(m.DownloadLink);
+                    if (fileInfo.Exists)
+                    {
+                        roundedFileSizeInKB = Math.Round((double)fileInfo.Length / 1024, 1); // KB
+                    }
+
+                    return new ModViewModel
+                    {
+                        ModId = m.ModId,
+                        Thumbnail = m.Thumbnail,
+                        ModName = m.ModName,
+                        Price = (int)m.Price,
+                        GameName = m.Game.GameName,
+                        AuthorName = m.Author.Username,
+                        CreateTime = m.CreateTime,
+                        UpdateTime = m.UpdateTime,
+                        Description = m.Description,
+                        Capacity = roundedFileSizeInKB, // Set capacity to the rounded file size in KB
+                        LikeCount = m.ModLikes.Count,
+                        FavoriteCount = m.Favorite.Count,
+                        DownloadCount = m.Downloaded.Count,
+                        TagNames = m.ModTags.Select(mt => mt.Tag.TagName).ToList()
+                    };
                 })
                 .OrderByDescending(m => m.DownloadCount)
                 .Take(4)
                 .ToList();
+
+
 
             var AuthorList = _context.Users
                 .Include(u => u.Mods)
