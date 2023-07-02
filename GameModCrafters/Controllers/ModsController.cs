@@ -3,10 +3,12 @@ using GameModCrafters.Models;
 using GameModCrafters.Services;
 using GameModCrafters.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -24,12 +26,14 @@ namespace GameModCrafters.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
         private readonly NotificationService _notification;
+        private IWebHostEnvironment _hostingEnvironment;
 
-        public ModsController(ApplicationDbContext context, ILogger<ModsController> logger, NotificationService notification)
+        public ModsController(ApplicationDbContext context, ILogger<ModsController> logger, NotificationService notification, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
             _logger = logger;
             _notification = notification;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: Mods
@@ -181,7 +185,8 @@ namespace GameModCrafters.Controllers
                 UserHasFavorite = userHasFavorite,
                 userAtavar = mod.Author.Avatar,
                 userCover = mod.Author.BackgroundImage,
-                UserHasPurchased = _context.PurchasedMods.Any(pm => pm.UserId == userId && pm.ModId == mod.ModId)
+                UserHasPurchased = _context.PurchasedMods.Any(pm => pm.UserId == userId && pm.ModId == mod.ModId),
+                DownloadLink = mod.DownloadLink
             };
 
             return View(modDetailViewModel);
@@ -759,6 +764,24 @@ namespace GameModCrafters.Controllers
         public class PurchaseRequest
         {
             public string ModId { get; set; }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task DownloadMod(string modId)
+        {
+            var mod = await _context.Mods.FindAsync(modId);
+
+            var downloaded = new Downloaded
+            {
+                DownloadId = Guid.NewGuid().ToString(),
+                UserId = User.FindFirstValue(ClaimTypes.Email),
+                ModId = modId,
+                DownloadTime = DateTime.Now
+            };
+
+            await _context.AddAsync(downloaded);
+            await _context.SaveChangesAsync();
         }
     }
 }

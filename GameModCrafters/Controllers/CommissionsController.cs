@@ -322,6 +322,52 @@ namespace GameModCrafters.Controllers
 
             return View(commissions);
         }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetAllTrackingCommission()
+        {
+            string loggedInUserEmail = User.FindFirstValue(ClaimTypes.Email);
+
+            if (loggedInUserEmail == null)
+            {
+                return NotFound();
+            }
+
+            var TrackingCommissionId = _context.CommissionTrackings
+                .Where(c => c.UserId == loggedInUserEmail)
+                .Select(c => c.CommissionId)
+                .ToList();
+
+
+            List<CommissionViewModel> TrackingCommisions = new List<CommissionViewModel>();
+
+            foreach (var commissionid in TrackingCommissionId)
+            {
+                var commission = await _context.Commissions
+               .Where(c => c.CommissionId == commissionid)
+               .Where(c => c.IsDone == true)
+               .Include(c => c.Delegator)
+               .Include(c => c.CommissionStatus)
+               .Include(c => c.Game)
+               .Select(c => new CommissionViewModel
+               {
+                   CommissionId = c.CommissionId,
+                   GameID = c.Game.GameId,
+                   GameName = c.Game.GameName,
+                   DelegatorName = c.Delegator.Username,
+                   CommissionTitle = c.CommissionTitle,
+                   Budget = c.Budget,
+                   CreateTime = c.CreateTime,
+                   UpdateTime = c.UpdateTime,
+                   Status = c.CommissionStatus.Status
+               })
+               .FirstOrDefaultAsync();
+
+                TrackingCommisions.Add(commission);
+            }
+
+            return View(TrackingCommisions);
+        }
 
         // GET: Commissions/Edit/5
         [Authorize]

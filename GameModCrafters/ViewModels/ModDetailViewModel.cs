@@ -27,5 +27,6 @@ namespace GameModCrafters.ViewModels
         public string userAtavar { get; set; }
         public string userCover { get; set; }
         public bool UserHasPurchased { get; set; }
+        public string DownloadLink { get; set; }
     }
 }
