@@ -33,6 +33,8 @@ namespace GameModCrafters.Data
         public DbSet<Counter> Counters { get; set; }
         public DbSet<PurchasedMod> PurchasedMods { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Announcement> Announcements { get; set; }
+        public DbSet<News> News { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

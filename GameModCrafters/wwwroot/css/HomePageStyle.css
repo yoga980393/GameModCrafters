@@ -50,6 +50,15 @@ Bulletin .btn {
         display:block;
         line-height:40px;
     }
+
+#AnnouncementsList button,
+#NewsList button{
+    border-radius: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
 /*modcard*/
 .mod .card {
     margin-bottom: 10px;

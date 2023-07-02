@@ -367,5 +367,27 @@ namespace GameModCrafters.Controllers
 
             return Ok(notifications);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAnnouncements()
+        {
+            var announcements = await _context.Announcements
+                .OrderByDescending(a => a.AddTime)
+                .Take(5)
+                .ToListAsync();
+
+            return Json(announcements);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetNews()
+        {
+            var news = await _context.News
+                .OrderByDescending (a => a.AddTime)
+                .Take(5)
+                .ToListAsync();
+
+            return Json(news);
+        }
     }
 }

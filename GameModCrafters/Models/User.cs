@@ -67,6 +67,9 @@ namespace GameModCrafters.Models
 
         public ICollection<Notification> SentNotifications { get; set; }
         public ICollection<Notification> ReceivedNotifications { get; set; }
+
+        public ICollection<Announcement> Announcements { get; set; }
+        public ICollection<News> News { get; set; }
     }
 
 }
