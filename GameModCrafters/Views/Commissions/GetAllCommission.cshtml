@@ -14,7 +14,7 @@
     </div>
     <div class="container text-center mod-list">
         <div class="row align-items-start">
-            <div class="col LastReply">
+            <div class="col GameName">
                 遊戲
             </div>
             <div class="col-6 title">
@@ -33,7 +33,7 @@
         @foreach (var item in Model)
         {
             <div class="row align-items-start">
-                <div class="col GameTag">
+                <div class="col GameName">
                     <a href="@Url.Action("Details", "Games", new { id = item.GameID })">
                         @item.GameName
                     </a>

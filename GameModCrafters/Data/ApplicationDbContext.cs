@@ -111,7 +111,7 @@ namespace GameModCrafters.Data
                 );
 
             modelBuilder.Entity<CommissionStatus>()
-               .HasData(new CommissionStatus { CommissionStatusId= "s01", Status= "待接受"},
+               .HasData(new CommissionStatus { CommissionStatusId=  "s01", Status= "待接受"},
                         new CommissionStatus { CommissionStatusId = "s02", Status = "進行中" },
                         new CommissionStatus { CommissionStatusId = "s03", Status = "已完成" },
                         new CommissionStatus { CommissionStatusId = "s04", Status = "已取消" }

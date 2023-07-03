@@ -30,18 +30,21 @@ namespace GameModCrafters.Controllers
 
         private readonly ISendGridClient _sendGridClient;
 
+        private readonly NotificationService _notification;
+
         private readonly ModService _modService;
 
         private readonly ILogger<CommissionsController> _logger;
 
 
-        public CommissionsController(ApplicationDbContext context, IHashService hashService, ISendGridClient sendGridClient, ModService modService, ILogger<CommissionsController> logger)
+        public CommissionsController(ApplicationDbContext context, IHashService hashService, ISendGridClient sendGridClient, ModService modService, ILogger<CommissionsController> logger , NotificationService notification)
         {
             _hashService = hashService;
             _context = context;
             _sendGridClient = sendGridClient;
             _modService = modService;
             _logger = logger;
+            _notification = notification;
         }
 
         private bool CommissionExists(string id)
@@ -52,7 +55,7 @@ namespace GameModCrafters.Controllers
 
         // GET: Commissions
         [Authorize]
-        public async Task<IActionResult> Index(List<CommissionViewModel> CommisionVM)
+        public async Task<IActionResult> Index()
         {
             var usermail = User.FindFirstValue(ClaimTypes.Email);
             if (usermail == null)
@@ -61,6 +64,7 @@ namespace GameModCrafters.Controllers
             }
             var applicationDbContext = _context.Commissions.Include(c => c.CommissionStatus).Include(c => c.Delegator).Include(c => c.Game);
 
+                 List<CommissionViewModel> CommisionVM = new List<CommissionViewModel>();
                  CommisionVM = await _context.Commissions
                 .Where(c => c.DelegatorId == usermail)
                 .Include(c => c.Delegator)
@@ -228,6 +232,7 @@ namespace GameModCrafters.Controllers
             ViewData["GameName"] = new SelectList(_context.Games, "GameId", "GameName");
             ViewData["AuthorId"] = new SelectList(_context.Users, "Email", "Email");
             ViewData["SelectedGameId"] = gameid;
+            ViewData["Commission"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId" , "Status");
 
             return View();
         }
@@ -286,6 +291,7 @@ namespace GameModCrafters.Controllers
                 commission.GameId = gameid;
                 commission.IsDone = true;
                 commission.Trash = false;
+
                 _context.Add(commission);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details", "Games", new {id = gameid});
@@ -302,6 +308,7 @@ namespace GameModCrafters.Controllers
             string loggedInUserEmail = User.FindFirstValue(ClaimTypes.Email);
             var commissions = await _context.Commissions
                 .Where(c => c.DelegatorId != loggedInUserEmail)
+                .Where(c => c.CommissionStatusId == "s01")
                 .Where(c => c.IsDone == true)
                 .Include(c => c.Delegator)
                 .Include(c => c.CommissionStatus)
@@ -319,6 +326,11 @@ namespace GameModCrafters.Controllers
                     Status = c.CommissionStatus.Status
                })
                .ToListAsync();
+
+            if (commissions.Count == 0)
+            {
+                return NotFound();
+            }
 
             return View(commissions);
         }
@@ -344,6 +356,7 @@ namespace GameModCrafters.Controllers
             foreach (var commissionid in TrackingCommissionId)
             {
                 var commission = await _context.Commissions
+               .Where(c => c.CommissionStatusId == "s01")
                .Where(c => c.CommissionId == commissionid)
                .Where(c => c.IsDone == true)
                .Include(c => c.Delegator)
@@ -386,6 +399,7 @@ namespace GameModCrafters.Controllers
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "Status", commission.CommissionStatusId);
             ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
             ViewData["GameName"] = new SelectList(_context.Games, "GameId", "GameName", commission.GameId);
+            ViewData["Status"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "Status");
             return View(commission);
         }
 
