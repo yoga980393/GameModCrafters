@@ -7,7 +7,9 @@
     position:absolute;
    
 }
-
+.footer a{
+    text-decoration:none;
+}
 .wrap {
     width: 100%;
     display: flex;
