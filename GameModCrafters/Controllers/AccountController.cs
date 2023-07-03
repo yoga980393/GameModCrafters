@@ -277,7 +277,7 @@ namespace GameModCrafters.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> PersonPage(PersonViewModel personVM, int page = 1)
+        public async Task<IActionResult> PersonPage(int page = 1)
         {
             var usermail = User.FindFirstValue(ClaimTypes.Email);
             if (usermail == null)
@@ -287,6 +287,8 @@ namespace GameModCrafters.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == usermail);
             var userAvatar = user.Avatar;
             var userCover = user.BackgroundImage;
+            PersonViewModel personVM = new PersonViewModel();
+
             personVM.Avatar = userAvatar;
             personVM.BackgroundImage = userCover;
 

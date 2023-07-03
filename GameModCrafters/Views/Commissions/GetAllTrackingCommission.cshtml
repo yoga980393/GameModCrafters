@@ -1,20 +1,21 @@
-﻿@model List<CommissionViewModel>
-@{
-    ViewData["Title"] = "GetAllCommission";
-}
+﻿@model List<CommissionViewModel>;
 
+
+@{
+    ViewData["Title"] = "GetAllTrackingCommission";
+}
 
 <div class="container my-4 mod Released_mods" id="publishedModsContainer"></div>
 <div class="container wire"></div>
 
 <div class="container entrust Release_Area_Wrap paging">
     <div class="title">
-        <h3>所有委託:</h3>
+        <h3>以追蹤委託:</h3>
 
     </div>
     <div class="container text-center mod-list">
         <div class="row align-items-start">
-            <div class="col GameName">
+            <div class="col LastReply">
                 遊戲
             </div>
             <div class="col-6 title">
@@ -33,7 +34,7 @@
         @foreach (var item in Model)
         {
             <div class="row align-items-start">
-                <div class="col GameName">
+                <div class="col GameTag">
                     <a href="@Url.Action("Details", "Games", new { id = item.GameID })">
                         @item.GameName
                     </a>

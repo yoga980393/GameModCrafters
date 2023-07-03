@@ -11,6 +11,7 @@
         <form method="post">
             <input type="hidden" class="from-control" asp-for="DelegatorId" />
             <input type="hidden" class="form-control" asp-for="CommissionId">
+            <select asp-for="CommissionStatusId" class="form-control" asp-items="@ViewBag.Status"></select>
             <div class="mb-3">
                 <label asp-for="CommissionTitle" class="form-label">委託標題:</label>
                 <input type="text" class="form-control" asp-for="CommissionTitle">

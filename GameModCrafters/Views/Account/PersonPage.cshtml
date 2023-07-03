@@ -145,6 +145,9 @@
     </div>
     <div class="container text-center mod-list">
         <div class="row align-items-start rowwrap">
+            <div class="col GameName">
+                遊戲
+            </div>
             <div class="col-6 title">
                 Title
             </div>
@@ -157,18 +160,31 @@
             <div class="col LastReply">
                 最後回覆
             </div>
-            <div class="col LastReply">
-                狀態
-            </div>
         </div>
         @foreach (var item in commssions)
         {
             <div class="row align-items-start rowwrap">
-                <div class="col-6 title">
-                    <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
-                        @item.CommissionTitle
+                <div class="col GameName">
+                    <a href="@Url.Action("Details", "Games", new { id = item.GameID })">
+                        @item.GameName
                     </a>
                 </div>
+                @if (item.Status != "s02")
+                {
+                    <div class="col-6 title">
+                        <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
+                            @item.CommissionTitle
+                        </a>
+                    </div>
+                }
+                @if (item.Status == "s02")
+                {
+                    <div class="col-6 title">
+                        <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
+                            @item.CommissionTitle
+                        </a>
+                    </div>
+                }
                 <div class="col SendernName">
                     @item.DelegatorName
                 </div>
@@ -177,9 +193,6 @@
                 </div>
                 <div class="col LastReply">
                     @item.UpdateTime
-                </div>
-                <div class="col LastReply">
-                    @item.Status
                 </div>
             </div>
         }
