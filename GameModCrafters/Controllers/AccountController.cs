@@ -512,10 +512,7 @@ namespace GameModCrafters.Controllers
                     Status = c.CommissionStatus.Status
                 })
                .ToListAsync();
-            if (commissions.Count == 0)
-            {
-                return NotFound();
-            }
+
             personVM.Commissions = commissions;
 
             var publishedMods = await _modService.GetPublishedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);

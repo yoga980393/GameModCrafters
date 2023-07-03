@@ -4,14 +4,16 @@ using GameModCrafters.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GameModCrafters.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230703082425_TransactionMore")]
+    partial class TransactionMore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -679,14 +681,11 @@ namespace GameModCrafters.Migrations
                     b.Property<string>("FileURL")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsConfirm")
-                        .HasColumnType("bit");
+                    b.Property<string>("IsConfirm")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsReceive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSubmit")
-                        .HasColumnType("bit");
+                    b.Property<string>("IsReceive")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Isdone")
                         .HasColumnType("bit");
