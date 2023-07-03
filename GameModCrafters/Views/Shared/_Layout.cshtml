@@ -380,6 +380,29 @@
             });
         }
 
+        function UserImformation(){
+            var navbarname = document.getElementById('navbarname');
+            var popover = new bootstrap.Popover(navbarname, {
+                html: true,
+                trigger: 'click',
+                content: function () {
+                    return $('#popover-content').html();
+                }
+            });
+
+            $.ajax({
+                url: '/Home/GetUserImformation',
+                method: 'GET',
+                success: function (data) {
+                    // 更新 Popover 的內容
+                    console.log(data);
+                    $('#popover-username').text(data.username);
+                    $('#popover-avatar').attr('src', data.avatar);
+                    $('#popover-modcoin').text(data.modCoin);
+                }
+            });
+        }
+
         $(() => {
             Connection();
             ConversationRecord();
@@ -389,6 +412,7 @@
             updateNotifications();
             setInterval(updateNotifications, 10000);
             NotificationBtn();
+            UserImformation();
         });
 
     </script>
