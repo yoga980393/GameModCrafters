@@ -13,6 +13,7 @@ using GameModCrafters.Migrations;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using GameModCrafters.Services;
 
 namespace GameModCrafters.Controllers
 {
@@ -20,11 +21,13 @@ namespace GameModCrafters.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly NotificationService _notification;
 
-        public TransactionsController(ApplicationDbContext context, IWebHostEnvironment env)
+        public TransactionsController(ApplicationDbContext context, IWebHostEnvironment env, NotificationService notification)
         {
             _context = context;
             _env = env;
+            _notification = notification;
         }
 
         // GET: Transactions
@@ -88,6 +91,10 @@ namespace GameModCrafters.Controllers
                 transaction.PayerId = User.FindFirstValue(ClaimTypes.Email);
                 transaction.TransactionStatus = false;
                 transaction.CreateTime = DateTime.Now;
+                transaction.IsReceive = false;
+                transaction.IsConfirm = false;
+                transaction.IsSubmit = false;
+                transaction.Isdone = false;
 
                 var privateMessage = new PrivateMessage()
                 {
@@ -102,6 +109,12 @@ namespace GameModCrafters.Controllers
                     MessageTime = DateTime.Now,
                     IsRequestMessage = true
                 };
+
+                var notifierId = transaction.PayerId;
+                var recipientId = transaction.PayeeId;
+                var content = $"{User.FindFirstValue(ClaimTypes.Name)}對你發起了委託交易，請到聊天室查看詳情";
+
+                _notification.CreateNotification(notifierId, recipientId, content);
 
                 await _context.AddAsync(transaction);
                 await _context.AddAsync(privateMessage);
@@ -220,13 +233,21 @@ namespace GameModCrafters.Controllers
         [HttpPost]
         public async Task<IActionResult> AcceptCommission(string transactionId)
         {
-            var transaction = _context.Transactions.FirstOrDefault(e => e.TransactionId == transactionId);
+            var transaction = await _context.Transactions
+                .Include(t => t.Commission)
+                .Include(t => t.Payee)
+                .Include(t => t.Payer)
+                .FirstOrDefaultAsync(m => m.TransactionId == transactionId);
             if (transaction == null)
             {
                 return NotFound();
             }
 
-            // TODO: 驗證交易確實屬於當前使用者
+            var notifierId = transaction.PayeeId;
+            var recipientId = transaction.PayerId;
+            var content = $"{transaction.Payee.Username}接受了你的委託交易，你可以到委託列表查看進度";
+
+            _notification.CreateNotification(notifierId, recipientId, content);
 
             transaction.TransactionStatus = true;
             await _context.SaveChangesAsync();
@@ -241,7 +262,30 @@ namespace GameModCrafters.Controllers
                 return NotFound();
             }
 
-            var transaction = await _context.Transactions.FindAsync(id);
+            var transaction = await _context.Transactions
+                .Include(t => t.Commission)
+                .Include(t => t.Payee)
+                .Include(t => t.Payer)
+                .FirstOrDefaultAsync(m => m.TransactionId == id);
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+            return View(transaction);
+        }
+
+        public async Task<IActionResult> ViewFinishedCommission(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var transaction = await _context.Transactions
+                .Include(t => t.Commission)
+                .Include(t => t.Payee)
+                .Include(t => t.Payer)
+                .FirstOrDefaultAsync(m => m.TransactionId == id);
             if (transaction == null)
             {
                 return NotFound();
@@ -252,7 +296,11 @@ namespace GameModCrafters.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file, string transactionId)
         {
-            var transaction = _context.Transactions.FirstOrDefault(e => e.TransactionId == transactionId);
+            var transaction = await _context.Transactions
+                .Include(t => t.Commission)
+                .Include(t => t.Payee)
+                .Include(t => t.Payer)
+                .FirstOrDefaultAsync(m => m.TransactionId == transactionId);
             if (transaction == null)
             {
                 return NotFound();
@@ -272,8 +320,65 @@ namespace GameModCrafters.Controllers
             transaction.IsSubmit = true;
             await _context.SaveChangesAsync();
 
+            var notifierId = transaction.PayeeId;
+            var recipientId = transaction.PayerId;
+            var content = $"{transaction.Payee.Username}已經提交了你的委託({transaction.Commission.CommissionTitle})的成品<br><a href=\"/Transactions/ViewFinishedCommission/{transaction.TransactionId}\">點此</a>驗收成品";
+
+            _notification.CreateNotification(notifierId, recipientId, content);
+
             return Ok("/Transactions/Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DownloadFile(string transactionId)
+        {
+            var transaction = await _context.Transactions
+                .Include(t => t.Commission)
+                .Include(t => t.Payee)
+                .Include(t => t.Payer)
+                .FirstOrDefaultAsync(m => m.TransactionId == transactionId);
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+
+            transaction.IsReceive = true;
+            await _context.SaveChangesAsync();
+
+            var notifierId = transaction.PayerId;
+            var recipientId = transaction.PayeeId;
+            var content = $"{transaction.Payer.Username}已經下載了你提交的成品";
+
+            _notification.CreateNotification(notifierId, recipientId, content);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmTransaction(string transactionId)
+        {
+            var transaction = _context.Transactions.FirstOrDefault(e => e.TransactionId == transactionId);
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+
+            var payer = await _context.Users.FirstOrDefaultAsync(u => u.Email == transaction.PayerId);
+            var payee = await _context.Users.FirstOrDefaultAsync(u => u.Email == transaction.PayeeId);
+
+            payer.ModCoin -= transaction.Budget;
+            payee.ModCoin += transaction.Budget;
+
+            transaction.IsConfirm = true;
+            await _context.SaveChangesAsync();
+
+            var notifierId = transaction.PayerId;
+            var recipientId = transaction.PayeeId;
+            var content = $"{transaction.Payer.Username}已經驗收了你的作品<br>並將{transaction.Budget}個Mod Coin移交給你";
+
+            _notification.CreateNotification(notifierId, recipientId, content);
+
+            return Ok("/Transactions/Index");
+        }
     }
 }

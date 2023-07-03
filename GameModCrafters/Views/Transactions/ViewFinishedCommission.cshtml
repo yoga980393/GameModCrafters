@@ -1,0 +1,117 @@
+﻿@model GameModCrafters.Models.Transaction
+@{
+    ViewData["Title"] = "ViewFinishedCommission";
+}
+
+<div class="container mt-4">
+    <h2>提交成品</h2>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Commission)
+        </dt>
+        <dd class="col-sm-10">
+            <a href="/Commissions/Details/@Html.DisplayFor(model => model.Commission.CommissionId)">@Html.DisplayFor(model => model.Commission.CommissionTitle)</a>
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Describe)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Describe)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Budget)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Budget) Mod Coin
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Payer)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Payer.Username) (@Html.DisplayFor(model => model.Payer.Email))
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Payee)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Payee.Username) (@Html.DisplayFor(model => model.Payee.Email))
+        </dd>
+
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreateTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreateTime)
+        </dd>
+    </dl>
+    <hr />
+    <div class="mb-4">
+        下載連結：<a id="downloadLink" href="@Model.FileURL">點我下載</a>
+    </div>
+    @if (Model.IsReceive && !Model.IsConfirm)
+    {
+        <div class="mb-4">
+            <p>確認成品無誤後 請點擊確認並撥款給作者</p>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                確認及撥款
+            </button>
+        </div>
+    }
+    
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">確認撥款？</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                確認成品品質符合需求<br />將交易預算(@Model.Budget)個Mod Coin交給作者(@Model.Payee.Username)？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="ConfirmBtn">確定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section js{
+    <script>
+        $('#downloadLink').on('click', function (e) {
+            var downloadLink = "@Html.Raw(Model.FileURL)";
+            e.preventDefault();
+
+            $.ajax({
+                url: '/Transactions/DownloadFile',
+                type: 'POST',
+                data: {
+                    transactionId: '@Model.TransactionId'
+                },
+                success: function (response) {
+                    window.location.href = downloadLink;
+                }
+            });
+        });
+
+        $("#ConfirmBtn").on("click", () => {
+            $.ajax({
+                url: '/Transactions/ConfirmTransaction',
+                type: 'POST',
+                data: {
+                    transactionId: '@Model.TransactionId'
+                },
+                success: function (response) {
+                    window.location.href = response;
+                }
+            })
+        })
+    </script>
+}

@@ -44,11 +44,14 @@ namespace GameModCrafters.Models
 
         // Navigation properties and Foreign key settings
         [ForeignKey(nameof(CommissionId))]
+        [Display(Name = "交易名稱")]
         public Commission Commission { get; set; }
 
+        [Display(Name = "委託人")]
         [ForeignKey(nameof(PayerId))]
         public User Payer { get; set; }
 
+        [Display(Name = "接受人")]
         [ForeignKey(nameof(PayeeId))]
         public User Payee { get; set; }
     }

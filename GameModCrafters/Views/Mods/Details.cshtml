@@ -210,16 +210,15 @@
                 $("#InstallationInstructions").html(content);
 
                 $('#downloadLink').on('click', function (e) {
-                    e.preventDefault();  // 防止默認的鏈接行為
+                    e.preventDefault();  
 
                     $.ajax({
                         url: '/Mods/DownloadMod',
                         type: 'POST',
                         data: {
-                            modId: '@Model.ModId'  // 你需要將此處替換為實際的 modId
+                            modId: '@Model.ModId'  
                         },
                         success: function (response) {
-                            // 在成功的回應後，直接導航到下載鏈接
                             window.location.href = downloadLink;
                         }
                     });

@@ -52,7 +52,21 @@
                     {
                         if (item.IsSubmit)
                         {
-                            <p>已提交</p>
+                            if (item.IsReceive)
+                            {
+                                if (item.IsConfirm)
+                                {
+                                    <p>已完成</p>
+                                }
+                                else
+                                {
+                                    <p>已下載</p>
+                                }
+                            }
+                            else
+                            {
+                                <p>已提交</p>
+                            }
                         }
                         else
                         {
@@ -77,9 +91,13 @@
                 @Html.DisplayFor(modelItem => item.Payee.Username)
             </td>
             <td>
-                    @if (item.PayeeId == User.FindFirstValue(ClaimTypes.Email))
+                    @if (item.PayeeId == User.FindFirstValue(ClaimTypes.Email) && !item.IsConfirm)
                     {
                         <a class="me-1 btn btn-success" asp-action="SubmitFile" asp-route-id="@item.TransactionId">提交成品</a>
+                    }
+                    @if (item.PayerId == User.FindFirstValue(ClaimTypes.Email) && item.IsSubmit)
+                    {
+                        <a class="me-1 btn btn-info" asp-action="ViewFinishedCommission" asp-route-id="@item.TransactionId">查看成品</a>
                     }
                     <a class="me-1 btn btn-primary" asp-action="Details" asp-route-id="@item.TransactionId">查看委託細節</a>
                     <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.TransactionId">取消交易</a>
