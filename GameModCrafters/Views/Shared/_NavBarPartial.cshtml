@@ -60,8 +60,18 @@
                         <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="PersonPage">個人專區</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" id="navbarname">Hello @User.Identity.Name</a>
+                        <a class="nav-link text-light" id="navbarname" tabindex="0" role="button" data-bs-toggle="popover">Hello @User.Identity.Name</a>
 
+                        <div id="popover-content" style="display: none">
+                            <div id="imformationList">
+                                <div id="nmae-avatar">
+                                    <img id="popover-avatar" />
+                                    <span id="popover-username"></span>
+                                </div>
+                                <p class="mt-3"><strong>ModCoin: </strong><span id="popover-modcoin"></span></p>
+                                <a herf="#" class="d-block border-top pt-3">發起交易</a>
+                            </div>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-light" asp-controller="Account" asp-action="Signout">登出</a>
