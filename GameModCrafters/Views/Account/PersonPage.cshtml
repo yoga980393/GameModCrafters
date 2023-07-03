@@ -379,6 +379,10 @@
                             // 根據需要進行處理回傳的數據
                             console.log(data);
                             personal_pic.src = data.fileUrl;
+                            if (data.message == "更新頭像成功")
+                            {
+                                $("#popover-avatar").attr('src',data.fileUrl)
+                            }
                             cropperperson.destroy();
                             previewPersonPic.src = '';
                         })
@@ -481,7 +485,7 @@
                     if (data == "更改成功") {
                         // 顯示成功訊息
                         $("#usernameError").text(data).removeClass("text-danger").addClass("text-success");
-                        $("#navbarname").text(username);
+                        $("#divuser").text(username);
                     } else {
                         // 顯示錯誤訊息
                         $("#usernameError").text(data).removeClass("text-success").addClass("text-danger");

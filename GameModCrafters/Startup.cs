@@ -33,7 +33,7 @@ namespace GameModCrafters
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
+            services.AddScoped<SendEmail>();
             services.AddDistributedMemoryCache();
             services.AddSession(); // 添加Session服務
             services.AddSingleton<IHashService, HashService>();//加密

@@ -1,0 +1,11 @@
+﻿#popover-avatar{
+    width:48px;
+    height:48px;
+}
+#imformationList{
+    width:150px;
+    font-size:20px
+}
+#imformationList a:hover{
+    color:blue;
+}

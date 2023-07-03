@@ -60,7 +60,7 @@
     </div>
     <input type="hidden" id="userEmail" value="@email" />
     <partial name="_ChatBoxPartial"></partial>
-
+    <link href="~/css/Navbar.css" rel="stylesheet" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -73,7 +73,17 @@
                 url: '/Account/GetUserName',
                 type: 'GET',
                 success: function (result) {
-                    $('#navbarname').text("Hello " + result);
+                    $('#divuser').text(result);
+                    $('#Username').text(result);
+                }
+            });
+        })
+        $(() => {
+            $.ajax({
+                url: '/Account/GetUserAvatar',
+                type: 'GET',
+                success: function (result) {
+                    $('#popover-avatar').attr('src', result);
                 }
             });
         })
@@ -400,7 +410,7 @@
                     // 更新 Popover 的內容
                     console.log(data);
                     $('#popover-username').text(data.username);
-                    $('#popover-avatar').attr('src', data.avatar);
+                    //$('#popover-avatar').attr('src', data.avatar);
                     $('#popover-modcoin').text(data.modCoin);
                 }
             });
