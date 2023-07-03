@@ -1,0 +1,81 @@
+﻿@model GameModCrafters.Models.Transaction
+@{
+    ViewData["Title"] = "SubmitFile";
+}
+
+<div class="Container mt-4">
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Commission)
+        </dt>
+        <dd class="col-sm-10">
+            <a href="/Commissions/Details/@Html.DisplayFor(model => model.Commission.CommissionId)">@Html.DisplayFor(model => model.Commission.CommissionTitle)</a>
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Describe)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Describe)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Budget)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Budget) Mod Coin
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Payer)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Payer.Username) (@Html.DisplayFor(model => model.Payer.Email))
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Payee)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Payee.Username) (@Html.DisplayFor(model => model.Payee.Email))
+        </dd>
+
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreateTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreateTime)
+        </dd>
+    </dl>
+    <hr />
+    <input type="file" id="fileInput" />
+    <button class="btn btn-primary" type="button" id="uploadButton">確定上傳</button>
+</div>
+
+@section js{
+    <script>
+        $("#uploadButton").on("click", () => {
+            var formData = new FormData();
+            var fileInput = document.getElementById('fileInput');
+            formData.append("file", fileInput.files[0]);
+            formData.append("transactionId", "@Model.TransactionId");
+
+            $.ajax({
+                url: '/Transactions/UploadFile',
+                type: 'POST',
+                data: formData,
+                processData: false,  // Important!
+                contentType: false,  // Important!
+                success: function (data) {
+                    window.location.href = data;
+                },
+                error: function (err) {
+                    // handle error
+                }
+            });
+        });
+    </script>
+
+}
+

@@ -16,7 +16,8 @@ namespace GameModCrafters.Hubs
             _context = context;
         }
 
-        public async Task SendMessage(string receiverEmail, string messageContent)
+        
+        public async Task SendMessage(string receiverEmail, string messageContent, bool IsRequestMessage)
         {
             var senderEmail = Context.User.FindFirstValue(ClaimTypes.Email); // 从授权的用户中获取发送者的 email
             if (string.IsNullOrEmpty(senderEmail))
@@ -31,7 +32,8 @@ namespace GameModCrafters.Hubs
                 SenderId = senderEmail,
                 ReceiverId = receiverEmail,
                 MessageContent = messageContent,
-                MessageTime = DateTime.Now
+                MessageTime = DateTime.Now,
+                IsRequestMessage = IsRequestMessage
             };
 
             // 将消息存入数据库

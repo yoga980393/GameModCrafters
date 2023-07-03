@@ -56,7 +56,6 @@
 
             </div>
         </div>
-
     </div>
     <input type="hidden" id="userEmail" value="@email" />
     <partial name="_ChatBoxPartial"></partial>
@@ -119,7 +118,11 @@
                         $('#chatList').prepend(chatButton);
                     }
 
-                    div.textContent = encodedMsg;
+                    if (encodedMsg.startsWith("<div")) {
+                        div.innerHTML = encodedMsg;
+                    } else {
+                        div.textContent = encodedMsg;
+                    }
                     li.appendChild(div);
                     var messagesList = document.getElementById("messagesList");
                     messagesList.appendChild(li);
@@ -144,7 +147,7 @@
             document.getElementById("sendButton").addEventListener("click", function (event) {
                 var receiverEmail = $(".room-link.active:first").data("room");
                 var messageContent = document.getElementById("messageInput").value;
-                connection.invoke("SendMessage", receiverEmail, messageContent).catch(function (err) {
+                connection.invoke("SendMessage", receiverEmail, messageContent, false).catch(function (err) {
                     return console.error(err.toString());
                 });
                 document.getElementById("messageInput").value = "";
@@ -200,7 +203,11 @@
                                 div.className = "messages right";
                             }
 
-                            div.textContent = encodedMsg;
+                            if (encodedMsg.startsWith("<div")) {
+                                div.innerHTML = encodedMsg;
+                            } else {
+                                div.textContent = encodedMsg;
+                            }
                             li.appendChild(div);
                             document.getElementById("messagesList").appendChild(li);
                             messagesList.scrollTop = messagesList.scrollHeight;

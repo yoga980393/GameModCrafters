@@ -1,0 +1,56 @@
+﻿@model GameModCrafters.Models.Transaction
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Transaction</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TransactionId" />
+            <div class="form-group">
+                <label asp-for="CommissionId" class="control-label"></label>
+                <select asp-for="CommissionId" class="form-control" asp-items="ViewBag.CommissionId"></select>
+                <span asp-validation-for="CommissionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PayerId" class="control-label"></label>
+                <select asp-for="PayerId" class="form-control" asp-items="ViewBag.PayerId"></select>
+                <span asp-validation-for="PayerId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PayeeId" class="control-label"></label>
+                <select asp-for="PayeeId" class="form-control" asp-items="ViewBag.PayeeId"></select>
+                <span asp-validation-for="PayeeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Describe" class="control-label"></label>
+                <input asp-for="Describe" class="form-control" />
+                <span asp-validation-for="Describe" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="TransactionStatus" /> @Html.DisplayNameFor(model => model.TransactionStatus)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreateTime" class="control-label"></label>
+                <input asp-for="CreateTime" class="form-control" />
+                <span asp-validation-for="CreateTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

@@ -59,3 +59,14 @@
 #popover-username{
     font-size:25px
 }
+
+.RequestMessage {
+    background-color: white;
+    padding: 10px;
+}
+
+.RequestMessage span{
+    color:red;
+}
+
+
