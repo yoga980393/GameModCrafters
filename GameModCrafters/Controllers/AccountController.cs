@@ -199,7 +199,7 @@ namespace GameModCrafters.Controllers
 
 
                 return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
-
+          
 
             }
 

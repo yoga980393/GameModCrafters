@@ -19,34 +19,37 @@
         </div>
 
 
-        <button type="submit" class="btn btn-primary">SEND EMAIL</button>
+        <button type="submit" class="btn btn-primary" id="sendemail_btn">SEND EMAIL</button>
     </form>
-
+    
 </div>
 
 @section js{
+    
     <script>
-        
-            //$('form.Register').submit(function (e) {
-                
+        const submitButton = document.getElementById('sendemail_btn');
 
-            //    var email = $('#email').val(); // 獲取輸入的郵件地址
+        // 添加点击事件监听器
+        submitButton.addEventListener('click', function (event) {
+            event.preventDefault(); // 阻止表单的默认提交行为
 
-            //    // 傳送 POST 請求
-            //    $.post('/Account/SendConfirmationEmail', { email: email }, function (data) {
-            //        if (data == "傳送成功") {
-            //            // 顯示成功訊息
-            //            alert("郵件已成功發送");
-            //        } else {
-            //            // 顯示錯誤訊息
-            //            alert("郵件發送失敗");
-            //        }
-            //    });
-            //});
+            // 使用 SweetAlert2 弹出成功提示框
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Your work has been saved',
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            // 手动提交表单
+            this.closest('form').submit();
+        });
     </script>
    
 }
 @section css{
+    
     <style>
         body {
             background-color: gray;
