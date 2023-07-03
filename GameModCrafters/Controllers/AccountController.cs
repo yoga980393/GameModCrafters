@@ -199,7 +199,7 @@ namespace GameModCrafters.Controllers
 
 
                 return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
-
+          
 
             }
 
@@ -512,7 +512,7 @@ namespace GameModCrafters.Controllers
                     Status = c.CommissionStatus.Status
                 })
                .ToListAsync();
-
+         
             personVM.Commissions = commissions;
 
             var publishedMods = await _modService.GetPublishedMods(User.FindFirstValue(ClaimTypes.Email), page, 8);
