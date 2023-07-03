@@ -7,7 +7,9 @@
     position:absolute;
    
 }
-
+.footer a{
+    text-decoration:none;
+}
 .wrap {
     width: 100%;
     display: flex;
@@ -41,3 +43,30 @@
 .menu a:first-child {
      border-right: #ccc solid 1px;
 }
+
+#nmae-avatar{
+    display:flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#popover-avatar{
+    border-radius:50%;
+    border:2px solid gray;
+    width:40%;
+}
+
+#popover-username{
+    font-size:25px
+}
+
+.RequestMessage {
+    background-color: white;
+    padding: 10px;
+}
+
+.RequestMessage span{
+    color:red;
+}
+
+

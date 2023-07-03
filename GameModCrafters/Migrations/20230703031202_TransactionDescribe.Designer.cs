@@ -4,14 +4,16 @@ using GameModCrafters.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GameModCrafters.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230703031202_TransactionDescribe")]
+    partial class TransactionDescribe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -544,9 +546,6 @@ namespace GameModCrafters.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsRequestMessage")
-                        .HasColumnType("bit");
-
                     b.Property<string>("MessageContent")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -662,9 +661,6 @@ namespace GameModCrafters.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Budget")
-                        .HasColumnType("int");
-
                     b.Property<string>("CommissionId")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -676,27 +672,13 @@ namespace GameModCrafters.Migrations
                     b.Property<string>("Describe")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FileURL")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsConfirm")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsReceive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSubmit")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Isdone")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PayeeId")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("PayerId")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -1084,7 +1066,8 @@ namespace GameModCrafters.Migrations
                     b.HasOne("GameModCrafters.Models.User", "Payer")
                         .WithMany("Payments")
                         .HasForeignKey("PayerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Commission");
 

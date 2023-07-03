@@ -46,27 +46,50 @@
                 </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="display: flex; align-items: center;">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li class="nav-item">
-                        <a class="nav-link active" id="notification-link" href="#">
-                            <i class="fa fa-bell" id="bell"></i>
-                            <span id="notification-count" class="badge badge-light">0</span>
-                        </a>
-                        <ul id="notification-list" class="dropdown-menu" aria-labelledby="navbarDropdown"></ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" asp-controller="Account" asp-action="PersonPage">個人專區</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-light" id="navbarname">Hello @User.Identity.Name</a>
+                    <div style="display:flex ;align-items:center;">
+                            <li style="display:flex;  align-items:center; justify-content:center;">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="notification-link" href="#">
+                                        <i class="fa fa-bell" id="bell"></i>
+                                        <span id="notification-count" class="badge badge-light">0</span>
+                                    </a>
+                                    <ul id="notification-list" class="dropdown-menu" aria-labelledby="navbarDropdown"></ul>
+                                </li>
+                                @*<li class="nav-item">
+                                    <img id="popover-avatar" />
+                                </li>*@
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" id="navbarname" tabindex="0" role="button" data-bs-toggle="popover" style="display:flex; align-items:center ;">
+                                       
+                                            <img id="popover-avatar" />
+                                            <div id="divuser" style="margin-left:10px;">@User.Identity.Name</div>
+                                          
+                                          
+                                    </a>
 
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-light" asp-controller="Account" asp-action="Signout">登出</a>
+                                    <div id="popover-content" style="display: none">
+                                        <div id="imformationList">
+                                            <p class="border-bottom"><strong>ModCoin: </strong><span id="popover-modcoin"></span></p>
+                                            <a class="nav-link active  border-bottom" aria-current="page" asp-controller="Account" asp-action="PersonPage">個人專區</a>
 
-                    </li>
+                                            <a href="#" class="d-block border-bottom pt-3">發起交易</a>
+
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                            </li>
+                            <li class="nav-item">
+                                    <a class="nav-link text-light" asp-controller="Account" asp-action="Signout">登出</a>
+
+                            </li>
+                       </div>
+                    
+                    
+                   
                 }
                 else
                 {
@@ -84,5 +107,6 @@
                 }
             </ul>
         </div>
-    </div>
+
+    
 </nav>

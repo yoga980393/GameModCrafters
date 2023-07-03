@@ -407,5 +407,17 @@ namespace GameModCrafters.Controllers
 
             return Json(news);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserImformation()
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == User.FindFirstValue(ClaimTypes.Email));
+
+            var username = user.Username;
+            var avatar = user.Avatar;
+            var modCoin = user.ModCoin;
+
+            return Json(new { username, avatar, modCoin });
+        }
     }
 }

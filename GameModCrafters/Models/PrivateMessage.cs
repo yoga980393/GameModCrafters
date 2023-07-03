@@ -24,6 +24,8 @@
         [Required, Display(Name = "是否已讀")]
         public bool IsRead { get; set; }
 
+        public bool IsRequestMessage { get; set; }
+
         // Navigation properties and Foreign key settings
         [ForeignKey(nameof(SenderId))]
         public User Sender { get; set; }

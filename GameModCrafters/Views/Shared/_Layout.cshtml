@@ -13,9 +13,11 @@
     <link rel="stylesheet" href="~/css/footer.css" />
     <link rel="stylesheet" href="~/css/ChatBoxStyle.css" />
     <link href="~/css/AutoSearch.css" rel="stylesheet" />
+    
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-brands/css/uicons-brands.css'>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <link href="~/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     @await RenderSectionAsync("css", required: false)
    
 </head>
@@ -54,14 +56,14 @@
 
             </div>
         </div>
-
     </div>
     <input type="hidden" id="userEmail" value="@email" />
     <partial name="_ChatBoxPartial"></partial>
-
+    <link href="~/css/Navbar.css" rel="stylesheet" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/sweetalert2/sweetalert2.min.js"></script>
     @await RenderSectionAsync("js", required: false)
     @await RenderSectionAsync("Scripts", required: false)
     <script>
@@ -70,7 +72,17 @@
                 url: '/Account/GetUserName',
                 type: 'GET',
                 success: function (result) {
-                    $('#navbarname').text("Hello " + result);
+                    $('#divuser').text(result);
+                    $('#Username').text(result);
+                }
+            });
+        })
+        $(() => {
+            $.ajax({
+                url: '/Account/GetUserAvatar',
+                type: 'GET',
+                success: function (result) {
+                    $('#popover-avatar').attr('src', result);
                 }
             });
         })
@@ -106,7 +118,11 @@
                         $('#chatList').prepend(chatButton);
                     }
 
-                    div.textContent = encodedMsg;
+                    if (encodedMsg.startsWith("<div")) {
+                        div.innerHTML = encodedMsg;
+                    } else {
+                        div.textContent = encodedMsg;
+                    }
                     li.appendChild(div);
                     var messagesList = document.getElementById("messagesList");
                     messagesList.appendChild(li);
@@ -131,7 +147,7 @@
             document.getElementById("sendButton").addEventListener("click", function (event) {
                 var receiverEmail = $(".room-link.active:first").data("room");
                 var messageContent = document.getElementById("messageInput").value;
-                connection.invoke("SendMessage", receiverEmail, messageContent).catch(function (err) {
+                connection.invoke("SendMessage", receiverEmail, messageContent, false).catch(function (err) {
                     return console.error(err.toString());
                 });
                 document.getElementById("messageInput").value = "";
@@ -187,7 +203,11 @@
                                 div.className = "messages right";
                             }
 
-                            div.textContent = encodedMsg;
+                            if (encodedMsg.startsWith("<div")) {
+                                div.innerHTML = encodedMsg;
+                            } else {
+                                div.textContent = encodedMsg;
+                            }
                             li.appendChild(div);
                             document.getElementById("messagesList").appendChild(li);
                             messagesList.scrollTop = messagesList.scrollHeight;
@@ -380,6 +400,29 @@
             });
         }
 
+        function UserImformation(){
+            var navbarname = document.getElementById('navbarname');
+            var popover = new bootstrap.Popover(navbarname, {
+                html: true,
+                trigger: 'click',
+                content: function () {
+                    return $('#popover-content').html();
+                }
+            });
+
+            $.ajax({
+                url: '/Home/GetUserImformation',
+                method: 'GET',
+                success: function (data) {
+                    // 更新 Popover 的內容
+                    console.log(data);
+                    $('#popover-username').text(data.username);
+                    //$('#popover-avatar').attr('src', data.avatar);
+                    $('#popover-modcoin').text(data.modCoin);
+                }
+            });
+        }
+
         $(() => {
             Connection();
             ConversationRecord();
@@ -389,6 +432,7 @@
             updateNotifications();
             setInterval(updateNotifications, 10000);
             NotificationBtn();
+            UserImformation();
         });
 
     </script>
