@@ -66,6 +66,7 @@ namespace GameModCrafters.Controllers
         {
             var commissions = await _context.Commissions
                 .Where(c => c.IsDone)
+                .Where(c => c.CommissionStatusId == "s01")
                 .Where(c => c.DelegatorId == User.FindFirstValue(ClaimTypes.Email)).ToListAsync();
 
             ViewData["CommissionId"] = commissions.Select(c => new SelectListItem
@@ -249,6 +250,9 @@ namespace GameModCrafters.Controllers
 
             _notification.CreateNotification(notifierId, recipientId, content);
 
+            var commission = await _context.Commissions.FirstOrDefaultAsync(c => c.CommissionId == transaction.CommissionId);
+            commission.CommissionStatusId = "s02";
+
             transaction.TransactionStatus = true;
             await _context.SaveChangesAsync();
 
@@ -378,7 +382,33 @@ namespace GameModCrafters.Controllers
 
             _notification.CreateNotification(notifierId, recipientId, content);
 
+            var commission = await _context.Commissions.FirstOrDefaultAsync(c => c.CommissionId == transaction.CommissionId);
+            commission.CommissionStatusId = "s03";
+
             return Ok("/Transactions/Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmedAmount(string transactionId)
+        {
+            var transaction = await _context.Transactions
+                .Include(t => t.Commission)
+                .Include(t => t.Payee)
+                .Include(t => t.Payer)
+                .FirstOrDefaultAsync(m => m.TransactionId == transactionId);
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+
+            if(transaction.Payer.ModCoin >= transaction.Budget)
+            {
+                return Json("餘額充足");
+            }
+            else
+            {
+                return Json("餘額不足");
+            }
         }
     }
 }
