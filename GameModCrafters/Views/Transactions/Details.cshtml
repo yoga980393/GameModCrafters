@@ -60,7 +60,10 @@
                 }
             }
         }
-        
+        @if (Model.IsConfirm)
+        {
+            <div>成品：<a href="@Model.FileURL">下載</a></div>
+        }
     </div>
 </div>
 

@@ -4,105 +4,121 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="container my-4 myContainer">
+    <h1>Index</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">發起新交易</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                你是
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TransactionStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Commission)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Payer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Payee)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                    @if (item.PayeeId == User.FindFirstValue(ClaimTypes.Email))
-                    {
-                        <p>接受方</p>
-                    }
-                    @if (item.PayerId == User.FindFirstValue(ClaimTypes.Email))
-                    {
-                        <p>發起方</p>
-                    }
-                </td>
-            <td>
-                
-                    @if (item.TransactionStatus)
-                    {
-                        if (item.IsSubmit)
+    <p>
+        <a asp-action="Create" class="btn btn-primary">發起新交易</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    你是
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TransactionStatus)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreateTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Commission)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Payer)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Payee)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.PayeeId == User.FindFirstValue(ClaimTypes.Email))
                         {
-                            if (item.IsReceive)
+                            <p>接受方</p>
+                        }
+                        @if (item.PayerId == User.FindFirstValue(ClaimTypes.Email))
+                        {
+                            <p>發起方</p>
+                        }
+                    </td>
+                    <td>
+
+                        @if (item.TransactionStatus)
+                        {
+                            if (item.IsSubmit)
                             {
-                                if (item.IsConfirm)
+                                if (item.IsReceive)
                                 {
-                                    <p>已完成</p>
+                                    if (item.IsConfirm)
+                                    {
+                                        <p>已完成</p>
+                                    }
+                                    else
+                                    {
+                                        <p>已下載</p>
+                                    }
                                 }
                                 else
                                 {
-                                    <p>已下載</p>
+                                    <p>已提交</p>
                                 }
                             }
                             else
                             {
-                                <p>已提交</p>
+                                <p>進行中</p>
                             }
                         }
                         else
                         {
-                            <p>進行中</p>
+                            <p>未被接受</p>
                         }
-                    }
-                    else
-                    {
-                        <p>未被接受</p>
-                    }
-                </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Commission.CommissionTitle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Payer.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Payee.Username)
-            </td>
-            <td>
-                    @if (item.PayeeId == User.FindFirstValue(ClaimTypes.Email) && !item.IsConfirm)
-                    {
-                        <a class="me-1 btn btn-success" asp-action="SubmitFile" asp-route-id="@item.TransactionId">提交成品</a>
-                    }
-                    @if (item.PayerId == User.FindFirstValue(ClaimTypes.Email) && item.IsSubmit)
-                    {
-                        <a class="me-1 btn btn-info" asp-action="ViewFinishedCommission" asp-route-id="@item.TransactionId">查看成品</a>
-                    }
-                    <a class="me-1 btn btn-primary" asp-action="Details" asp-route-id="@item.TransactionId">查看委託細節</a>
-                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.TransactionId">取消交易</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreateTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Commission.CommissionTitle)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Payer.Username)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Payee.Username)
+                    </td>
+                    <td>
+                        <a class="me-1 btn btn-primary" asp-action="Details" asp-route-id="@item.TransactionId">查看委託細節</a>
+                        @if (!item.IsConfirm)
+                        {
+                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.TransactionId">取消交易</a>
+                        }
+                        @if (item.PayeeId == User.FindFirstValue(ClaimTypes.Email) && !item.IsConfirm)
+                        {
+                            <a class="me-1 btn btn-success" asp-action="SubmitFile" asp-route-id="@item.TransactionId">提交成品</a>
+                        }
+                        @if (item.PayerId == User.FindFirstValue(ClaimTypes.Email) && item.IsSubmit)
+                        {
+                            <a class="me-1 btn btn-info" asp-action="ViewFinishedCommission" asp-route-id="@item.TransactionId">查看成品</a>
+                        }
+                        
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+                            @section css{
+                                <style>
+        .myContainer{
+            min-height:60vh;
+        }
+                                </style>
+                            }
