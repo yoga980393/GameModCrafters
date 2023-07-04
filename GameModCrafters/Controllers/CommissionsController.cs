@@ -485,14 +485,14 @@ namespace GameModCrafters.Controllers
                 return NotFound();
             }
 
-            var TransactionId = await _context.Transactions.Where(c => c.CommissionId == id).FirstOrDefaultAsync();
+            var TransactionId = await _context.Transactions.Where(c => c.CommissionId == id).Select(c => c.TransactionId).FirstOrDefaultAsync();
 
             if (TransactionId == null)
             {
                 return NotFound();
             }
 
-            return RedirectToAction("Details", "Transactions", new { TransactionId });
+            return RedirectToAction("Details", "Transactions", new {id=TransactionId});
         }
 
 

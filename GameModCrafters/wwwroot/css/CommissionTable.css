@@ -1,5 +1,5 @@
 ﻿body {
-    min-height: 60th;
+
 }
 
 .Release_Area_Wrap {
@@ -9,7 +9,7 @@
     border-bottom: 1px solid #a4b6c3;
     margin: 10px auto;
     padding: 10px 0;
-    min-height: 60th;
+    min-height: 60vh;
     /* display: flex;
      justify-content: center;
      align-items: center; */

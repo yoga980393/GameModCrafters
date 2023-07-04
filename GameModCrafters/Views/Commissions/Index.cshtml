@@ -57,7 +57,7 @@
                     if (item.Status == "進行中")
                     {
                         <div class="col-6 title">
-                            <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
+                            <a href="@Url.Action("GotoTransactionDetails", "Commissions", new { id = item.CommissionId })">
                                 @item.CommissionTitle
                             </a>
                         </div>
