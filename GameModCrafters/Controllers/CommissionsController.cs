@@ -123,55 +123,7 @@ namespace GameModCrafters.Controllers
             }
             return View(commission);
         }
-        //[Authorize]
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Details(string id, [Bind("CommissionId,DelegatorId,GameId,CommissionTitle,CommissionDescription,Budget,Deadline,CommissionStatusId,CreateTime,UpdateTime,IsDone,Trash")] Commission commission)
-        //{
-        //    if (id != commission.CommissionId)
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-
-
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            // 在適當的位置取得追蹤委託的相關資訊
-        //            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value; // 取得當前使用者的ID或識別符號
-        //            string commissionId = id; // 請根據實際情況取得委託的ID
-
-        //            // 建立新的CommissionTracking物件
-        //            var commissionTracking = new CommissionTracking
-        //            {
-        //                UserId = userId,
-        //                CommissionId = commissionId,
-        //                AddTime = DateTime.Now // 可以根據需要指定添加時間,
-
-        //            };
-
-        //            // 將CommissionTracking物件新增到資料庫中
-        //            _context.CommissionTrackings.Add(commissionTracking);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!CommissionExists(commission.CommissionId))
-        //            {
-        //                return RedirectToAction(nameof(Index));
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View();
-        //}
-
+       
 
         [Authorize]
         [HttpPost]
@@ -290,6 +242,7 @@ namespace GameModCrafters.Controllers
                 //commission.GameId = gameId;
                 commission.GameId = gameid;
                 commission.IsDone = true;
+                commission.CommissionStatusId = "s01";
                 commission.Trash = false;
 
                 _context.Add(commission);
