@@ -9,3 +9,18 @@
 #imformationList a:hover{
     color:blue;
 }
+
+#notification-list {
+    right: 20%;
+    left: auto;
+    max-width: calc(100vw - 20%); /* 限制最大寬度為視窗寬度 */
+    overflow-x: auto; /* 如果內容過長，顯示滾動條 */
+}
+
+#view-all-notifications{
+    cursor:pointer;
+}
+
+#no-notifications{
+    cursor:default;
+}

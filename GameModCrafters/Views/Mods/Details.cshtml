@@ -199,9 +199,10 @@
 
             var userHasPurchased = '@Model.UserHasPurchased';
             var authorId = '@Model.AuthorId';
+            var price = @Model.Price;
             var userId = '@User.FindFirstValue(ClaimTypes.Email)';  // 從 Razor 中取得用戶ID
 
-            if (userHasPurchased == 'True' || authorId == userId) {
+            if (userHasPurchased == 'True' || authorId == userId || price == 0) {
                 // 如果用戶已經購買了該 mod 或用戶就是作者，則顯示安裝說明以及下載連結
                 let installationInstructions = "@Html.Raw(Model.InstallationInstructions)";
                 let downloadLink = "@Html.Raw(Model.DownloadLink)";
