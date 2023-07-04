@@ -14,7 +14,7 @@
             </div>
             <div class="mb-3">
                 <label asp-for="GameId" class="form-label">遊戲名稱:</label>
-                <select asp-for="GameId" class="form-control" asp-items="@ViewBag.GameName"></select>
+                <select asp-for="GameId" class="form-control" asp-items="ViewBag.GameName"></select>
             </div>
             <div class="mb-3">
                 <label asp-for="CommissionDescription" class="form-label">委託詳情:</label>
@@ -155,5 +155,11 @@
                 return new ServerUploadAdapter(loader);
             };
         }
+
+        $.get('/GetGameName/Commissions', function (data) {
+            $("#GameId").autocomplete({
+                source: data
+            });
+        });
     </script>
 }
