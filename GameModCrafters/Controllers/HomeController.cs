@@ -216,24 +216,26 @@ namespace GameModCrafters.Controllers
         public async Task<IActionResult> SearchResult(string keyword, int page = 1)
         {
 
-            int pageSize = 8;
+            int ModpageSize = 8;
+            int GamepagSize = 8;
             var searchResults = await GetAutoSearchResults(keyword);
             var pagedMods = searchResults.Mods
-              .Skip((page - 1) * pageSize)
-              .Take(pageSize)
+              .Skip((page - 1) * ModpageSize)
+              .Take(ModpageSize)
               .ToList();
             var pagedGames = searchResults.Games
-              .Skip((page - 1) * pageSize)
-              .Take(pageSize)
+              .Skip((page - 1) * GamepagSize)
+              .Take(GamepagSize)
               .ToList();
-            var GametotalPages = (int)Math.Ceiling((double)searchResults.Games.Count / pageSize);
-            var ModtotalPages = (int)Math.Ceiling((double)searchResults.Mods.Count / pageSize);
+            var GametotalPages = (int)Math.Ceiling((double)searchResults.Games.Count / GamepagSize);
+            var ModtotalPages = (int)Math.Ceiling((double)searchResults.Mods.Count / ModpageSize);
             var VM = new NavbarSearchResultViewmodel()
             {
                 Mods = pagedMods,
                 ModTotalPages = ModtotalPages,
                 GameTotalPages = GametotalPages,
                 ModCurrentPage = page,
+                GameCurrentPage = page,
                 Games = pagedGames,
                 SearchString = keyword
             };
@@ -246,7 +248,7 @@ namespace GameModCrafters.Controllers
         public async Task<IActionResult> ModSearchResultPage(string keyword, int page = 1)
         {
 
-            int pageSize = 16;
+            int pageSize = 8;
             var searchResults = await GetAutoSearchResults(keyword);
             var pagedMods = searchResults.Mods
               .Skip((page - 1) * pageSize)
@@ -274,7 +276,7 @@ namespace GameModCrafters.Controllers
         public async Task<IActionResult> GameSearchResultPage(string keyword, int page = 1)
         {
 
-            int pageSize = 2;
+            int pageSize = 8;
             var searchResults = await GetAutoSearchResults(keyword);
             //var pagedMods = searchResults.Mods
             //  .Skip((page - 1) * pageSize)
