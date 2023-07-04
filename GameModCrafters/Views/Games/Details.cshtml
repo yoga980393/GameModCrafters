@@ -134,9 +134,6 @@
         </div>
         <div class="container text-center mod-list">
             <div class="row align-items-start">
-                <div class="col GameName">
-                    遊戲
-                </div>
                 <div class="col-6 title">
                     Title
                 </div>
@@ -156,9 +153,6 @@
             @foreach(var item in Model.Commissions)
             {
                 <div class="row align-items-start">
-                    <div class="col GameName">
-                        @item.GameName
-                    </div>
                     <div class="col-6 title">
                         <a href="@Url.Action("Details", "Commissions", new { id = item.CommissionId })">
                             @item.CommissionTitle
