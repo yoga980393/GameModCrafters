@@ -3,7 +3,7 @@
     ViewData["Title"] = "ViewFinishedCommission";
 }
 
-<div class="container mt-4">
+<div class="container my-4">
     <h2>提交成品</h2>
     <hr />
     <dl class="row">
@@ -73,7 +73,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                確認成品品質符合需求<br />將交易預算(@Model.Budget)個Mod Coin交給作者(@Model.Payee.Username)？
+                確認成品品質符合需求<br />將交易預算 @Model.Budget 個Mod Coin交給作者(@Model.Payee.Username)？
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -97,7 +97,9 @@
                 },
                 success: function (response) {
                     window.location.href = downloadLink;
-                    location.reload();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 200);  
                 }
             });
         });
