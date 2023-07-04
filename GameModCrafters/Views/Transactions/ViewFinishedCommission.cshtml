@@ -3,7 +3,7 @@
     ViewData["Title"] = "ViewFinishedCommission";
 }
 
-<div class="container mt-4">
+<div class="container my-4">
     <h2>提交成品</h2>
     <hr />
     <dl class="row">
@@ -57,7 +57,7 @@
     {
         <div class="mb-4">
             <p>確認成品無誤後 請點擊確認並撥款給作者</p>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" id="ModalBtn">
                 確認及撥款
             </button>
         </div>
@@ -73,7 +73,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                確認成品品質符合需求<br />將交易預算(@Model.Budget)個Mod Coin交給作者(@Model.Payee.Username)？
+                確認成品品質符合需求<br />將交易預算 @Model.Budget 個Mod Coin交給作者(@Model.Payee.Username)？
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -97,21 +97,48 @@
                 },
                 success: function (response) {
                     window.location.href = downloadLink;
+                    setTimeout(function () {
+                        location.reload();
+                    }, 200);  
                 }
             });
         });
 
-        $("#ConfirmBtn").on("click", () => {
+        $("#ModalBtn").on("click", () => {
             $.ajax({
-                url: '/Transactions/ConfirmTransaction',
+                url: '/Transactions/ConfirmedAmount',
                 type: 'POST',
                 data: {
                     transactionId: '@Model.TransactionId'
                 },
-                success: function (response) {
-                    window.location.href = response;
+                success: function (data) {
+                    if (data == "餘額不足"){
+                        $("#ConfirmBtn").removeClass('btn-primary').addClass('btn-danger').text("餘額不足 前往儲值");
+
+                        $("#ConfirmBtn").on("click", () => {
+                            // 將當前頁面的 URL 存儲到 sessionStorage
+                            sessionStorage.setItem('redirectUrl', window.location.href);
+
+                            // 然後導向到儲值頁面
+                            location.href = "/Payments/StoredValue";
+                        })
+                    }
+                    else{
+                        $("#ConfirmBtn").on("click", () => {
+                            $.ajax({
+                                url: '/Transactions/ConfirmTransaction',
+                                type: 'POST',
+                                data: {
+                                    transactionId: '@Model.TransactionId'
+                                },
+                                success: function (response) {
+                                    window.location.href = response;
+                                }
+                            })
+                        })
+                    }
                 }
-            })
+            });
         })
     </script>
 }

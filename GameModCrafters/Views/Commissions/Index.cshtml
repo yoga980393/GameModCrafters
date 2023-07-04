@@ -31,6 +31,9 @@
             <div class="col LastReply">
                 最後回覆
             </div>
+            <div class="col CommisionStatus">
+                委託狀態
+            </div>
         </div>
         @foreach (var item in Model)
         {
@@ -41,7 +44,7 @@
                     </a>
                 </div>
 
-                @if (item.Status != "s02")
+                @if (item.Status != "待接受")
                 {
                     <div class="col-6 title">
                         <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
@@ -50,10 +53,10 @@
                     </div>
                 }
 
-                @if (item.Status == "s02")
+                @if (item.Status == "待接受")
                 {
                     <div class="col-6 title">
-                        <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
+                        <a href="@Url.Action("Edit", "Transactions", new { id = item.CommissionId })">
                             @item.CommissionTitle
                         </a>
                     </div>
@@ -67,6 +70,9 @@
                 </div>
                 <div class="col LastReply">
                     @item.UpdateTime
+                </div>
+                <div class="col CommssionStatus">
+                    @item.Status
                 </div>
             </div>
         }

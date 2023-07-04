@@ -58,6 +58,7 @@ namespace GameModCrafters.Services
         {
             var notifications = await _context.Notifications
                 .Where(n => n.RecipientId == userId && !n.IsRead)
+                .OrderByDescending(n => n.NotificationTime)
                 .ToListAsync();
 
             var notificationInfo = new NotificationInfo
@@ -92,6 +93,7 @@ namespace GameModCrafters.Services
         {
             var notifications = await _context.Notifications
                 .Where(n => n.RecipientId == userId)
+                .OrderByDescending(n => n.NotificationTime)
                 .Select(n => new NotificationDetails
                 {
                     Id = n.NotificationId,
