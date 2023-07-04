@@ -35,7 +35,8 @@ namespace GameModCrafters.Controllers
         {
             var applicationDbContext = _context.Transactions
                 .Include(t => t.Commission).Include(t => t.Payee).Include(t => t.Payer)
-                .Where(c => c.PayeeId == User.FindFirstValue(ClaimTypes.Email) || c.PayerId == User.FindFirstValue(ClaimTypes.Email));
+                .Where(c => c.PayeeId == User.FindFirstValue(ClaimTypes.Email) || c.PayerId == User.FindFirstValue(ClaimTypes.Email))
+                .OrderByDescending(c => c.CreateTime);
 
             return View(await applicationDbContext.ToListAsync());
         }
@@ -74,7 +75,8 @@ namespace GameModCrafters.Controllers
                 Value = c.CommissionId,
                 Text = c.CommissionTitle
             }).ToList();
-            ViewData["PayeeId"] = new SelectList(_context.Users, "Email", "Email");
+            ViewData["PayeeId"] = new SelectList(_context.Users.Where(u => u.Email != User.FindFirstValue(ClaimTypes.Email)), "Email", "Email");
+
             ViewData["PayerId"] = new SelectList(_context.Users, "Email", "Email");
             return View();
         }
@@ -132,7 +134,7 @@ namespace GameModCrafters.Controllers
                 Value = c.CommissionId,
                 Text = c.CommissionTitle
             }).ToList();
-            ViewData["PayeeId"] = new SelectList(_context.Users, "Email", "Email", transaction.PayeeId);
+            ViewData["PayeeId"] = new SelectList(_context.Users.Where(u => u.Email != User.FindFirstValue(ClaimTypes.Email)), "Email", "Email");
             ViewData["PayerId"] = new SelectList(_context.Users, "Email", "Email", transaction.PayerId);
             return View(transaction);
         }

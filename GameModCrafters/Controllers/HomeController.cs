@@ -334,7 +334,7 @@ namespace GameModCrafters.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUserEmails()
         {
-            var emails = await _context.Users.Select(u => u.Email).ToListAsync();
+            var emails = await _context.Users.Where(u => u.Email != User.FindFirstValue(ClaimTypes.Email)).Select(u => u.Email).ToListAsync();
             return Ok(emails);
         }
 
