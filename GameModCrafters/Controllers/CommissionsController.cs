@@ -64,6 +64,7 @@ namespace GameModCrafters.Controllers
             }
             var applicationDbContext = _context.Commissions.Include(c => c.CommissionStatus).Include(c => c.Delegator).Include(c => c.Game);
 
+
                  List<CommissionViewModel> CommisionVM = new List<CommissionViewModel>();
                  CommisionVM = await _context.Commissions
                 .Where(c => c.DelegatorId == usermail)
@@ -175,6 +176,23 @@ namespace GameModCrafters.Controllers
             }
         }
 
+        public async Task<IActionResult> GetGameName(string name)
+        {
+            var gameName = await _context.Games.FirstOrDefaultAsync(u => u.GameName == name);
+
+            if (gameName == null)
+            {
+                return NotFound(new { message = "No game found with this name." });
+            }
+
+            return Ok(gameName);
+        }
+
+        public async Task<IActionResult> GetAllGameName()
+        {
+            var gameName = await _context.Games.Select(u => u.GameName).ToListAsync();
+            return Ok(gameName);
+        }
 
         // GET: Commissions/Create
         public IActionResult Create(string gameid)
@@ -432,8 +450,53 @@ namespace GameModCrafters.Controllers
             return RedirectToAction("PersonPage", "Account");
         }
 
+        public async Task<IActionResult> FinishCommission(string id)
+        {
+            string loggedInUserEmail = User.FindFirstValue(ClaimTypes.Email);
 
-       
+            if (loggedInUserEmail == null) 
+            {
+                return NotFound();
+            }
+
+            var commission = await _context.Commissions
+                  .Include(c => c.CommissionStatus)
+                  .Include(c => c.Delegator)
+                  .Include(c => c.Game)
+                  .Where(c => c.DelegatorId == loggedInUserEmail)
+                  .FirstOrDefaultAsync(m => m.CommissionId == id);
+
+            ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "Status", commission.CommissionStatusId);
+            ViewData["DelegatorId"] = new SelectList(_context.Users, "Email", "Email", commission.DelegatorId);
+            ViewData["GameName"] = new SelectList(_context.Games, "GameName", "GameName", commission.GameId);
+
+            if (commission == null)
+            {
+                return NotFound();
+            }
+
+            return View(commission);
+        }
+
+        public async Task<IActionResult> GotoTransactionDetails(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var TransactionId = await _context.Transactions.Where(c => c.CommissionId == id).FirstOrDefaultAsync();
+
+            if (TransactionId == null)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("Details", "Transactions", new { TransactionId });
+        }
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile file)

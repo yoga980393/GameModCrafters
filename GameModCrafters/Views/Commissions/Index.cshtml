@@ -44,24 +44,35 @@
                     </a>
                 </div>
 
-                @if (item.Status != "待接受")
-                {
-                    <div class="col-6 title">
-                        <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
-                            @item.CommissionTitle
-                        </a>
-                    </div>
+                @{
+                    if (item.Status == "待接受")
+                    {
+                        <div class="col-6 title">
+                            <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
+                                @item.CommissionTitle
+                            </a>
+                        </div>
+                    }
+
+                    if (item.Status == "進行中")
+                    {
+                        <div class="col-6 title">
+                            <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
+                                @item.CommissionTitle
+                            </a>
+                        </div>
+                    }
+
+                    if (item.Status == "已完成")
+                    {
+                        <div class="col-6 title">
+                            <a href="@Url.Action("FinishCommission", "Commissions", new { id = item.CommissionId })">
+                                @item.CommissionTitle
+                            </a>
+                        </div>
+                    }
                 }
 
-                @if (item.Status == "待接受")
-                {
-                    <div class="col-6 title">
-                        <a href="@Url.Action("Edit", "Transactions", new { id = item.CommissionId })">
-                            @item.CommissionTitle
-                        </a>
-                    </div>
-                }
-                
                 <div class="col SendernName">
                     @item.DelegatorName
                 </div>
