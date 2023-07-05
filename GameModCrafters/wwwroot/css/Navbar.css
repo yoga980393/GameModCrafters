@@ -24,3 +24,8 @@
 #no-notifications{
     cursor:default;
 }
+
+a{
+    text-decoration:none;
+    color:black;
+}

@@ -127,6 +127,7 @@ namespace GameModCrafters.Controllers
             }
             var commissions = await _context.Commissions
                 .Where(c => c.IsDone)
+                .Where(c => c.CommissionStatusId == "s01")
                 .Where(c => c.DelegatorId == User.FindFirstValue(ClaimTypes.Email)).ToListAsync();
 
             ViewData["CommissionId"] = commissions.Select(c => new SelectListItem

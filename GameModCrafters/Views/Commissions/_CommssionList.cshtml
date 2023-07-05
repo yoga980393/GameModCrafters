@@ -1,0 +1,70 @@
+﻿
+@model List<CommissionViewModel>;
+
+<div class="container text-center">
+    <div class="row align-items-start rowwrap">
+        <div class="col GameNameTitle">
+            遊戲
+        </div>
+        <div class="col-4 titleTitle">
+            Title
+        </div>
+        <div class="col SendernNameTitle">
+            發文人
+        </div>
+        <div class="col-2 SenderDateTitle">
+            發文日
+        </div>
+        <div class="col-2 LastReplyTitle">
+            最後回覆
+        </div>
+        <div class="col statusTitle">
+            狀態
+        </div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="row align-items-start rowwrap">
+            <a href="@Url.Action("Details", "Games", new { id = item.GameID })" class="col GameName">
+                @item.GameName
+
+            </a>
+            @if (item.Status != "s01")
+            {
+
+                <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })" class="col-4 title">
+                    @item.CommissionTitle
+                </a>
+
+            }
+            @if (item.Status == "s02")
+            {
+
+                <a href="@Url.Action("GotoTransactionDetails", "Commissions", new { id = item.CommissionId })" class="col-6 title">
+                    @item.CommissionTitle
+                </a>
+
+            }
+            @if (item.Status == "s03")
+            {
+
+                <a href="@Url.Action("FinishCommission", "Commissions", new { id = item.CommissionId })" class="col-6 title">
+                    @item.CommissionTitle
+                </a>
+
+            }
+            <div class="col SendernName">
+                @item.DelegatorName
+            </div>
+            <div class="col-2 SenderDate">
+                @item.CreateTime
+            </div>
+            <div class="col-2 LastReply">
+                @item.UpdateTime
+            </div>
+            <div class="col status">
+                @item.Status
+            </div>
+        </div>
+    }
+</div>

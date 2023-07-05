@@ -13,43 +13,43 @@
 
     </div>
     <div class="container text-center mod-list">
-        <div class="row align-items-start">
-            <div class="col GameName">
+        <div class="row align-items-start rowwrap">
+            <div class="col GameNameTitle">
                 遊戲
             </div>
-            <div class="col-6 title">
+            <div class="col-4 titleTitle">
                 Title
             </div>
-            <div class="col SendernName">
+            <div class="col SendernNameTitle">
                 發文人
             </div>
-            <div class="col SenderDate">
+            <div class="col-2 SenderDateTitle">
                 發文日
             </div>
-            <div class="col LastReply">
+            <div class="col-2 LastReplyTitle">
                 最後回覆
             </div>
         </div>
         @foreach (var item in Model)
         {
-            <div class="row align-items-start">
-                <div class="col GameName">
-                    <a href="@Url.Action("Details", "Games", new { id = item.GameID })">
-                        @item.GameName
-                    </a>
-                </div>
-                <div class="col-6 title">
-                    <a href="@Url.Action("Details", "Commissions", new { id = item.CommissionId })">
-                        @item.CommissionTitle
-                    </a>
-                </div>
+            <div class="row align-items-start rowwrap">
+              
+                <a href="@Url.Action("Details", "Games", new { id = item.GameID })" class="col GameName">
+                    @item.GameName
+                </a>
+                
+               
+                <a href="@Url.Action("Details", "Commissions", new { id = item.CommissionId })" class="col-4 title">
+                    @item.CommissionTitle
+                </a>
+               
                 <div class="col SendernName">
                     @item.DelegatorName
                 </div>
-                <div class="col SenderDate">
+                <div class="col-2 SenderDate">
                     @item.CreateTime
                 </div>
-                <div class="col LastReply">
+                <div class="col-2 LastReply">
                     @item.UpdateTime
                 </div>
             </div>
@@ -58,5 +58,5 @@
 </div>
 
 @section css{
-    <link href="~/css/commissiontable.css" rel="stylesheet" />
+    <link href="~/css/CommissionTable.css" rel="stylesheet" />
 }

@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\css\CreateTransactionStyle.css" />
     <_ContentIncludedByDefault Remove="wwwroot\css\emailvaild.css" />
   </ItemGroup>
 
