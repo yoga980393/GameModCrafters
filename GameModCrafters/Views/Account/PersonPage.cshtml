@@ -139,10 +139,11 @@
 <div class="container wire"></div>
 
 <div class="container entrust Release_Area_Wrap paging">
+
     <div class="title">
         <h3>委託的mod:</h3>
-
     </div>
+
     <div class="container text-center mod-list">
         <div class="row align-items-start rowwrap">
             <div class="col GameName">
@@ -160,6 +161,9 @@
             <div class="col LastReply">
                 最後回覆
             </div>
+            <div class="col status">
+                狀態
+            </div>
         </div>
         @foreach (var item in commssions)
         {
@@ -169,7 +173,7 @@
                         @item.GameName
                     </a>
                 </div>
-                @if (item.Status != "s02")
+                @if (item.Status != "s01")
                 {
                     <div class="col-6 title">
                         <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
@@ -180,7 +184,15 @@
                 @if (item.Status == "s02")
                 {
                     <div class="col-6 title">
-                        <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
+                        <a href="@Url.Action("GotoTransactionDetails", "Commissions", new { id = item.CommissionId })">
+                            @item.CommissionTitle
+                        </a>
+                    </div>
+                }
+                @if (item.Status == "s03")
+                {
+                    <div class="col-6 title">
+                        <a href="@Url.Action("FinishCommission", "Commissions", new { id = item.CommissionId })">
                             @item.CommissionTitle
                         </a>
                     </div>
@@ -194,11 +206,12 @@
                 <div class="col LastReply">
                     @item.UpdateTime
                 </div>
+                <div class="col status">
+                    @item.Status
+                </div>
             </div>
         }
     </div>
-
-
 </div>
 <div class="container wire"></div>
 

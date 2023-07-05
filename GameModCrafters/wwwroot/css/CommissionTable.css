@@ -2,6 +2,10 @@
 
 }
 
+a{
+    text-decoration:none ;
+}
+
 .Release_Area_Wrap {
     background-color: #bdbcbc;
     /* background-image: linear-gradient(to bottom, #d7e9f7, #c6dced); */
