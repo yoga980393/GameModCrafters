@@ -278,7 +278,6 @@ namespace GameModCrafters.Controllers
         {
             string loggedInUserEmail = User.FindFirstValue(ClaimTypes.Email);
             var commissions = await _context.Commissions
-                .Where(c => c.DelegatorId != loggedInUserEmail)
                 .Where(c => c.CommissionStatusId == "s01")
                 .Where(c => c.IsDone == true)
                 .Include(c => c.Delegator)
