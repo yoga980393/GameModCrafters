@@ -1,16 +1,26 @@
-﻿.footer {
+﻿html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
     background-color: black;
     width: 100%;
     text-align: center;
     color: white;
     padding: 40px;
-    position:absolute;
-   
+    flex-shrink: 0;
 }
-.footer a{
-    text-decoration:none;
+
+.footer a {
+    text-decoration: none;
 }
-.wrap {
+.logoAndicon {
     width: 100%;
     display: flex;
     justify-content: space-between;

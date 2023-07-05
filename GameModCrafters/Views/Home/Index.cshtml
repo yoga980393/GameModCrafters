@@ -160,7 +160,7 @@
             @foreach (var mod in Model.Mods)
             {
                 <text>
-                                        var tagContainer = document.getElementById("tag-id-@(mod.ModId)");
+                    var tagContainer = document.getElementById("tag-id-@(mod.ModId)");
                     var tagNames = @Html.Raw(Json.Serialize(mod.TagNames));
                     tagNames.forEach(function (tagName) {
                         var spanElement = document.createElement("span");

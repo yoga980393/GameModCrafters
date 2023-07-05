@@ -24,15 +24,17 @@
 <body>
     
     <partial name="_NavBarPartial"></partial>
-
-    @RenderBody()
-     
-
+    <div style="flex-grow: 1;">
+        @RenderBody()
+    </div>
+   
+    
+    
     <div class="footer">
         <div class="title">
             <h3>&copy;copyright 2023 by dan</h3>
         </div>
-        <div class="wrap">
+        <div class="logoAndicon">
             <div class="logo">
                 GameModeLogo
             </div>

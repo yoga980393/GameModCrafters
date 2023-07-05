@@ -4,20 +4,22 @@
     border-radius: 20px;
     border: 2px solid black;
 }
-
-    .container.payments .row > .square .content {
-        position: absolute; /* 这里添加 position: absolute */
-        top: 0; /* 这里添加 top: 0 */
-        left: 0; /* 这里添加 left: 0 */
-        right: 0; /* 这里添加 right: 0 */
-        bottom: 0; /* 这里添加 bottom: 0 */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-decoration:none;
-        color:black;
-    }
+.payments{
+    min-height:60vh;
+}
+.container.payments .row > .square .content {
+    position: absolute; /* 这里添加 position: absolute */
+    top: 0; /* 这里添加 top: 0 */
+    left: 0; /* 这里添加 left: 0 */
+    right: 0; /* 这里添加 right: 0 */
+    bottom: 0; /* 这里添加 bottom: 0 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: black;
+}
 
     .container.payments .row > .square:hover {
         background-color: lightblue;
