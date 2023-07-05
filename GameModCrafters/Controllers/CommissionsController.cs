@@ -55,7 +55,7 @@ namespace GameModCrafters.Controllers
 
         // GET: Commissions
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> PublishedCommission()
         {
             var usermail = User.FindFirstValue(ClaimTypes.Email);
             if (usermail == null)
@@ -269,7 +269,7 @@ namespace GameModCrafters.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(PublishedCommission));
             }
             
         }
@@ -278,7 +278,6 @@ namespace GameModCrafters.Controllers
         {
             string loggedInUserEmail = User.FindFirstValue(ClaimTypes.Email);
             var commissions = await _context.Commissions
-                .Where(c => c.DelegatorId != loggedInUserEmail)
                 .Where(c => c.CommissionStatusId == "s01")
                 .Where(c => c.IsDone == true)
                 .Include(c => c.Delegator)
@@ -298,10 +297,7 @@ namespace GameModCrafters.Controllers
                })
                .ToListAsync();
 
-            if (commissions.Count == 0)
-            {
-                return NotFound();
-            }
+           
 
             return View(commissions);
         }
@@ -418,7 +414,7 @@ namespace GameModCrafters.Controllers
         {
             if (id == null)
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(PublishedCommission));
             }
 
             var commission = await _context.Commissions
@@ -428,7 +424,7 @@ namespace GameModCrafters.Controllers
                 .FirstOrDefaultAsync(m => m.CommissionId == id);
             if (commission == null)
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(PublishedCommission));
             }
 
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "CommissionStatusId", commission.CommissionStatusId);

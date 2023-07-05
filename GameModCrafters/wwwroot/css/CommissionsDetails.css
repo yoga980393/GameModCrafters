@@ -2,6 +2,14 @@
     background-color: azure;
 }
 
+a:hover, a:visited, a:link, a:active{
+    text-decoration: none;
+}
+
+a{
+    text-decoration: none;
+}
+
 .Entrustcontainer {
     box-sizing:border-box;
     border-radius: 5px;

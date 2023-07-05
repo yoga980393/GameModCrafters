@@ -9,6 +9,7 @@
         <div class="text">
             
             <p>電子郵件驗證成功!</p>
+            <p>將在 <span id="countdown">5</span> 秒后自動跳轉...</p>
         </div>
 
         
@@ -17,10 +18,40 @@
 </div>
 
 @section js{
+    <script>
+    // 获取倒计时显示的元素
+    var countdownElement = document.getElementById('countdown');
 
+    // 设置初始倒计时秒数
+    var countdownSeconds = 5;
 
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    // 更新倒计时显示
+    function updateCountdown() {
+        countdownElement.textContent = countdownSeconds;
+    }
+
+    // 倒计时函数
+    function countdown() {
+        // 更新倒计时显示
+        updateCountdown();
+
+        // 如果倒计时秒数为 0，执行重定向操作
+        if (countdownSeconds <= 0) {
+                window.location.href = '/Account/LoginPage'; // 替换为你想要跳转的页面的 URL
+        } else {
+            // 倒计时秒数减一
+            countdownSeconds--;
+
+            // 延迟一秒后再次调用倒计时函数
+            setTimeout(countdown, 1000);
+        }
+    }
+
+    // 开始倒计时
+    countdown();
+</script>
+
+   
 }
 @section css{
     <style>
