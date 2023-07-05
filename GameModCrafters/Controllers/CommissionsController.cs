@@ -154,8 +154,6 @@ namespace GameModCrafters.Controllers
                     };
                     _context.CommissionTrackings.Add(newCommissionTracking);
 
-
-
                     await _context.SaveChangesAsync();
                     return Json("新增成功");
                 }
@@ -296,8 +294,6 @@ namespace GameModCrafters.Controllers
                     Status = c.CommissionStatus.Status
                })
                .ToListAsync();
-
-           
 
             return View(commissions);
         }
