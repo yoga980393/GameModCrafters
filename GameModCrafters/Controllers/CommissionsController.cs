@@ -298,11 +298,6 @@ namespace GameModCrafters.Controllers
                })
                .ToListAsync();
 
-            if (commissions.Count == 0)
-            {
-                return NotFound();
-            }
-
             return View(commissions);
         }
         [HttpGet]
