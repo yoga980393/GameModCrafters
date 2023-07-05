@@ -4,221 +4,222 @@
     var userAtavar = Model.Avatar;
     var commssions = Model.Commissions;
 }
-<div class="ImgWrap">
-   @* @if (string.IsNullOrEmpty(userCover))
-    {
+<div class="personbody">
+    <div class="ImgWrap">
+        @* @if (string.IsNullOrEmpty(userCover))
+        {
         <img src="https://picsum.photos/1400/600/?random=10" class="img-fluid Img_cover" id="Cover_pic" alt="...">
-    }
-    else
-    {
+        }
+        else
+        {
         <img src="@userCover" class="img-fluid Img_cover" id="Cover_pic" alt="...">
-    }*@
+        }*@
 
-    <img src="@userCover" class="img-fluid Img_cover" id="Cover_pic" alt="...">
+        <img src="@userCover" class="img-fluid Img_cover" id="Cover_pic" alt="...">
 
-</div>
-<div class="container-fluid position_height">
-    
-    <div class="container Cover_container">
-        <div class="Cover">
-            <div class="pic_name">
-                <div class="personal_pic">
-                    
-                    
+    </div>
+    <div class="container-fluid position_height">
+
+        <div class="container Cover_container">
+            <div class="Cover">
+                <div class="pic_name">
+                    <div class="personal_pic">
+
+
                         <img src="@userAtavar" id="personal_pic">
-                    @*<img src="~/avatarimages/avatar_preview.jpg" />*@
-                    
+                        @*<img src="~/avatarimages/avatar_preview.jpg" />*@
+
+                    </div>
+                    <div class="Cover_text">
+                        <h1 class="name" id="Username">@User.Identity.Name</h1>
+                    </div>
+
                 </div>
-                <div class="Cover_text">
-                    <h1 class="name" id="Username">@User.Identity.Name</h1>
-                </div>
 
             </div>
 
-        </div>
-
-        <div class="Edit">
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#Edit_pic_modal"
-                    id="Editpicbtn">
-                編輯封面照片
-            </button>
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                    data-bs-target="#Edit_Profile_modal">
-                編輯個人檔案
-            </button>
-        </div>
-    </div>
-</div>
-<!-- ----------Modal -->
-<!-- 封面照片 -->
-<div class="modal modal-xl" id="Edit_pic_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">編輯封面照片</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <button type="button" class="btn btn-secondary btn-sm " id="Edit_pic">上傳照片</button>
-                <!-- <input type="file" id="imageInput"> -->
-                <!-- <button type="button" class="btn btn-secondary btn-sm " id="cropButton">剪切</button> -->
-            </div>
-            <div class="modal_img">
-                <img src="" id="preview_cover_pic" alt="">
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary  CoverClose" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="cropcoverButton">確定</button>
+            <div class="Edit">
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#Edit_pic_modal"
+                        id="Editpicbtn">
+                    編輯封面照片
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                        data-bs-target="#Edit_Profile_modal">
+                    編輯個人檔案
+                </button>
             </div>
         </div>
     </div>
-</div>
-<div id="personPageContainer">
-    <!-- 編輯個人檔案的模態框內容 -->
-    <div class="modal modal-xl" id="Edit_Profile_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <!-- ----------Modal -->
+    <!-- 封面照片 -->
+    <div class="modal modal-xl" id="Edit_pic_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog ">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">編輯個人檔案</h1>
-                    <button type="button" class="btn-close fork_btn" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">編輯封面照片</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body person">
-                    <button type="button" class="btn btn-secondary btn-sm " id="EditName_btn">編輯名字</button>
-                    <form class="row g-3 nameform d-none" asp-action="PersonPage" asp-controller="Account" method="post">
-                        <div class="col-sm-5">
-                            <label for="inputUsername" class="visually-hidden">Username</label>
-                            <input asp-for="Username" type="text" class="form-control" id="inputUsername" placeholder="username">
-                            <span id="usernameError" class="text-danger"></span>
-                        </div>
-                        <div class="col-sm">
-                            <button type="button" class="btn btn-primary btn-sm " id="confirm_Name_btn">確認</button>
-                        </div>
-                    </form>
-
-
-                    <button type="button" class="btn btn-secondary btn-sm " id="Edit_Profile">上傳照片</button>
-
-                    <button type="button" class="btn btn-secondary btn-sm " id="PayPalSetting_btn">設定PayPal帳戶</button>
-                    <form class="row g-3 PayPalform d-none">
-                        <!-- d-none-->
-                        <div class="col-sm-5">
-                            <label for="inputAccount" class="visually-hidden">PayPal帳號</label>
-                            <input type="text" class="form-control" id="inputAccount" placeholder="PayPal帳號">
-                            <span id="AccountError" class="text-danger"></span>
-                        </div>
-                        <div class="col-sm">
-                            <button type="button" class="btn btn-primary btn-sm " id="confirm_PayPalAccount_btn">確認</button>
-                        </div>
-                    </form>
-                    
-
+                <div class="modal-body">
+                    <button type="button" class="btn btn-secondary btn-sm " id="Edit_pic">上傳照片</button>
+                    <!-- <input type="file" id="imageInput"> -->
+                    <!-- <button type="button" class="btn btn-secondary btn-sm " id="cropButton">剪切</button> -->
                 </div>
-                <!-- <div class="modal-body">
-                    <button type="button" class="btn btn-secondary btn-sm " id="Edit_Name_btn">編輯名字</button>
-                </div> -->
                 <div class="modal_img">
-                    <img src="" id="preview_person_pic" alt="">
+                    <img src="" id="preview_cover_pic" alt="">
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary personClose" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="croppersonButton">確定</button>
+                    <button type="button" class="btn btn-secondary  CoverClose" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="cropcoverButton">確定</button>
                 </div>
             </div>
         </div>
-    
     </div>
-</div>
-<!-- 個人照片 -->
+    <div id="personPageContainer">
+        <!-- 編輯個人檔案的模態框內容 -->
+        <div class="modal modal-xl" id="Edit_Profile_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">編輯個人檔案</h1>
+                        <button type="button" class="btn-close fork_btn" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body person">
+                        <button type="button" class="btn btn-secondary btn-sm " id="EditName_btn">編輯名字</button>
+                        <form class="row g-3 nameform d-none" asp-action="PersonPage" asp-controller="Account" method="post">
+                            <div class="col-sm-5">
+                                <label for="inputUsername" class="visually-hidden">Username</label>
+                                <input asp-for="Username" type="text" class="form-control" id="inputUsername" placeholder="username">
+                                <span id="usernameError" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm">
+                                <button type="button" class="btn btn-primary btn-sm " id="confirm_Name_btn">確認</button>
+                            </div>
+                        </form>
 
-<!-- ----------Modal -->
-<div class="container my-4 mod Released_mods" id="publishedModsContainer"></div>
-<div class="container wire"></div>
 
-<div class="container entrust Release_Area_Wrap paging">
+                        <button type="button" class="btn btn-secondary btn-sm " id="Edit_Profile">上傳照片</button>
 
-    <div class="title">
-        <h3>委託的mod:</h3>
-    </div>
+                        <button type="button" class="btn btn-secondary btn-sm " id="PayPalSetting_btn">設定PayPal帳戶</button>
+                        <form class="row g-3 PayPalform d-none">
+                            <!-- d-none-->
+                            <div class="col-sm-5">
+                                <label for="inputAccount" class="visually-hidden">PayPal帳號</label>
+                                <input type="text" class="form-control" id="inputAccount" placeholder="PayPal帳號">
+                                <span id="AccountError" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm">
+                                <button type="button" class="btn btn-primary btn-sm " id="confirm_PayPalAccount_btn">確認</button>
+                            </div>
+                        </form>
 
-    <div class="container text-center mod-list">
-        <div class="row align-items-start rowwrap">
-            <div class="col GameName">
-                遊戲
+
+                    </div>
+                    <!-- <div class="modal-body">
+                        <button type="button" class="btn btn-secondary btn-sm " id="Edit_Name_btn">編輯名字</button>
+                    </div> -->
+                    <div class="modal_img">
+                        <img src="" id="preview_person_pic" alt="">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary personClose" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="croppersonButton">確定</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-6 title">
-                Title
-            </div>
-            <div class="col SendernName">
-                發文人
-            </div>
-            <div class="col SenderDate">
-                發文日
-            </div>
-            <div class="col LastReply">
-                最後回覆
-            </div>
-            <div class="col status">
-                狀態
-            </div>
+
         </div>
-        @foreach (var item in commssions)
-        {
+    </div>
+    <!-- 個人照片 -->
+    <!-- ----------Modal -->
+    <div class="container my-4 mod Released_mods" id="publishedModsContainer"></div>
+    <div class="container wire"></div>
+
+    <div class="container entrust Release_Area_Wrap paging">
+
+        <div class="title">
+            <h3>委託的mod:</h3>
+        </div>
+
+        <div class="container text-center mod-list">
             <div class="row align-items-start rowwrap">
-                <div class="col GameName">
-                    <a href="@Url.Action("Details", "Games", new { id = item.GameID })">
-                        @item.GameName
-                    </a>
+                <div class="col GameNameTitle">
+                    遊戲
                 </div>
-                @if (item.Status != "s01")
-                {
-                    <div class="col-6 title">
-                        <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })">
-                            @item.CommissionTitle
-                        </a>
-                    </div>
-                }
-                @if (item.Status == "s02")
-                {
-                    <div class="col-6 title">
-                        <a href="@Url.Action("GotoTransactionDetails", "Commissions", new { id = item.CommissionId })">
-                            @item.CommissionTitle
-                        </a>
-                    </div>
-                }
-                @if (item.Status == "s03")
-                {
-                    <div class="col-6 title">
-                        <a href="@Url.Action("FinishCommission", "Commissions", new { id = item.CommissionId })">
-                            @item.CommissionTitle
-                        </a>
-                    </div>
-                }
-                <div class="col SendernName">
-                    @item.DelegatorName
+                <div class="col-4 titleTitle">
+                    Title
                 </div>
-                <div class="col SenderDate">
-                    @item.CreateTime
+                <div class="col SendernNameTitle">
+                    發文人
                 </div>
-                <div class="col LastReply">
-                    @item.UpdateTime
+                <div class="col-2 SenderDateTitle">
+                    發文日
                 </div>
-                <div class="col status">
-                    @item.Status
+                <div class="col-2 LastReplyTitle">
+                    最後回覆
+                </div>
+                <div class="col statusTitle">
+                    狀態
                 </div>
             </div>
-        }
+            @foreach (var item in commssions)
+            {
+                <div class="row align-items-start rowwrap">
+                    <a href="@Url.Action("Details", "Games", new { id = item.GameID })" class="col GameName">
+                        @item.GameName
+                      
+                    </a>
+                    @if (item.Status != "s01")
+                    {
+                        
+                        <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })" class="col-4 title">
+                            @item.CommissionTitle
+                        </a>
+                        
+                    }
+                    @if (item.Status == "s02")
+                    {
+                        
+                        <a href="@Url.Action("GotoTransactionDetails", "Commissions", new { id = item.CommissionId })" class="col-6 title">
+                            @item.CommissionTitle
+                        </a>
+                        
+                    }
+                    @if (item.Status == "s03")
+                    {
+                        
+                        <a href="@Url.Action("FinishCommission", "Commissions", new { id = item.CommissionId })" class="col-6 title">
+                            @item.CommissionTitle
+                        </a>
+                        
+                    }
+                    <div class="col SendernName">
+                        @item.DelegatorName
+                    </div>
+                    <div class="col-2 SenderDate">
+                        @item.CreateTime
+                    </div>
+                    <div class="col-2 LastReply">
+                        @item.UpdateTime
+                    </div>
+                    <div class="col status">
+                        @item.Status
+                    </div>
+                </div>
+            }
+        </div>
     </div>
+    <div class="container wire"></div>
+
+    <div class="container my-4 mod Downloaded_mod" id="downloadedModsContainer"></div>
+    <div class="container wire"></div>
+
+    <div class="container my-4 mod favorite_mod" id="favoritedModsContainer"></div>
 </div>
-<div class="container wire"></div>
 
-<div class="container my-4 mod Downloaded_mod" id="downloadedModsContainer"></div>
-<div class="container wire"></div>
-
-<div class="container my-4 mod favorite_mod" id="favoritedModsContainer"></div>
 
 @section js{
     <script>
@@ -563,6 +564,9 @@
             margin: 0;
         }
 
+        .personbody{
+            flex-grow: 1;
+        }
         body {
             background-color: azure;
         }
@@ -787,7 +791,38 @@
         }
 
 
+        .rowwrap a{
+            text-decoration:none;
+            color:black;
 
+        }
+
+        .GameNameTitle, .titleTitle, .SenderDateTitle, .LastReplyTitle, .statusTitle, .SendernNameTitle {
+            padding:20px;
+        }
+
+
+
+        .rowwrap .GameName, .rowwrap .title, .rowwrap .status, .rowwrap .SendernName, .rowwrap .LastReply, .rowwrap .SenderDate {
+            padding: 20px;
+        }
+
+        .rowwrap:nth-child(even) .GameName:hover {
+            background-color: #e9e9e9;
+        }
+
+        .rowwrap:nth-child(odd) .GameName:hover {
+            background-color: #f6f6f6;
+        }
+
+        .rowwrap:nth-child(even) .title:hover {
+            background-color: #e9e9e9;
+        }
+
+        .rowwrap:nth-child(odd) .title:hover {
+            background-color: #f6f6f6;
+        }
+      
         .rowwrap:nth-child(even) {
             background: linear-gradient(to right, #f6f6f6, #e9e9e9);
         }
@@ -845,55 +880,7 @@
             border-bottom: 3px solid gray;
         }
 
-        /* -------------footer */
-        .footer {
-            background-color: black;
-            width: 100%;
-            text-align: center;
-            color: white;
-            padding: 40px;
-        }
-
-            .footer .title h3 {
-                display: block;
-                margin: auto;
-            }
-
-        .wrap {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            font-size: 24px;
-            border-bottom: #ccc solid 1px;
-            padding: 10px;
-        }
-
-        .icon_img a {
-            padding: 0 10px;
-            color: white;
-        }
-
-        .wrap_bottom {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px 10px;
-        }
-
-        .menu {
-            display: flex;
-        }
-
-            .menu a {
-                color: white;
-                padding: 0 5px;
-            }
-
-                .menu a:first-child {
-                    border-right: #ccc solid 1px;
-                }
-
-        /* -------------footer */
+       
 
         .card img{
             width:100%;
