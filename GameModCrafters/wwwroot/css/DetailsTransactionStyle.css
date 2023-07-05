@@ -1,0 +1,123 @@
+﻿
+.main-bothside h2 {
+    font-size: 30px;
+    text-transform: capitalize;
+    color: #ffffff;
+    text-shadow: 2px 3px rgba(0, 0, 0, 0.42);
+    letter-spacing: 5px;
+}
+
+.main-bothside {
+    width: 64%;
+    padding: 2em 2em 2em;
+    margin: 0em auto;
+    -webkit-box-shadow: -2px 7px 37px 8px rgba(0,0,0,0.52);
+    -moz-box-shadow: -2px 7px 37px 8px rgba(0,0,0,0.52);
+    box-shadow: -2px 7px 37px 8px rgba(0,0,0,0.52);
+    background: rgba(0, 0, 0, 0.44);
+    border: #000 6px double;
+}
+
+.form{
+    padding:20px;
+}
+
+.item-group{
+    width:100%;
+    display:flex;
+    gap:20px;
+    margin-bottom:20px;
+    color:white;
+}
+
+.item{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding-bottom:5px;
+    padding-right:15px;
+    border-bottom: 1px solid white;
+    align-items:flex-end;
+}
+
+.item *{
+    width:fit-content;
+}
+
+.item a{
+    color: yellow;
+    text-decoration:none;
+    font-size:24px;
+}
+
+.textarea-item{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+    .textarea-item label{
+        width:100%;
+    }
+
+    .textarea-item div {
+        text-indent: 2em;
+        min-height:130px;
+        width:100%;
+    }
+
+.btn-item {
+    text-transform: uppercase;
+    background: #fff;
+    color: #000000;
+    padding: .7em 0em;
+    border: none;
+    font-size: 1em;
+    outline: none;
+    width: 100%;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-top: 1em;
+    cursor: pointer;
+    transition: 0.5s all;
+    text-decoration:none;
+    text-align:center;
+}
+
+    .btn-item:hover:not(:disabled) {
+        color: #fff;
+        background: #000;
+    }
+
+    .btn-item:disabled {
+        cursor: not-allowed;
+        background: #ccc;
+        color: #888;
+    }
+
+#gifImage {
+    position: absolute;
+    z-index: -1;
+    width: 100px;
+    height: 100px;
+}
+
+.footer {
+    z-index: -2;
+}
+
+.btn-group{
+    display:flex;
+    gap:20px;
+}
+
+.submitPart, .confirmPart {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.confirmPart div{
+    padding-left:20px;
+    color:white;
+}
