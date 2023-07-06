@@ -1,0 +1,158 @@
+﻿@model User
+@{
+
+}
+
+<div class="forgotwrap">
+    <div class="Register">
+
+        <div class="text">
+
+            <p>請去確認您的信箱確認信件並點擊連結...</p>
+            <p>連結將在 <span id="validationminute">1</span>分<span id="validationsecond">0</span>秒後失效...</p>
+            <div id="resendEmailContainer">
+                <button id="resendEmailButton" type="button">重新傳送郵件</button>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+@section js{
+    <script>
+        // 獲取計時器元素
+        var minuteElement = document.getElementById('validationminute');
+        var secondElement = document.getElementById('validationsecond');
+
+        // 設置倒數時間（單位：秒）
+        var initialCountdown = 60; // 初始倒數時間為60秒
+        var countdown = initialCountdown;
+
+        // 定義更新倒數時間的函數
+        function updateCountdown() {
+            var minutes = Math.floor(countdown / 60);
+            var seconds = countdown % 60;
+
+            minuteElement.textContent = minutes;
+            secondElement.textContent = seconds;
+
+            countdown--; // 每秒減少1
+
+            // 判斷倒數計時是否結束
+            if (countdown < 0) {
+                $.ajax({
+                    url: '/Account/RegisterValidationTime',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { deletedata: true }, // 傳遞參數deletedata為true
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+                            console.log("刪除成功");
+                        } else {
+                            console.log("刪除失敗");
+                        }
+                    }
+                });
+
+                // 清除定時器
+                clearInterval(timer);
+            }
+        }
+
+        // 開始倒數計時
+        var timer = setInterval(updateCountdown, 1000); // 每秒執行一次更新函數
+
+        // 監聽重新傳送按鈕的點擊事件
+        $("#resendEmailButton").click(function () {
+            // 重置倒數計時
+            countdown = initialCountdown;
+
+            // 發送AJAX請求重新傳送郵件
+            $.ajax({
+                url: "/Account/ResendConfirmationEmail",
+                type: "POST",
+                dataType: "json",
+                success: function (response) {
+                    if (response.success) {
+                        // 重新傳送成功，執行相應的操作
+                        console.log("郵件已重新傳送");
+                    } else {
+                        // 重新傳送失敗，執行相應的操作
+                        console.log("郵件重新傳送失敗");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // 發生錯誤，處理錯誤情況
+                    console.log("發生錯誤：" + error);
+                }
+            });
+        });
+    </script>
+}
+@section css{
+    <style>
+        body {
+            background-color: gray;
+        }
+
+        .forgotwrap {
+            width: 100%;
+            height: 100vh;
+            background-color: azure;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .Register {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+            .Register .back {
+                display: block;
+                text-decoration: none;
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+            .Register .text {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+                .Register .text h1 {
+                    margin-bottom: 10px;
+                }
+
+                .Register .text p {
+                    margin-bottom: 20px;
+                }
+
+            .Register .form-floating {
+                margin-bottom: 20px;
+            }
+
+                .Register .form-floating label {
+                    font-weight: bold;
+                }
+
+                .Register .form-floating .form-control {
+                    border-radius: 5px;
+                }
+
+            .Register button {
+                width: 100%;
+            }
+    </style>
+}
+
+
+
+
