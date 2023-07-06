@@ -308,7 +308,7 @@ namespace GameModCrafters.Controllers
                 // 回傳回應給前端
                 return Json(new { success = true });
             }
-
+            HttpContext.Session.Clear();
             return Json(new { success = false });
         }
 
