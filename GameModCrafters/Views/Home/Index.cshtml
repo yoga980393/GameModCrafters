@@ -106,7 +106,7 @@
         @foreach(var author in Model.Author)
         {
             <div class="col-12 col-md-3">
-                <a href="">
+                <a href="/Account/OtherPage/@author.Email">
                     <div class="card">
                         <div class="pic">
                             <img src=@(author.BackgroundImage == null ? "https://picsum.photos/300/200/?random=1" : author.BackgroundImage)>
