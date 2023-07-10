@@ -104,17 +104,49 @@
                 </div>
             </div>
             <div class="entrustClassification">
-                <div>
-                    <button>
-                        <h4>免費</h4>
-                    </button>
-                    <button>
-                        <h4>付費</h4>
-                    </button>
-                    <button>
-                        <h4>熱門(30天)</h4>
-                    </button>
-                </div>
+                <form id="CommissionSearchForm" method="get" class="filter-form">
+                    <div class="form-group">
+                        <label for="CommissiontimeFilter">時間：</label>
+                        <select id="CommissiontimeFilter" name="CommissiontimeFilter" class="form-control">
+                            <option value="">全部</option>
+                            <option value="1">一天內</option>
+                            <option value="7">一周內</option>
+                            <option value="30">一個月內</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="CommissionsortFilter">排序：</label>
+                        <select id="CommissionsortFilter" name="CommissionsortFilter" class="form-control">
+                            <option value="uploadTime">上傳時間</option>
+                            <option value="updateTime">更新時間</option>
+                            <option value="name">名字</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="CommissionorderFilter">正反序：</label>
+                        <select id="CommissionorderFilter" name="CommissionorderFilter" class="form-control">
+                            <option value="desc">反序</option>
+                            <option value="asc">正序</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="CommissionpageSize">每次顯示的數量：</label>
+                        <select id="CommissionpageSize" name="CommissionpageSize" class="form-control">
+                            <option value="8">8</option>
+                            <option value="16">16</option>
+                            <option value="24">24</option>
+                            <option value="32">32</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="CommissionSearch">搜索：</label>
+                        <input type="text" name="CommissionsearchString" placeholder="Search" id="CommissionSearch" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">應用過濾</button>
+                    </div>
+                </form>
+
                     <a class="upload-button" asp-controller="Commissions" asp-action="Create" asp-route-gameId="@Model.GameId">
                         <h4>新增委託</h4>
                     </a>
@@ -254,14 +286,35 @@
     </script>
 
     <script>
+        $('#CommissionSearchForm').on('submit', function (e) {
+            // 防止表單的預設提交行為
+            e.preventDefault();
+
+            // 重新載入分頁結果，從第一頁開始
+            loadCommissions(1);
+        });
+
         loadCommissions(1);
         CommissionsPageButton();
 
         function loadCommissions(pageNumber) {
+            let CommissiontimeFilter = $('#CommissiontimeFilter').val();
+            let CommissionsortFilter = $('#CommissionsortFilter').val();
+            let CommissionorderFilter = $('#CommissionorderFilter').val();
+            let CommissionpageSize = $('#CommissionpageSize').val();
+            let CommissionsearchString = $('#CommissionSearch').val();
             let GameId = "@Model.GameId";
+
             $.ajax({
                 url: '/Games/CommissionsPartial',
-                data: { page: pageNumber, id: GameId },
+                data: { page: pageNumber, 
+                    id: GameId, 
+                    timeFilter: CommissiontimeFilter,
+                    sortFilter: CommissionsortFilter,
+                    orderFilter: CommissionorderFilter,
+                    pageSize: CommissionpageSize,
+                    searchString: CommissionsearchString
+                },
                 success: function (data) {
                     $('#commissionsContainer').html(data);
                     var totalPages = $('#totalPages').val();

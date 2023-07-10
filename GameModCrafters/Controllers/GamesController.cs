@@ -282,26 +282,55 @@ namespace GameModCrafters.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CommissionsPartial(int? page, string id)
+        public async Task<IActionResult> CommissionsPartial(int? page, string id, string timeFilter, string sortFilter, string orderFilter, int pageSize, string searchString)
         {
-            int pageSize = 16; // 每頁的數量
             int pageNumber = (page ?? 1); // 當前的頁數，如果沒有提供，預設為第一頁
 
-            // 先獲取總筆數
-            var totalCommissionsCount = await _context.Commissions
-                .Where(c => c.GameId == id)
-                .Where(c => c.IsDone)
-                .Where(c => c.CommissionStatusId == "s01").CountAsync();
-
-            // 根據總筆數和每頁筆數計算總頁數
-            var totalPages = (totalCommissionsCount + pageSize - 1) / pageSize;
-
-            var commissions = await _context.Commissions
+            // 初始查詢
+            var commissionsQuery = _context.Commissions
                 .Where(c => c.GameId == id)
                 .Where(c => c.IsDone)
                 .Where(c => c.CommissionStatusId == "s01")
                 .Include(c => c.Delegator)
                 .Include(c => c.CommissionStatus)
+                .AsQueryable();
+
+            // 應用時間過濾
+            if (!string.IsNullOrWhiteSpace(timeFilter))
+            {
+                var days = int.Parse(timeFilter);
+                var date = DateTime.Now.AddDays(-days);
+                commissionsQuery = commissionsQuery.Where(c => c.CreateTime >= date);
+            }
+
+            // 應用搜尋過濾
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                commissionsQuery = commissionsQuery.Where(c => c.CommissionTitle.Contains(searchString));
+            }
+
+            // 排序過濾
+            switch (sortFilter)
+            {
+                case "uploadTime":
+                    commissionsQuery = orderFilter == "asc" ? commissionsQuery.OrderBy(c => c.CreateTime) : commissionsQuery.OrderByDescending(c => c.CreateTime);
+                    break;
+                case "updateTime":
+                    commissionsQuery = orderFilter == "asc" ? commissionsQuery.OrderBy(c => c.UpdateTime) : commissionsQuery.OrderByDescending(c => c.UpdateTime);
+                    break;
+                case "name":
+                    commissionsQuery = orderFilter == "asc" ? commissionsQuery.OrderBy(c => c.CommissionTitle) : commissionsQuery.OrderByDescending(c => c.CommissionTitle);
+                    break;
+            }
+
+            // 計算總頁數
+            var totalItems = await commissionsQuery.CountAsync();
+            var totalPages = (totalItems + pageSize - 1) / pageSize;
+
+            // 獲取該頁的數據
+            var commissions = await commissionsQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .Select(c => new CommissionViewModel
                 {
                     CommissionId = c.CommissionId,
@@ -312,8 +341,6 @@ namespace GameModCrafters.Controllers
                     UpdateTime = c.UpdateTime,
                     Status = c.CommissionStatus.Status
                 })
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
                 .ToListAsync();
 
             // 返回包含數據和總頁數的 ViewModel
