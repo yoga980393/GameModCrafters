@@ -113,6 +113,8 @@ namespace GameModCrafters.Controllers
             }
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
+            ViewBag.UserId = userId;
+
             var existingTracking = _context.CommissionTrackings.FirstOrDefault(m => m.CommissionId == id && m.UserId == userId);
             if (existingTracking != null)
             {

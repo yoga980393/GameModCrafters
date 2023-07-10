@@ -29,14 +29,15 @@
                 <input type="text" class="budgetinput" asp-for="Budget" disabled>
             </div>
             <div class="btnCantaner">
-               
-                <button class="btn btn-primary mt-3" id="MessageButton" type="button">
-                    私訊委託者
-                </button>
-                <button class="btn btn-primary mt-3" id="followButton" type="button" >
-                    @(ViewBag.TraEX ? "取消追蹤" : "追蹤委託")
-                </button>
-
+                @if (ViewBag.UserId != Model.DelegatorId)
+                {
+                    <button class="btn btn-primary mt-3" id="MessageButton" type="button">
+                        私訊委託者
+                    </button>
+                    <button class="btn btn-primary mt-3" id="followButton" type="button">
+                        @(ViewBag.TraEX ? "取消追蹤" : "追蹤委託")
+                    </button>
+                }
             </div>
         </form>
     </div>
