@@ -312,12 +312,7 @@ namespace GameModCrafters.Controllers
             return Json(new { success = false });
         }
 
-        [AllowAnonymous]
-        public IActionResult WaitConfirmEmail()
-        {
-            return View();
-        }
-        
+      
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string email, string confirmationCode)
         {
@@ -441,6 +436,66 @@ namespace GameModCrafters.Controllers
             return View(personVM);
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> OtherPage(string id,int page = 1)
+        {
+            var usermail = id;
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == usermail);
+            var userAvatar = user.Avatar;
+            var userCover = user.BackgroundImage;
+            var userName = user.Username;
+            PersonViewModel personVM = new PersonViewModel()
+            {
+                    Avatar = userAvatar,
+                    BackgroundImage = userCover,
+                    Username = userName
+            };
+  
+           
+
+            var commissions = await _context.Commissions
+                .Where(c => c.DelegatorId == user.Email)
+                .Include(c => c.Delegator)
+                .Include(c => c.CommissionStatus)
+                .Include(c => c.Game)
+                .Select(c => new CommissionViewModel
+                {
+                    CommissionId = c.CommissionId,
+                    GameID = c.Game.GameId,
+                    GameName = c.Game.GameName,
+                    DelegatorName = c.Delegator.Username,
+                    CommissionTitle = c.CommissionTitle,
+                    Budget = c.Budget,
+                    CreateTime = c.CreateTime,
+                    UpdateTime = c.UpdateTime,
+                    Status = c.CommissionStatus.Status
+                })
+               .ToListAsync();
+
+            personVM.Commissions = commissions;
+
+            var publishedMods = await _modService.GetPublishedMods(id, page, 8);
+            personVM.PublishedMods = publishedMods.Mods;
+            personVM.PublishedCurrentPage = page;
+            personVM.PublishedTotalPages = publishedMods.TotalPages;
+
+            var favoritedMods = await _modService.GetFavoritedMods(id, page, 8);
+            personVM.FavoritedMods = favoritedMods.Mods;
+            personVM.FavoritedCurrentPage = page;
+            personVM.FavoritedTotalPages = favoritedMods.TotalPages;
+
+            var downloadedMods = await _modService.GetDownloadedMods(id, page, 8);
+            personVM.DownloadedMods = downloadedMods.Mods;
+            personVM.DownloadedCurrentPage = page;
+            personVM.DownloadedTotalPages = downloadedMods.TotalPages;
+
+            return View(personVM);
+        }
 
         [HttpPost]
         public async Task<IActionResult> CropperAvatarImage(IFormFile croppedPersonImage)
@@ -750,6 +805,67 @@ namespace GameModCrafters.Controllers
             return PartialView("_DownloadedModsPartial", personVM);
         }
 
+
+
+        [HttpGet]
+        public async Task<IActionResult> PublishedModsPartialOther(string id,int page = 1)
+        {
+            var usermail = id;
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+
+            var mods = await _modService.GetPublishedMods(usermail, page, 8);
+            var personVM = new PersonViewModel
+            {
+                PublishedCurrentPage = page,
+                PublishedMods = mods.Mods,
+                PublishedTotalPages = mods.TotalPages
+            };
+
+            return PartialView("_PublishedModsPartial", personVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FavoritedModsPartialOther(string id, int page = 1)
+        {
+            var usermail = id;
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+
+            var mods = await _modService.GetFavoritedMods(usermail, page, 8);
+            var personVM = new PersonViewModel
+            {
+                FavoritedCurrentPage = page,
+                FavoritedMods = mods.Mods,
+                FavoritedTotalPages = mods.TotalPages
+            };
+
+            return PartialView("_FavoritedModsPartial", personVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadedModsPartialOther(string id, int page = 1)
+        {
+            var usermail = id;
+            if (usermail == null)
+            {
+                return NotFound();
+            }
+
+            var mods = await _modService.GetDownloadedMods(usermail, page, 8);
+            var personVM = new PersonViewModel
+            {
+                DownloadedCurrentPage = page,
+                DownloadedMods = mods.Mods,
+                DownloadedTotalPages = mods.TotalPages
+            };
+
+            return PartialView("_DownloadedModsPartial", personVM);
+        }
         [HttpGet]
         public async Task<IActionResult> GetUserName()
         {

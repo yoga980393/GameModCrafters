@@ -31,23 +31,14 @@
 
                     </div>
                     <div class="Cover_text">
-                        <h1 class="name" id="Username">@User.Identity.Name</h1>
+                        <h1 class="name" id="Username">@Model.Username</h1>@*@User.Identity.Name*@
                     </div>
 
                 </div>
 
             </div>
             
-                 <div class="Edit">
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#Edit_pic_modal"
-                            id="Editpicbtn">
-                        編輯封面照片
-                    </button>
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                            data-bs-target="#Edit_Profile_modal">
-                        編輯個人檔案
-                    </button>
-                </div>
+               
             
            
 
@@ -227,7 +218,8 @@
 @section js{
     <script>
         $(document).ready(function () {
-            $('#publishedModsContainer').load('/Account/PublishedModsPartial');
+
+            $('#publishedModsContainer').load('/Account/PublishedModsPartialOther/'+"@Model.Email");
 
             $(document).on('click', '.page-link-published', function (event) {
                 event.preventDefault();
@@ -239,7 +231,7 @@
                 }, 0);
             });
 
-            $('#favoritedModsContainer').load('/Account/FavoritedModsPartial');
+            $('#favoritedModsContainer').load('/Account/FavoritedModsPartialOther/' + "@Model.Email");
 
             $(document).on('click', '.page-link-favorited', function (event) {
                 event.preventDefault();
@@ -251,7 +243,7 @@
                 }, 0);
             });
 
-            $('#downloadedModsContainer').load('/Account/DownloadedModsPartial');
+            $('#downloadedModsContainer').load('/Account/DownloadedModsPartialOther/' + "@Model.Email");
 
             $(document).on('click', '.page-link-downloaded', function (event) {
                 event.preventDefault();
@@ -265,302 +257,7 @@
         });
     </script>
 
-    <script>
-
-        let cropperperson
-        let cropBoxes = [];
-        let croppercover; // 定義全局變量 croppercover
-
-        function favorite_star() {
-            let star_icons = document.querySelectorAll('.star_icon');
-            star_icons.forEach(star_icon => {
-                star_icon.addEventListener('click', function () {
-                    star_icon.classList.toggle('active');
-                });
-            });
-        }
-
-        function Edit_Name() {
-            let form = document.querySelector('.nameform')
-            let confirm_btn = document.getElementById("confirm_Name_btn")
-            let inputUsername = document.getElementById("inputUsername")
-            let EditName_btn = document.getElementById("EditName_btn")
-            let Username = document.getElementById("Username")
-            EditName_btn.addEventListener('click', function () {
-                if (form.classList.contains('d-none')) {
-                    form.classList.remove('d-none')
-                }
-                else {
-                    form.classList.add('d-none')
-                }
-            })
-            confirm_btn.addEventListener('click', function () {
-                let newName = inputUsername.value;
-                console.log(newName)
-                Username.textContent = newName;
-
-            })
-        }
-
-        function PayPalAccountSetting() {
-            let form = document.querySelector('.PayPalform')
-            let confirm_btn = document.getElementById("confirm_PayPalAccount_btn")
-            let inputAccount = document.getElementById("inputAccount")
-            let PayPalSetting_btn = document.getElementById("PayPalSetting_btn")
-
-            PayPalSetting_btn.addEventListener('click', function () {
-                if (form.classList.contains('d-none')) {
-                    form.classList.remove('d-none')
-                }
-                else {
-                    form.classList.add('d-none')
-                }
-            })
-
-        }
-
-        function handlePersonImg() {
-            let editbtn = document.getElementById('Edit_Profile')
-            let preview_person_pic = document.getElementById('preview_person_pic')
-            editbtn.addEventListener('click', function () {
-                let input = document.createElement('input')
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.click();
-                input.addEventListener('change', function () {
-                    let reader = new FileReader()
-                    reader.readAsDataURL(input.files[0])
-                    reader.addEventListener('load', function () {
-                        preview_person_pic.src = reader.result
-                        if (cropperperson) {
-                            cropperperson.destroy()
-                        }
-                        initCropPersonImg()
-                    })
-                })
-            })
-        }
-
-        function initCropPersonImg() {
-            let cropButton = document.getElementById("croppersonButton");
-            let personal_pic = document.getElementById("personal_pic");
-            let previewPersonPic = document.getElementById("preview_person_pic");
-            cropperperson = new Cropper(previewPersonPic, {
-                aspectRatio: 1 / 1,
-                cropBoxResizable: true,
-                cropBoxMovable: true,
-                autoCropArea: 1,
-                viewMode: 2
-            });
-            let observer = new MutationObserver(function (mutations) {
-                mutations.forEach(function (mutation) {
-                    cropBoxes = document.querySelectorAll('.cropper-crop-box, .cropper-view-box');
-                    cropBoxes.forEach((box) => {
-                        box.style.borderRadius = '50%';
-                    });
-                });
-            });
-            let options = {
-                childList: true,
-                attributes: true,
-                subtree: true,
-            };
-            observer.observe(document.body, options);
-            let personClose = document.querySelector('.personClose');
-            let fork_btn = document.querySelector('.btn-close.fork_btn');
-            personClose.addEventListener('click', function () {
-                cropBoxes.forEach((box) => {
-                    box.style.borderRadius = 'none';
-                });
-                observer.disconnect(); //停止MutationObserver实例的观察功能的方法
-                cropperperson.destroy();
-            })
-            fork_btn.addEventListener('click', function () {
-                cropBoxes.forEach((box) => {
-                    box.style.borderRadius = 'none';
-                });
-                observer.disconnect(); //停止MutationObserver实例的观察功能的方法
-                cropperperson.destroy();
-            })
-            // 當按鈕被點擊時，剪裁圖片並在控制台中輸出剪裁後的圖片數據
-            cropButton.addEventListener('click', function () {
-                //let croppedCanvas = cropperperson.getCroppedCanvas();
-                //let dataUrl = croppedCanvas.toDataURL();
-
-                cropperperson.getCroppedCanvas().toBlob(function (blob) {
-                    // 建立一個 FormData 對象，用於將圖片數據傳遞給控制器
-                    console.log("111")
-                    let formData = new FormData();
-                    formData.append('croppedPersonImage', blob, "Personcropped.jpg");
-                    //formData.append('imageType', 'person'); // 传递imageType参数
-                    // 上傳圖片
-                    fetch('/Account/CropperAvatarImage', {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => {
-                            if (response.ok) {
-                                return response.json();
-                            } else {
-                                throw new Error('Network response was not ok.');
-                            }
-                        })
-                        .then(data => {
-                            // 根據需要進行處理回傳的數據
-                            console.log(data);
-                            personal_pic.src = data.fileUrl;
-                            if (data.message == "更新頭像成功")
-                            {
-                                $("#popover-avatar").attr('src',data.fileUrl)
-                            }
-                            cropperperson.destroy();
-                            previewPersonPic.src = '';
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
-                }, 'image/jpeg');
-
-                cropperperson.destroy(); // 清除緩存
-
-
-                //personal_pic.src = croppedCanvas.toDataURL();
-
-                // observer.disconnect();
-
-            });
-        }
-
-        function handleCoverImg() {
-            let editbtn = document.getElementById('Edit_pic');
-            let cropButton = document.getElementById('cropcoverButton');
-            let preview_cover_pic = document.getElementById('preview_cover_pic');
-            editbtn.addEventListener('click', function () {
-                let input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.click();
-                input.addEventListener('change', function () {
-                    let reader = new FileReader();
-                    reader.readAsDataURL(input.files[0]);
-                    reader.addEventListener('load', function () {
-                        preview_cover_pic.src = reader.result;
-                        if (croppercover) {
-                            croppercover.destroy(); // 如果有，清除緩存
-                        
-                        }
-                        initCoverCropper(); // 初始化新的 cropper 實例
-                    });
-                });
-            });
-
-
-        }
-
-        function initCoverCropper() {
-            let preview_cover_pic = document.getElementById('preview_cover_pic');
-            croppercover = new Cropper(preview_cover_pic, {
-                aspectRatio: 14 / 6,
-                cropBoxResizable: true,
-                cropBoxMovable: true,
-                autoCropArea: 1,
-                viewMode: 2
-            });
-            let cropButton = document.getElementById('cropcoverButton');
-            let Cover_pic = document.getElementById('Cover_pic');
-            cropButton.addEventListener('click', function () {
-                //let croppedCanvas = croppercover.getCroppedCanvas();
-                //Cover_pic.src = croppedCanvas.toDataURL();
-                //croppercover.destroy(); // 清除緩存
-
-                croppercover.getCroppedCanvas().toBlob(function (blob) {
-                    // 建立一個 FormData 對象，用於將圖片數據傳遞給控制器
-                    console.log("111")
-                    let formData = new FormData();
-                    formData.append('croppedCoverImage', blob, "Covercropped.jpg");
-                    //formData.append('imageType', 'person'); // 传递imageType参数
-                    // 上傳圖片
-                    fetch('/Account/CropperBackgroundImage', {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => {
-                            if (response.ok) {
-                                return response.json();
-                            } else {
-                                throw new Error('Network response was not ok.');
-                            }
-                        })
-                        .then(data => {
-                            // 根據需要進行處理回傳的數據
-                            console.log(data);
-                            Cover_pic.src = data.fileUrl;
-                            croppercover.destroy();
-                            preview_cover_pic.src = '';
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
-                }, 'image/jpeg');
-
-                cropperperson.destroy(); // 清除緩存
-                $("#preview_person_pic").arrr("");
-            });
-        }
-
-        function ChangName() {
-            $("#confirm_Name_btn").click(function () {
-                var username = $("#inputUsername").val();
-                $.post('/Account/IsUsernameInUse', { username: username }, function (data) {
-                    if (data == "更改成功") {
-                        // 顯示成功訊息
-                        $("#usernameError").text(data).removeClass("text-danger").addClass("text-success");
-                        $("#divuser").text(username);
-                    } else {
-                        // 顯示錯誤訊息
-                        $("#usernameError").text(data).removeClass("text-success").addClass("text-danger");
-                    }
-                });
-            });
-        }
-
-        function SetPayPalAccount(){
-            $("#confirm_PayPalAccount_btn").on("click", () => {
-                var account = $("#inputAccount").val();
-                $.post('/Account/SetPayPalAccount', { account: account }, function(data){
-                    if (data == "更改成功"){
-                        $("#AccountError").text(data).removeClass("text-danger").addClass("text-success");
-                    }
-                    else{
-                        $("#AccountError").text("錯誤").removeClass("text-success").addClass("text-danger");
-                    }
-                })
-            })
-        }
-
-        $(() => {
-            handleCoverImg();
-            handlePersonImg();
-            Edit_Name();
-            PayPalAccountSetting();
-            favorite_star();
-            ChangName();
-            SetPayPalAccount();
-        });
-
-    </script>
-    <script>
-        $(() => {
-            $.ajax({
-                url: '/Account/GetUserName',
-                type: 'GET',
-                success: function (result) {
-                    $('#Username').text(result);
-
-                }
-            });
-        })
-    </script>
+    
 }
 
 

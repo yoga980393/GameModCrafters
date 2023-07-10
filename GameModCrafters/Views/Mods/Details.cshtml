@@ -7,7 +7,7 @@
 <div class="container " style="min-height: 100vh;">
     <div class="row">
         <div class="col-12 col-md-3 my-3">
-            <a href="" class="author">
+            <a asp-controller="Account" asp-action="OtherPage" asp-route-id="@Model.AuthorId" class="author" id="LinkToPerson">
                 <div class="card">
                     <div class="pic">
                         <img src="@Model.userCover">
@@ -26,6 +26,7 @@
             </a>
             @if (Model.AuthorName == User.Identity.Name)
             {
+
                 <div class="ModOption mt-3">
                     <button class="btn btn-primary me-3">
                         <a asp-controller="Mods" asp-action="Edit" asp-route-id="@Model.ModId" style="color: white; text-decoration: none;">修改Mod資訊</a>
@@ -181,6 +182,7 @@
     </script>
 
     <script>
+       
         $(document).ready(function () {
             $(".tag-buttons button").on("click", function () {
                 var pageIndex = $(this).index();
