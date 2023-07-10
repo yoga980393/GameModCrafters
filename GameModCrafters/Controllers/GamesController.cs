@@ -137,31 +137,12 @@ namespace GameModCrafters.Controllers
                 filter.PageSize = 8; // fallback to default value if invalid input
             }
 
-            var commissions = await _context.Commissions
-                .Where(c => c.GameId == id)
-                .Where(c => c.IsDone)
-                .Where(c => c.CommissionStatusId == "s01")
-                .Include(c => c.Delegator)
-                .Include(c => c.CommissionStatus)
-                .Select(c => new CommissionViewModel
-                {
-                    CommissionId = c.CommissionId,
-                    DelegatorName = c.Delegator.Username,
-                    CommissionTitle = c.CommissionTitle,
-                    Budget = c.Budget,
-                    CreateTime = c.CreateTime,
-                    UpdateTime = c.UpdateTime,
-                    Status = c.CommissionStatus.Status
-                })
-                .ToListAsync();
-
             var pagedModel = new PagedModsModel
             {
                 Mods = mods.Skip((page - 1) * filter.PageSize).Take(filter.PageSize).ToList(),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(mods.Count() / (double)filter.PageSize),
-                GameId = id,
-                Commissions = commissions
+                GameId = id
             };
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -277,6 +258,72 @@ namespace GameModCrafters.Controllers
         private bool GameExists(string id)
         {
             return _context.Games.Any(e => e.GameId == id);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CommissionsPartial(int? page, string id, string timeFilter, string sortFilter, string orderFilter, int pageSize, string searchString)
+        {
+            int pageNumber = (page ?? 1); // 當前的頁數，如果沒有提供，預設為第一頁
+
+            // 初始查詢
+            var commissionsQuery = _context.Commissions
+                .Where(c => c.GameId == id)
+                .Where(c => c.IsDone)
+                .Where(c => c.CommissionStatusId == "s01")
+                .Include(c => c.Delegator)
+                .Include(c => c.CommissionStatus)
+                .AsQueryable();
+
+            // 應用時間過濾
+            if (!string.IsNullOrWhiteSpace(timeFilter))
+            {
+                var days = int.Parse(timeFilter);
+                var date = DateTime.Now.AddDays(-days);
+                commissionsQuery = commissionsQuery.Where(c => c.CreateTime >= date);
+            }
+
+            // 應用搜尋過濾
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                commissionsQuery = commissionsQuery.Where(c => c.CommissionTitle.Contains(searchString));
+            }
+
+            // 排序過濾
+            switch (sortFilter)
+            {
+                case "uploadTime":
+                    commissionsQuery = orderFilter == "asc" ? commissionsQuery.OrderBy(c => c.CreateTime) : commissionsQuery.OrderByDescending(c => c.CreateTime);
+                    break;
+                case "updateTime":
+                    commissionsQuery = orderFilter == "asc" ? commissionsQuery.OrderBy(c => c.UpdateTime) : commissionsQuery.OrderByDescending(c => c.UpdateTime);
+                    break;
+                case "name":
+                    commissionsQuery = orderFilter == "asc" ? commissionsQuery.OrderBy(c => c.CommissionTitle) : commissionsQuery.OrderByDescending(c => c.CommissionTitle);
+                    break;
+            }
+
+            // 計算總頁數
+            var totalItems = await commissionsQuery.CountAsync();
+            var totalPages = (totalItems + pageSize - 1) / pageSize;
+
+            // 獲取該頁的數據
+            var commissions = await commissionsQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(c => new CommissionViewModel
+                {
+                    CommissionId = c.CommissionId,
+                    DelegatorName = c.Delegator.Username,
+                    CommissionTitle = c.CommissionTitle,
+                    Budget = c.Budget,
+                    CreateTime = c.CreateTime,
+                    UpdateTime = c.UpdateTime,
+                    Status = c.CommissionStatus.Status
+                })
+                .ToListAsync();
+
+            // 返回包含數據和總頁數的 ViewModel
+            return PartialView("_CommissionListPartial", new CommissionsViewModel { Commissions = commissions, TotalPages = totalPages });
         }
     }
 }

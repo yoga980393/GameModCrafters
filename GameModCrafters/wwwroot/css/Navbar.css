@@ -29,3 +29,8 @@ a{
     text-decoration:none;
     color:black;
 }
+
+#navbarname{
+    display:flex;
+    align-items:center;
+}

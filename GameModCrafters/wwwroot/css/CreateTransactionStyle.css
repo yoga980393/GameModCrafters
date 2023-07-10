@@ -81,3 +81,17 @@
 .footer{
     z-index:-2;
 }
+
+.budget-div{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+    .budget-div input{
+        width:80%;
+    }
+
+    .budget-div div{
+        color:white;
+    }

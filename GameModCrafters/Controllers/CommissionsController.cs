@@ -195,6 +195,7 @@ namespace GameModCrafters.Controllers
         }
 
         // GET: Commissions/Create
+        [Authorize]
         public IActionResult Create(string gameid)
         {
             ViewData["CommissionStatusId"] = new SelectList(_context.CommissionStatuses, "CommissionStatusId", "Status");
