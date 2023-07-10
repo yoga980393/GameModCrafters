@@ -417,7 +417,6 @@
                 method: 'GET',
                 success: function (data) {
                     // 更新 Popover 的內容
-                    console.log(data);
                     $('#popover-username').text(data.username);
                     //$('#popover-avatar').attr('src', data.avatar);
                     $('#popover-modcoin').text(data.modCoin);
@@ -435,7 +434,6 @@
             setInterval(updateNotifications, 10000);
             NotificationBtn();
             UserImformation();
-            
         });
         
         
@@ -487,7 +485,6 @@
                 window.location.href = url;
             });
         });
-
     </script>
 </body>
 </html>

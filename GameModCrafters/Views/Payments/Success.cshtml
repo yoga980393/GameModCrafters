@@ -3,22 +3,16 @@
     ViewData["Title"] = "Success";
 }
 
-<div id="success">
-    <h1>付款成功</h1>
-    <p>你現在擁有 @Model 個Mod Coin</p>
+<div class="container my-4">
+    <div id="success">
+        <h1>付款成功</h1>
+        <p>你現在擁有 @Model 個Mod Coin</p>
 
-    <div class="mt-5 ms-5" id="redirectSection" style="display: none;">
-        <button class="btn btn-primary" id="redirectToMod">回到購買頁面</button>
+        <div class="mt-5 ms-5" id="redirectSection" style="display: none;">
+            <button class="btn btn-primary" id="redirectToMod">回到購買頁面</button>
+        </div>
     </div>
 </div>
-
-@section css{
-    <style>
-        #success {
-            min-height: 60vh;
-        }
-    </style>
-}
 
 @section js {
     <script>

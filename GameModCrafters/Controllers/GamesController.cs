@@ -137,33 +137,12 @@ namespace GameModCrafters.Controllers
                 filter.PageSize = 8; // fallback to default value if invalid input
             }
 
-            var commissions = await _context.Commissions
-                .Where(c => c.GameId == id)
-                .Where(c => c.IsDone)
-                .Where(c => c.CommissionStatusId == "s01")
-                .Include(c => c.Delegator)
-                .Include(c => c.CommissionStatus)
-                .Select(c => new CommissionViewModel
-                {
-                    CommissionId = c.CommissionId,
-                    DelegatorName = c.Delegator.Username,
-                    CommissionTitle = c.CommissionTitle,
-                    Budget = c.Budget,
-                    CreateTime = c.CreateTime,
-                    UpdateTime = c.UpdateTime,
-                    Status = c.CommissionStatus.Status
-                })
-                .Skip((page - 1) * 16)
-                .Take(16)
-                .ToListAsync();
-
             var pagedModel = new PagedModsModel
             {
                 Mods = mods.Skip((page - 1) * filter.PageSize).Take(filter.PageSize).ToList(),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling(mods.Count() / (double)filter.PageSize),
-                GameId = id,
-                Commissions = commissions
+                GameId = id
             };
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
