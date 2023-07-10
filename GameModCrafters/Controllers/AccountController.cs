@@ -441,6 +441,53 @@ namespace GameModCrafters.Controllers
             return View(personVM);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetCommissionsPartial(int? page)
+        {
+            int pageNumber = (page ?? 1); // 當前的頁數，如果沒有提供，預設為第一頁
+
+            int pageSize = 4;
+
+            //尋找對應User
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+
+            // 初始查詢
+            var commissionsQuery = _context.Commissions
+                .Where(c => c.DelegatorId == usermail)
+                .Where(c => c.IsDone)
+                .Where(c => c.CommissionStatusId == "s01")
+                .Include(c => c.Delegator)
+                .Include(c => c.CommissionStatus)
+                .Include(c => c.Game)
+                .AsQueryable();
+
+
+
+            // 計算總頁數
+            var totalItems = await commissionsQuery.CountAsync();
+            var totalPages = (totalItems + pageSize - 1) / pageSize;
+
+            // 獲取該頁的數據
+            var commissions = await commissionsQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(c => new CommissionViewModel
+                {
+                    CommissionId = c.CommissionId,
+                    GameName = c.Game.GameName,
+                    DelegatorName = c.Delegator.Username,
+                    CommissionTitle = c.CommissionTitle,
+                    Budget = c.Budget,
+                    CreateTime = c.CreateTime,
+                    UpdateTime = c.UpdateTime,
+                    Status = c.CommissionStatus.Status
+                })
+                .ToListAsync();
+
+            // 返回包含數據和總頁數的 ViewModel
+            return PartialView("_PersonalCommissionListPartial", new CommissionsViewModel { Commissions = commissions, TotalPages = totalPages });
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> CropperAvatarImage(IFormFile croppedPersonImage)
