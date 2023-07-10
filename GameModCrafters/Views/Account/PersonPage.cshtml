@@ -155,17 +155,13 @@
 @section js{
     <script>
 
-        $('#commissionsContainer').load('/Account/GetCommissionsPartial');
-        $('#CommissionSearchForm').on('submit', function (e) {
-            // 防止表單的預設提交行為
-            e.preventDefault();
+        $(document).ready(function () {
+            $('#commissionsContainer').load('/Account/GetCommissionsPartial');
 
-            // 重新載入分頁結果，從第一頁開始
             loadCommissions(1);
-        });
+            CommissionsPageButton();
 
-        loadCommissions(1);
-        CommissionsPageButton();
+            });
 
         function loadCommissions(pageNumber) {
 
