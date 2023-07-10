@@ -436,7 +436,6 @@ namespace GameModCrafters.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> OtherPage(string id,int page = 1)
         {
             var usermail = id;

@@ -3,6 +3,7 @@
     public class AuthorViewModel
     {
         public string Name { get; set; }
+        public string Email { get; set; }
         public int LikeCount { get; set; }
         public int WorkCount { get; set; }
         public string Avatar { get; set; }
