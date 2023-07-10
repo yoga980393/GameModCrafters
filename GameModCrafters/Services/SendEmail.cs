@@ -5,7 +5,7 @@ namespace GameModCrafters.Services
 {
     public class SendEmail
     {
-        public async Task<string> GetVerifyEmailCssContent()
+        public string GetVerifyEmailCssContent()
         {
             string cssContent = @"
             body, p, div {
@@ -110,7 +110,7 @@ namespace GameModCrafters.Services
              ";
             return cssContent;
         }
-        public async Task<string> GetVerifyEmailHtmlContent(string cssContent,string confirmationLink)
+        public string GetVerifyEmailHtmlContent(string cssContent,string confirmationLink)
         {
             string htmlContent = $@"
         <html>
@@ -219,7 +219,7 @@ namespace GameModCrafters.Services
         </html>";
             return htmlContent;
         }
-        public async Task<string> GetRestPasswordCssContent()
+        public string GetRestPasswordCssContent()
         {
             string cssContent = @"
             body, p, div {
@@ -324,7 +324,7 @@ namespace GameModCrafters.Services
              ";
             return cssContent;
         }
-        public async Task<string> GetRestPasswordHtmlContent(string cssContent ,string UserName,string confirmationLink)
+        public string GetRestPasswordHtmlContent(string cssContent ,string UserName,string confirmationLink)
         {
             string htmlContent = $@"
         <html>

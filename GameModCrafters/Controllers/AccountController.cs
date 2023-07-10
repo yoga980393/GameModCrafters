@@ -224,9 +224,8 @@ namespace GameModCrafters.Controllers
             return Json(new { success = true });
         }
         [HttpGet]
-        public async Task<IActionResult> RegisterValidationTime()
+        public IActionResult RegisterValidationTime()
         {
-
             return  View();
         }
         [HttpPost]
@@ -260,7 +259,7 @@ namespace GameModCrafters.Controllers
             if (deletedata)
             {
                 var useremail = TempData["Email"]?.ToString();
-                var user = _context.Users.FirstOrDefault(x => x.Email == useremail);
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == useremail);
                 if (user != null)
                 {
                     // 生成新的確認碼
@@ -279,7 +278,7 @@ namespace GameModCrafters.Controllers
             return Json(new { success = true });
         }
         [HttpGet]
-        public async Task<IActionResult> RestPasswordValidationTime()
+        public IActionResult RestPasswordValidationTime()
         {
 
             return View();
@@ -344,8 +343,8 @@ namespace GameModCrafters.Controllers
             var from = new EmailAddress("wggisddejp@gmail.com", "第七小組遊戲mod");
             var to = new EmailAddress(email);
             var subject = "確認您的電子郵件地址";
-            var cssContent = await _sendEmail.GetVerifyEmailCssContent();//打開直接起飛
-            var htmlContent = await _sendEmail.GetVerifyEmailHtmlContent(cssContent,confirmationLink);//打開直接起飛
+            var cssContent = _sendEmail.GetVerifyEmailCssContent();//打開直接起飛
+            var htmlContent =  _sendEmail.GetVerifyEmailHtmlContent(cssContent,confirmationLink);//打開直接起飛
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);
             await _sendGridClient.SendEmailAsync(msg);
@@ -453,7 +452,8 @@ namespace GameModCrafters.Controllers
             {
                     Avatar = userAvatar,
                     BackgroundImage = userCover,
-                    Username = userName
+                    Username = userName,
+                    Email = user.Email
             };
   
            
@@ -737,8 +737,8 @@ namespace GameModCrafters.Controllers
             var from = new EmailAddress("wggisddejp@gmail.com", "第七小組遊戲mod");
             var to = new EmailAddress(email);
             var subject = "確認您的電子郵件地址";
-            var cssContent = await _sendEmail.GetRestPasswordCssContent();//打開直接起飛
-            var htmlContent =await _sendEmail.GetRestPasswordHtmlContent(cssContent,UserName,confirmationLink);//打開直接起飛
+            var cssContent = _sendEmail.GetRestPasswordCssContent();//打開直接起飛
+            var htmlContent =_sendEmail.GetRestPasswordHtmlContent(cssContent,UserName,confirmationLink);//打開直接起飛
            
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, null, htmlContent);

@@ -218,9 +218,8 @@
 @section js{
     <script>
         $(document).ready(function () {
-
             $('#publishedModsContainer').load('/Account/PublishedModsPartialOther/'+"@Model.Email");
-
+            
             $(document).on('click', '.page-link-published', function (event) {
                 event.preventDefault();
                 console.log($(this).attr('href'));
