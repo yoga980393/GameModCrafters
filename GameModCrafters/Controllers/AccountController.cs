@@ -108,7 +108,7 @@ namespace GameModCrafters.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult RegisterPage()
+        public  IActionResult RegisterPage()
         {
             return View();
         }
@@ -198,7 +198,7 @@ namespace GameModCrafters.Controllers
 
 
 
-                return RedirectToAction("ValidationTime"); // 等待email驗證
+                return RedirectToAction("RegisterValidationTime"); // 等待email驗證
           
 
             }
