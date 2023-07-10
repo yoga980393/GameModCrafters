@@ -153,6 +153,8 @@ namespace GameModCrafters.Controllers
                     UpdateTime = c.UpdateTime,
                     Status = c.CommissionStatus.Status
                 })
+                .Skip((page - 1) * 16)
+                .Take(16)
                 .ToListAsync();
 
             var pagedModel = new PagedModsModel
@@ -277,6 +279,45 @@ namespace GameModCrafters.Controllers
         private bool GameExists(string id)
         {
             return _context.Games.Any(e => e.GameId == id);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CommissionsPartial(int? page, string id)
+        {
+            int pageSize = 16; // 每頁的數量
+            int pageNumber = (page ?? 1); // 當前的頁數，如果沒有提供，預設為第一頁
+
+            // 先獲取總筆數
+            var totalCommissionsCount = await _context.Commissions
+                .Where(c => c.GameId == id)
+                .Where(c => c.IsDone)
+                .Where(c => c.CommissionStatusId == "s01").CountAsync();
+
+            // 根據總筆數和每頁筆數計算總頁數
+            var totalPages = (totalCommissionsCount + pageSize - 1) / pageSize;
+
+            var commissions = await _context.Commissions
+                .Where(c => c.GameId == id)
+                .Where(c => c.IsDone)
+                .Where(c => c.CommissionStatusId == "s01")
+                .Include(c => c.Delegator)
+                .Include(c => c.CommissionStatus)
+                .Select(c => new CommissionViewModel
+                {
+                    CommissionId = c.CommissionId,
+                    DelegatorName = c.Delegator.Username,
+                    CommissionTitle = c.CommissionTitle,
+                    Budget = c.Budget,
+                    CreateTime = c.CreateTime,
+                    UpdateTime = c.UpdateTime,
+                    Status = c.CommissionStatus.Status
+                })
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // 返回包含數據和總頁數的 ViewModel
+            return PartialView("_CommissionListPartial", new CommissionsViewModel { Commissions = commissions, TotalPages = totalPages });
         }
     }
 }

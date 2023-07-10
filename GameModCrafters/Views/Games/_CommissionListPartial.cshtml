@@ -1,0 +1,62 @@
+﻿@model CommissionsViewModel
+<input type="hidden" id="totalPages" value="@Model.TotalPages" />
+<div class="title">
+    <h3>委託區:</h3>
+
+</div>
+<div class="container text-center mod-list">
+    <div class="row align-items-start">
+        <div class="col-6 title">
+            Title
+        </div>
+        <div class="col SendernName">
+            發文人
+        </div>
+        <div class="col SenderDate">
+            發文日
+        </div>
+        <div class="col LastReply">
+            最後回覆
+        </div>
+        <div class="col CommissionStatus">
+            委託狀態
+        </div>
+    </div>
+    @foreach (var item in Model.Commissions)
+    {
+        <div class="row align-items-start CommissionRow">
+            <div class="col-6 title">
+                <a href="@Url.Action("Details", "Commissions", new { id = item.CommissionId })">
+                    @item.CommissionTitle
+                </a>
+            </div>
+            <div class="col SendernName">
+                @item.DelegatorName
+            </div>
+            <div class="col SenderDate">
+                @item.CreateTime
+            </div>
+            <div class="col LastReply">
+                @item.UpdateTime
+            </div>
+            <div class="col CommissionStatus">
+                @item.Status
+            </div>
+        </div>
+    }
+</div>
+
+<div class="CommissionPage my-4">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination" id="pagination">
+            <li class="page-item disabled" id="previous-page">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+            <!-- 頁碼由 Ajax 生成 -->
+            <li class="page-item" id="next-page">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+

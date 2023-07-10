@@ -423,3 +423,14 @@ a {
             border-color: #bbb;
             outline: none;
         }
+
+
+.CommissionPage{
+    display:flex;
+    justify-content:center;
+}
+
+.CommissionRow {
+    display: flex;
+    align-items: center !important;
+}
