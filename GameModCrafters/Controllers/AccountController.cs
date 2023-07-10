@@ -198,18 +198,126 @@ namespace GameModCrafters.Controllers
 
 
 
-                return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
+                return RedirectToAction("ValidationTime"); // 等待email驗證
           
 
             }
 
             return View("RegisterEmailPage"); // 失敗
         }
+        [HttpPost]
+        public async Task<IActionResult> RegisterValidationTime(bool deletedata)
+        {
+            if (deletedata)
+            {
+                var useremail = TempData["Email"]?.ToString();
+                var user = _context.Users.FirstOrDefault(x => x.Email == useremail);
+                if (user != null)
+                {
+                    _context.Users.Remove(user);
+                    await _context.SaveChangesAsync();
+                    // 刪除成功
+                }
+            }
+
+            // 回傳回應給前端
+            return Json(new { success = true });
+        }
+        [HttpGet]
+        public async Task<IActionResult> RegisterValidationTime()
+        {
+
+            return  View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResendConfirmationEmail()
+        {
+            // 獲取用戶的email，這裡假設您已經存儲在TempData中
+            var email = TempData["Email"]?.ToString();
+            var user = await _context.Users.FirstOrDefaultAsync(x=>x.Email == email);
+            if (user != null)
+            {
+                var confirmationCode = Guid.NewGuid().ToString();
+
+                // 更新使用者的確認碼
+                user.ConfirmationCode = confirmationCode;
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+
+                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { email, confirmationCode }, Request.Scheme);
+                await SendConfirmationEmail(email, confirmationLink);
+
+                // 回傳回應給前端
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false });
+        }
+        //重置密碼
+        [HttpPost]
+        public async Task<IActionResult> RestPasswordValidationTime(bool deletedata)//時間到的話確認碼更換
+        {
+            if (deletedata)
+            {
+                var useremail = TempData["Email"]?.ToString();
+                var user = _context.Users.FirstOrDefault(x => x.Email == useremail);
+                if (user != null)
+                {
+                    // 生成新的確認碼
+                    var confirmationCode = Guid.NewGuid().ToString();
+
+                    // 將確認碼儲存到使用者物件中
+                    user.ConfirmationCode = confirmationCode;
+
+                    // 將確認碼儲存到資料庫中
+                    _context.SaveChanges();
+                }
+                return Json(new { success = false });
+            }
+
+            // 回傳回應給前端
+            return Json(new { success = true });
+        }
+        [HttpGet]
+        public async Task<IActionResult> RestPasswordValidationTime()
+        {
+
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResendRestPasswordEmail()
+        {
+            
+            // 從Session中獲取用戶的email和username
+            var email = HttpContext.Session.GetString("Email");
+            var username = HttpContext.Session.GetString("Username");
+            
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if (user != null)
+            {
+                var confirmationCode = Guid.NewGuid().ToString();
+
+                // 更新使用者的確認碼
+                user.ConfirmationCode = confirmationCode;
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+
+                var confirmationLink = Url.Action("RestPassword", "Account", new { email , confirmationCode }, Request.Scheme);
+                await SendRestEmail(email, confirmationLink, username);
+
+                // 回傳回應給前端
+                return Json(new { success = true });
+            }
+            HttpContext.Session.Clear();
+            return Json(new { success = false });
+        }
+
         [AllowAnonymous]
         public IActionResult WaitConfirmEmail()
         {
             return View();
         }
+        
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string email, string confirmationCode)
         {
@@ -549,13 +657,17 @@ namespace GameModCrafters.Controllers
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
                 if (user != null)
                 {
+
                     // 確認碼
                     var username = user.Username;
                     var confirmationCode = user.ConfirmationCode;
                     var useremail = user.Email;
+                    // 將需要傳遞的資料存儲在Session中
+                    HttpContext.Session.SetString("Email", useremail);
+                    HttpContext.Session.SetString("Username", username);
                     var confirmationLink = Url.Action("RestPassword", "Account", new { email = useremail, confirmationCode }, Request.Scheme);
                     await SendRestEmail(useremail, confirmationLink,username);
-                    return RedirectToAction("WaitConfirmEmail"); // 等待email驗證
+                    return RedirectToAction("RestPasswordValidationTime"); // 等待email驗證
                 }
                 else
                 {
