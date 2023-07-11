@@ -114,7 +114,7 @@
 
                 <div class="mt-5 submitBtn">
                     <button type="submit" class="btn btn-primary" name="IsDone" value="false">儲存草稿</button>
-                    <button type="submit" class="btn btn-primary" name="IsDone" value="true">確認送出</button>
+                    <button type="submit" id="submitBtn" class="btn btn-primary" name="IsDone" value="true" disabled>確認送出</button>
                 </div>
             </div>
 
@@ -185,6 +185,7 @@
 
     <script src="/js/ckeditor.js"></script>
 
+    @*編輯器部分*@
     <script>
         let myEditor1, myEditor2;
 
@@ -264,6 +265,10 @@
             // 在表單提交時，手動更新隱藏的 input 欄位的值
             $('#Description').val(myEditor1.getData());
             $('#InstallationInstructions').val(myEditor2.getData());
+
+            if ($("#flexRadioDefault2").is(":checked") && $("#priceInput").val() == '') {
+                $("#Price").val(0);
+            }
         });
 
         $(".editorSwitch").on("click", function () {
@@ -317,6 +322,7 @@
         }
     </script>
 
+    @*價格部分*@
     <script>
         $(document).ready(function () {
             let price = parseFloat($("#Price").val());  // get price from hidden field
@@ -350,9 +356,17 @@
                 $("#Price").val(inputPrice);
                 console.log(price);
             });
+
+            $('#priceInput').on('keypress', function (evt) {
+                var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+                if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+                    return false;
+                return true;
+            });
         });
     </script>
 
+    @*tag部分*@
     <script>
         var allTags = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["Tags"]));
 
@@ -466,6 +480,7 @@
         });
     </script>
 
+    @*圖片部分*@
     <script>
         // 上傳按鈕事件
         $("#uploadCoverBtn").on("click", function () {
@@ -526,6 +541,7 @@
         });
     </script>
 
+    @*預覽部分*@
     <script>
         $("#titleInput").on("input", function () {
             let inputText = $(this).val();
@@ -567,9 +583,27 @@
 
     </script>
 
+    @*防呆部分*@
     <script>
         $(document).ready(function () {
             $('#unfinishedModModal').modal('show');
+
+            $('#gameFile').on('change', function () {
+                if (this.files.length > 0) {
+                    $('#submitBtn').prop('disabled', false);
+                } else {
+                    $('#submitBtn').prop('disabled', true);
+                }
+            });
+
+            $('select[name="GameId"]').on('change', function () {
+                var selectedOption = $(this).find('option:selected').text();
+                $('#previewGame').text(selectedOption);
+            });
+
+            $('select[name="GameId"]').trigger('change');
         });
     </script>
+
+
 }

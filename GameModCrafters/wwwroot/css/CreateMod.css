@@ -116,6 +116,7 @@
 .mod .name_price {
     display: flex;
     justify-content: space-between;
+    gap:10px;
 }
 
 .mod .text {
@@ -180,4 +181,15 @@
     top: 0;
     z-index: 5;
     box-shadow: 1px 1px 5px 1px #cccccc;
+}
+
+#previewTag, #previewName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#previewPrice {
+    width: fit-content;
+    white-space: nowrap;
 }
