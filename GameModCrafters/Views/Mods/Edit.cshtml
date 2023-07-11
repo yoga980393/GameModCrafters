@@ -109,7 +109,7 @@
                     <div class="col-6">
                         <div class="card">
                             <div class="pic" id="croppedImagePreview">
-                                <img src="https://picsum.photos/300/200/?random=${item}" id="previewImage">
+                                <img src="https://fakeimg.pl/300x200/?text=PreviewImage&font=lobster" id="previewImage">
                             </div>
                             <div class="text">
                                 <div class="name_price">
@@ -459,6 +459,7 @@
                     .then(response => response.json())
                     .then(data => {
                         $("#previewImage").attr("src", data.fileUrl);
+                        if()
                         $("#Thumbnail").val(data.fileUrl)
                         $("#cropperModal").modal("hide");
                         cropper.destroy();
@@ -478,7 +479,9 @@
 
         $(() => {
             $("#previewName").text($("#titleInput").val());
-            $("#previewImage").attr("src", $("#Thumbnail").val());
+            if ($("#Thumbnail").val() != ''){
+                $("#previewImage").attr("src", $("#Thumbnail").val());
+            }
         })
 
         $("#GameId").on("change", function () {

@@ -283,8 +283,11 @@
                             })
                             .fail(function (jqXHR) {
                                 if (jqXHR.status == 404) {
-                                    // User not found. Show an error message.
-                                    alert(jqXHR.responseJSON.message);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: '錯誤',
+                                        text: '搜索不到這個Email'
+                                    });
                                 } else {
                                     // Some other error occurred.
                                     console.log("Error: " + jqXHR.status);
@@ -292,7 +295,11 @@
                             });
                     }
                 } else {
-                    alert('Please enter an email to search.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: '錯誤',
+                        text: '請輸入一個Email'
+                    });
                 }
             });
 
@@ -312,7 +319,7 @@
                 let ChatBoxHeight = $('.Container').css('top');
 
                 if (parseInt(ChatBoxHeight) === windowHeight) {
-                    $('.Container').css("top", moveto)
+                    $('.Container').css("top", 267)
                 }
 
                 else {
