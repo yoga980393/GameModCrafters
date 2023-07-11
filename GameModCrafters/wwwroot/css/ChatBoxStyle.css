@@ -197,3 +197,9 @@
 .markNone{
     display:none;
 }
+
+#ChatBoxSpan{
+    cursor:pointer;
+    font-size:18px;
+    padding:5px 20px;
+}
