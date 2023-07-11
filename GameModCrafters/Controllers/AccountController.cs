@@ -168,6 +168,7 @@ namespace GameModCrafters.Controllers
                     return View("RegisterEmailPage");
                 }
                 TempData["Email"] = email;
+                HttpContext.Session.SetString("Email", email);
                 // 從暫時的變數中獲取使用者名稱和密碼
                 var username = TempData["Username"].ToString();
                 var password = TempData["Password"].ToString();
@@ -214,25 +215,34 @@ namespace GameModCrafters.Controllers
                 var user = _context.Users.FirstOrDefault(x => x.Email == useremail);
                 if (user != null)
                 {
-                    _context.Users.Remove(user);
-                    await _context.SaveChangesAsync();
-                    // 刪除成功
+
+                    // 生成新的確認碼
+                    var confirmationCode = Guid.NewGuid().ToString();
+
+                    // 將確認碼儲存到使用者物件中
+                    user.ConfirmationCode = confirmationCode;
+
+                    // 將確認碼儲存到資料庫中
+                    _context.SaveChanges();
                 }
+                // 回傳回應給前端
+                return Json(new { success = true });
             }
 
-            // 回傳回應給前端
-            return Json(new { success = true });
+            return Json(new { success = false });
         }
         [HttpGet]
         public IActionResult RegisterValidationTime()
         {
             return  View();
         }
+        //註冊
         [HttpPost]
         public async Task<IActionResult> ResendConfirmationEmail()
         {
             // 獲取用戶的email，這裡假設您已經存儲在TempData中
-            var email = TempData["Email"]?.ToString();
+            var email = HttpContext.Session.GetString("Email");
+            //var email = TempData["Email"]?.ToString();
             var user = await _context.Users.FirstOrDefaultAsync(x=>x.Email == email);
             if (user != null)
             {
@@ -249,7 +259,7 @@ namespace GameModCrafters.Controllers
                 // 回傳回應給前端
                 return Json(new { success = true });
             }
-
+         
             return Json(new { success = false });
         }
         //重置密碼
@@ -271,11 +281,12 @@ namespace GameModCrafters.Controllers
                     // 將確認碼儲存到資料庫中
                     _context.SaveChanges();
                 }
-                return Json(new { success = false });
+                return Json(new { success = true });
+                
             }
 
             // 回傳回應給前端
-            return Json(new { success = true });
+           return Json(new { success = false });
         }
         [HttpGet]
         public IActionResult RestPasswordValidationTime()
@@ -283,6 +294,7 @@ namespace GameModCrafters.Controllers
 
             return View();
         }
+       
         [HttpPost]
         public async Task<IActionResult> ResendRestPasswordEmail()
         {

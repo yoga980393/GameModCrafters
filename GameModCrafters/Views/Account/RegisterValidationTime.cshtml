@@ -50,9 +50,9 @@
                     success: function (response) {
                         console.log(response);
                         if (response.success) {
-                            console.log("刪除成功");
+                            console.log("成功");
                         } else {
-                            console.log("刪除失敗");
+                            console.log("失敗");
                         }
                     }
                 });
@@ -69,6 +69,8 @@
         $("#resendEmailButton").click(function () {
             // 重置倒數計時
             countdown = initialCountdown;
+            // 重新啟動計時器
+            timer = setInterval(updateCountdown, 1000); // 每秒執行一次更新函數
 
             // 發送AJAX請求重新傳送郵件
             $.ajax({
