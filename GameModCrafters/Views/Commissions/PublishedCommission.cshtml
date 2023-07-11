@@ -144,6 +144,10 @@
 
                 var page = $(this).data('page-number');
                 loadCommissions(page);
+
+                $('html, body').animate({
+                    scrollTop: $('#commissionsContainer').offset().top
+                }, 0);
             });
         }
     </script>

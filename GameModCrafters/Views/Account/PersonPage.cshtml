@@ -156,7 +156,7 @@
     <script>
 
         $(document).ready(function () {
-            $('#commissionsContainer').load('/Account/GetCommissionsPartial');
+            //$('#commissionsContainer').load('/Account/GetCommissionsPartial');
 
             loadCommissions(1);
             CommissionsPageButton();
@@ -173,10 +173,7 @@
                 success: function (data) {
                     $('#commissionsContainer').html(data);
 
-                    $('html, body').animate({
-                        scrollTop: $('#commissionsContainer').offset().top
-                    }, 0);
-
+                    
                     var totalPages = $('#totalPages').val();
                     // 更新分頁
                     updatePagination(pageNumber, totalPages);
@@ -206,6 +203,11 @@
 
                 var page = $(this).data('page-number');
                 loadCommissions(page);
+
+                $('html, body').animate({
+                    scrollTop: $('#commissionsContainer').offset().top
+                }, 0);
+
             });
         }
     </script>
