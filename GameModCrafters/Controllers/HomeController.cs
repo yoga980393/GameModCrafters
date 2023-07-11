@@ -101,7 +101,7 @@ namespace GameModCrafters.Controllers
                     WorkCount = u.Mods.Count,
                     Avatar = u.Avatar,
                     BackgroundImage = u.BackgroundImage,
-
+                    Email = u.Email
                 })
                 .OrderByDescending(x => x.WorkCount)
                 .Take(4)

@@ -1,10 +1,95 @@
-﻿body {
-
+﻿* {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-a{
-    text-decoration:none ;
+.commissiomTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
 }
+
+    .commissiomTop.Commissiontitle {
+        display:flex ;
+        vertical-align: middle;
+    }   
+
+    .entrustClassification {
+        display: flex;
+        gap: 5px;
+    }
+
+.entrustClassification {
+    justify-content: space-between;
+}
+
+.ModGameClassification .upload-button {
+    margin-left: auto;
+    height: 50px;
+}
+
+.entrustClassification .upload-button {
+    margin-left: auto;
+    height: 50px;
+}
+
+
+.entrustClassification div button,
+.entrustClassification a {
+    padding: 10px;
+    border: 1px solid white;
+    background-color: rgb(170, 163, 163);
+    border-radius: 5px;
+}
+
+
+    .entrustClassification button:hover,
+    .entrustClassification a:hover {
+        transition: .5s;
+        background-color: azure;
+        color: black;
+    }
+
+
+
+.filter-form {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    min-width: 40%;
+    gap: 10px;
+}
+
+    .filter-form button {
+        margin-left: 10px;
+    }
+
+    .filter-form .form-group {
+        flex: 1 0 auto;
+    }
+
+    .filter-form .form-control {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #666;
+        background-color: #fff;
+    }
+
+        .filter-form .form-control:focus {
+            border-color: #bbb;
+            outline: none;
+        }
+
+
+
 
 .Release_Area_Wrap {
     background-color: #bdbcbc;
@@ -13,10 +98,19 @@ a{
     border-bottom: 1px solid #a4b6c3;
     margin: 10px auto;
     padding: 10px 0;
-   
     /* display: flex;
-     justify-content: center;
-     align-items: center; */
+            justify-content: center;
+            align-items: center; */
+}
+
+.CommissionPage {
+    display: flex;
+    justify-content: center;
+}
+
+.CommissionRow {
+    display: flex;
+    align-items: center !important;
 }
 
 .entrust_link a {
@@ -25,25 +119,6 @@ a{
 
 .entrust .row {
     /* background-color: #ccc; */
-    padding: 20px;
-}
-
-
-
-.row:nth-child(even) {
-    background: linear-gradient(to right, #f6f6f6, #e9e9e9);
-}
-
-.row:nth-child(odd) {
-    background: linear-gradient(to right, #e9e9e9, #f6f6f6);
-}
-
-.row .title {
-    display: flex;
-    justify-content: start;
-}
-
-.Release_Area_Wrap {
     padding: 20px;
 }
 
@@ -60,7 +135,7 @@ a{
 
 
 .rowwrap .GameName, .rowwrap .title, .rowwrap .status, .rowwrap .SendernName, .rowwrap .LastReply, .rowwrap .SenderDate {
-    padding: 20px;
+    padding: 10px;
 }
 
 .rowwrap:nth-child(even) .GameName:hover {
@@ -77,4 +152,21 @@ a{
 
 .rowwrap:nth-child(odd) .title:hover {
     background-color: #f6f6f6;
+}
+
+.rowwrap:nth-child(even) {
+    background: linear-gradient(to right, #f6f6f6, #e9e9e9);
+}
+
+.rowwrap:nth-child(odd) {
+    background: linear-gradient(to right, #e9e9e9, #f6f6f6);
+}
+
+.row .title {
+    display: flex;
+    justify-content: center;
+}
+
+.Release_Area_Wrap {
+    padding: 20px;
 }
