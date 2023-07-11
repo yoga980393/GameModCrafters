@@ -424,9 +424,27 @@ namespace GameModCrafters.Controllers
         {
             var mod = await _context.Mods.FindAsync(id);
 
-            // Find all ModTag entities related to the Mod.
+            // Find all related entities to the Mod and remove them.
             var modTags = _context.ModTags.Where(mt => mt.ModId == id);
             _context.ModTags.RemoveRange(modTags);
+
+            var modLikes = _context.ModLikes.Where(ml => ml.ModId == id);
+            _context.ModLikes.RemoveRange(modLikes);
+
+            var modComments = _context.ModComments.Where(mc => mc.ModId == id);
+            _context.ModComments.RemoveRange(modComments);
+
+            var favorites = _context.Favorites.Where(f => f.ModId == id);
+            _context.Favorites.RemoveRange(favorites);
+
+            var logs = _context.Logs.Where(l => l.ModId == id);
+            _context.Logs.RemoveRange(logs);
+
+            var downloadedMods = _context.Downloadeds.Where(dm => dm.ModId == id);
+            _context.Downloadeds.RemoveRange(downloadedMods);
+
+            var purchasedMods = _context.PurchasedMods.Where(pm => pm.ModId == id);
+            _context.PurchasedMods.RemoveRange(purchasedMods);
 
             var gameId = mod.GameId;
 
@@ -434,6 +452,7 @@ namespace GameModCrafters.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", "Games", new { id = gameId });
         }
+
 
         private bool ModExists(string id)
         {

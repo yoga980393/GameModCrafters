@@ -434,3 +434,14 @@ a {
     display: flex;
     align-items: center !important;
 }
+
+.previewTag, .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.price {
+    width: fit-content;
+    white-space: nowrap;
+}

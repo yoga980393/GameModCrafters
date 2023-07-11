@@ -8,7 +8,7 @@
                 <div class="card">
                     <div class="pic">
                         <a href="@Url.Action("Details", "Mods", new { id = mod.ModId })">
-                            <img src=@(mod.Thumbnail == null ? "https://picsum.photos/300/200/?random=10" : mod.Thumbnail)>
+                            <img src=@(mod.Thumbnail == null ? "https://fakeimg.pl/300x200/?text=PreviewImage&font=lobster" : mod.Thumbnail)>
                         </a>
                     </div>
                     <div class="text">
@@ -17,7 +17,7 @@
                             <h3 class="price">@(mod.Price == 0 ? "Free" : mod.Price + " Mod Coin")</h3>
                         </div>
                         <div class="detail">
-                            <h2 class="tag" id="tag-id-@(mod.ModId)"><span class="badge bg-secondary" id="previewGame">@mod.GameName</span></h2>
+                            <h2 class="tag previewTag" id="tag-id-@(mod.ModId)"><span class="badge bg-secondary" id="previewGame">@mod.GameName</span></h2>
                             <h3 class="author"><span>作者：</span>@mod.AuthorName</h3>
                             <h3 class="creatTime"><span>上傳日期：</span>@mod.CreateTime</h3>
                             <h3 class="UpdateTime"><span>更新日期：</span>@mod.UpdateTime</h3>

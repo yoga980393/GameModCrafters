@@ -4,27 +4,6 @@
     ViewData["Title"] = "Create";
 }
 
-@if (ViewBag.HasUnfinishedMod == true)
-{
-    <div class="modal fade" id="unfinishedModModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">發現一個草稿</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    你有一個未完成的草稿，要去完成它嗎？
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
-                    <a href="@Url.Action("Edit", new { id = ViewBag.UnfinishedModId })" class="btn btn-primary">完成草稿</a>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
 <div class="container my-4">
     <form asp-action="Create" asp-controller="Mods" method="post" enctype="multipart/form-data">
         <input asp-for="AuthorId" type="hidden" value="@User.FindFirstValue(ClaimTypes.Email)" />
@@ -114,7 +93,7 @@
 
                 <div class="mt-5 submitBtn">
                     <button type="submit" class="btn btn-primary" name="IsDone" value="false">儲存草稿</button>
-                    <button type="submit" class="btn btn-primary" name="IsDone" value="true">確認送出</button>
+                    <button type="submit" id="submitBtn" class="btn btn-primary" name="IsDone" value="true" disabled>確認送出</button>
                 </div>
             </div>
 
@@ -124,7 +103,7 @@
                     <div class="col-6">
                         <div class="card">
                             <div class="pic" id="croppedImagePreview">
-                                <img src="https://picsum.photos/300/200/?random=${item}" id="previewImage">
+                                <img src="https://fakeimg.pl/300x200/?text=PreviewImage&font=lobster" id="previewImage">
                             </div>
                             <div class="text">
                                 <div class="name_price">
@@ -185,6 +164,7 @@
 
     <script src="/js/ckeditor.js"></script>
 
+    @*編輯器部分*@
     <script>
         let myEditor1, myEditor2;
 
@@ -264,6 +244,10 @@
             // 在表單提交時，手動更新隱藏的 input 欄位的值
             $('#Description').val(myEditor1.getData());
             $('#InstallationInstructions').val(myEditor2.getData());
+
+            if ($("#flexRadioDefault2").is(":checked") && $("#priceInput").val() == '') {
+                $("#Price").val(0);
+            }
         });
 
         $(".editorSwitch").on("click", function () {
@@ -317,6 +301,7 @@
         }
     </script>
 
+    @*價格部分*@
     <script>
         $(document).ready(function () {
             let price = parseFloat($("#Price").val());  // get price from hidden field
@@ -350,9 +335,17 @@
                 $("#Price").val(inputPrice);
                 console.log(price);
             });
+
+            $('#priceInput').on('keypress', function (evt) {
+                var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+                if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+                    return false;
+                return true;
+            });
         });
     </script>
 
+    @*tag部分*@
     <script>
         var allTags = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["Tags"]));
 
@@ -466,6 +459,7 @@
         });
     </script>
 
+    @*圖片部分*@
     <script>
         // 上傳按鈕事件
         $("#uploadCoverBtn").on("click", function () {
@@ -526,6 +520,7 @@
         });
     </script>
 
+    @*預覽部分*@
     <script>
         $("#titleInput").on("input", function () {
             let inputText = $(this).val();
@@ -567,9 +562,49 @@
 
     </script>
 
+    @*防呆部分*@
     <script>
         $(document).ready(function () {
             $('#unfinishedModModal').modal('show');
+
+            $('#gameFile').on('change', function () {
+                if (this.files.length > 0) {
+                    $('#submitBtn').prop('disabled', false);
+                } else {
+                    $('#submitBtn').prop('disabled', true);
+                }
+            });
+
+            $('select[name="GameId"]').on('change', function () {
+                var selectedOption = $(this).find('option:selected').text();
+                $('#previewGame').text(selectedOption);
+            });
+
+            $('select[name="GameId"]').trigger('change');
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            var hasUnfinishedMod = '@ViewBag.HasUnfinishedMod';
+            var unfinishedModId = '@ViewBag.UnfinishedModId';
+
+            if (hasUnfinishedMod === 'True') {
+                Swal.fire({
+                    title: '發現一個草稿',
+                    text: '你有一個未完成的草稿，要去完成它嗎？',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '完成草稿',
+                    cancelButtonText: '關閉'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '@Url.Action("Edit")' + '?id=' + unfinishedModId;
+                    }
+                });
+            }
         });
     </script>
 }

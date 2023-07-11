@@ -127,7 +127,10 @@
     text-decoration: none;
     color: black;
 }
-
+.rowwrap {
+    display: flex;
+    align-items: center !important
+}
 .GameNameTitle, .titleTitle, .SenderDateTitle, .LastReplyTitle, .statusTitle, .SendernNameTitle {
     padding: 20px;
 }

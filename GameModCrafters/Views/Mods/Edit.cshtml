@@ -5,7 +5,7 @@
     var nameIdentifier = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 }
 
-<div class="container">
+<div class="container my-4">
     <form asp-action="Edit" asp-controller="Mods" method="post">
         <input asp-for="AuthorId" type="hidden"/>
         <input asp-for="ModId" type="hidden" />
@@ -71,7 +71,7 @@
                             付費
                         </label>
                         <input class="form-control" type="text" id="priceInput" disabled>
-                        <div>NTD</div>
+                        <div>Mod Coin</div>
                     </div>
 
                     <input asp-for="Price" type="hidden">
@@ -87,6 +87,7 @@
                                 <p>當前的檔案： <a href="@Model.DownloadLink">下載</a></p>
                             }
                         </div>
+                        <input asp-for="DownloadLink" type="hidden" />
 
                         <div class="col-6">
                             <label for="coverImage" class="form-label">上傳封面圖片</label>
@@ -108,7 +109,7 @@
                     <div class="col-6">
                         <div class="card">
                             <div class="pic" id="croppedImagePreview">
-                                <img src="https://picsum.photos/300/200/?random=${item}" id="previewImage">
+                                <img src="https://fakeimg.pl/300x200/?text=PreviewImage&font=lobster" id="previewImage">
                             </div>
                             <div class="text">
                                 <div class="name_price">
@@ -286,6 +287,13 @@
                 $("#Price").val(inputPrice);
                 console.log(price);
             });
+
+            $('#priceInput').on('keypress', function (evt) {
+                var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+                if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+                    return false;
+                return true;
+            });
         });
     </script>
 
@@ -451,6 +459,7 @@
                     .then(response => response.json())
                     .then(data => {
                         $("#previewImage").attr("src", data.fileUrl);
+                        if()
                         $("#Thumbnail").val(data.fileUrl)
                         $("#cropperModal").modal("hide");
                         cropper.destroy();
@@ -470,7 +479,9 @@
 
         $(() => {
             $("#previewName").text($("#titleInput").val());
-            $("#previewImage").attr("src", $("#Thumbnail").val());
+            if ($("#Thumbnail").val() != ''){
+                $("#previewImage").attr("src", $("#Thumbnail").val());
+            }
         })
 
         $("#GameId").on("change", function () {
@@ -483,7 +494,7 @@
                 $("#previewPrice").text("free");
             } else {
                 var price = $("#priceInput").val();
-                $("#previewPrice").text(price + " NTD");
+                $("#previewPrice").text(price + " Mod Coin");
             }
         }
 
@@ -502,5 +513,18 @@
         $('.createTime').append(formattedDate);
         $('.UpdateTime').append(formattedDate);
 
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#unfinishedModModal').modal('show');
+
+            $('select[name="GameId"]').on('change', function () {
+                var selectedOption = $(this).find('option:selected').text();
+                $('#previewGame').text(selectedOption);
+            });
+
+            $('select[name="GameId"]').trigger('change');
+        });
     </script>
 }
