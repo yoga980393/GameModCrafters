@@ -21,9 +21,13 @@
                 <div id="editor"></div>
                 <input asp-for="CommissionDescription" class="form-control" type="hidden" />
             </div>
-            <div class="mb-3">
+            <div class="mb-3 ">
                 <label asp-for="Budget">預算:</label>
-                <input type="text" class="budgetinput" asp-for="Budget">
+                <div class="d-flex gap-2">
+                    <input type="text" class="budgetinput" asp-for="Budget">
+                    <div>ModCoin</div>
+                </div>
+                
             </div>
             <div class="mb-3">
                 <label asp-for="IsDone">公開委託:</label>
