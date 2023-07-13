@@ -339,6 +339,21 @@
             });
         }
 
+        function ChatBoxPopUp2() {
+            $('.Container').css("bottom", -450)
+
+            $('#ChatBoxSpan').on('click', function () {
+                let ChatBoxHeight = parseInt($('.Container').css('bottom'));
+
+                if (ChatBoxHeight === -450) {
+                    $('.Container').css("bottom", 0)
+                }
+                else {
+                    $('.Container').css("bottom", -450)
+                };
+            });
+        }
+
         function updateNotifications() {
             $.ajax({
                 url: '/Home/GetUnreadNotifications',  
@@ -447,7 +462,7 @@
             ConversationRecord();
             SendButton();
             SearchUser();
-            //ChatBoxPopUp();
+            ChatBoxPopUp2();
             updateNotifications();
             setInterval(updateNotifications, 10000);
             NotificationBtn();
