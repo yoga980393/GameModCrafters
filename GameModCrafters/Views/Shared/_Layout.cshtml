@@ -191,7 +191,6 @@
                         console.log(response);
                         $.get('/Home/GetChatHistory', function (data) {
                             var hasUnread = data.some(item => item.hasUnread);
-                            console.log(hasUnread);
                             if (!hasUnread) {
                                 $('#ChatBoxSpan').removeClass('blink');
                             }
