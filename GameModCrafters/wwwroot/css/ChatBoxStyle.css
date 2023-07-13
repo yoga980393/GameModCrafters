@@ -203,3 +203,13 @@
     font-size:18px;
     padding:5px 20px;
 }
+
+.blink {
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}

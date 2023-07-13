@@ -136,6 +136,7 @@
 
                     if (senderEmail != currentChatPartnerEmail) {
                         chatButton.find('.exclamation-mark').removeClass('markNone');
+                        $('#ChatBoxSpan').addClass('blink');
                     }
                 }
             });
@@ -166,7 +167,11 @@
 
         function ConversationRecord(){
             $.get('/Home/GetChatHistory', function (data) {
-                console.log(data);
+
+                var hasUnread = data.some(item => item.hasUnread);
+                if (hasUnread) {
+                    $('#ChatBoxSpan').addClass('blink');
+                }
 
                 data.forEach(function (item, index) {
                     var roomElement = '<div class="sliderroom"><button class="room-link btn" data-room="' + item.email + '">' + item.email + '<span class="exclamation-mark '
@@ -176,7 +181,7 @@
                 });
 
                 // 綁定按鈕點擊事件
-                $(".room-link").click(function () {
+                $(".room-link").on("click", function () {
                     var receiverId = $(this).data("room");
 
                     $(this).find('.exclamation-mark').addClass('markNone');
@@ -184,6 +189,13 @@
                     // 新增這裡: 發送一個 POST 請求來標記訊息為已讀
                     $.post('/Home/MarkMessagesAsRead', { senderEmail: receiverId }, function (response) {
                         console.log(response);
+                        $.get('/Home/GetChatHistory', function (data) {
+                            var hasUnread = data.some(item => item.hasUnread);
+                            console.log(hasUnread);
+                            if (!hasUnread) {
+                                $('#ChatBoxSpan').removeClass('blink');
+                            }
+                        });
                     });
 
                     // 获取并显示聊天记录
@@ -223,9 +235,11 @@
                     // 為被點擊的按鈕添加 'active' 類別
                     $(this).addClass("active");
                     $(this).parent(".sliderroom").addClass("active");
+
+                    
                 });
 
-                $('.room-link[data-room="' + data[0].email + '"]').click();
+                ChatBoxPopUp(data[0].email);
             });
         }
 
@@ -310,17 +324,18 @@
             });
         }
 
-        function ChatBoxPopUp(){
-            $('.Container').css("bottom", -445)
+        function ChatBoxPopUp(email){
+            $('.Container').css("bottom", -450)
 
             $('#ChatBoxSpan').on('click', function () {
                 let ChatBoxHeight = parseInt($('.Container').css('bottom'));
 
-                if (ChatBoxHeight === -445) {
+                if (ChatBoxHeight === -450) {
                     $('.Container').css("bottom", 0)
+                    $('.room-link[data-room="' + email + '"]').click();
                 }
                 else {
-                    $('.Container').css("bottom", -445)
+                    $('.Container').css("bottom", -450)
                 };
             });
         }
@@ -433,7 +448,7 @@
             ConversationRecord();
             SendButton();
             SearchUser();
-            ChatBoxPopUp();
+            //ChatBoxPopUp();
             updateNotifications();
             setInterval(updateNotifications, 10000);
             NotificationBtn();
