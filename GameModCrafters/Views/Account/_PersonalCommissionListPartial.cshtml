@@ -40,7 +40,7 @@
             <a href="@Url.Action("Details", "Games", new { id = item.GameID })" class="col GameName">
                 @item.GameName
             </a>
-            @if (item.Status != "s01")
+            @if (item.Status == "待接受")
             {
 
                 <a href="@Url.Action("Edit", "Commissions", new { id = item.CommissionId })" class="col-4 title">
@@ -48,18 +48,18 @@
                 </a>
 
             }
-            @if (item.Status == "s02")
+            @if (item.Status == "進行中")
             {
 
-                <a href="@Url.Action("GotoTransactionDetails", "Commissions", new { id = item.CommissionId })" class="col-6 title">
+                <a href="@Url.Action("GotoTransactionDetails", "Commissions", new { id = item.CommissionId })" class="col-4 title">
                     @item.CommissionTitle
                 </a>
 
             }
-            @if (item.Status == "s03")
+            @if (item.Status == "已完成")
             {
 
-                <a href="@Url.Action("FinishCommission", "Commissions", new { id = item.CommissionId })" class="col-6 title">
+                <a href="@Url.Action("FinishCommission", "Commissions", new { id = item.CommissionId })" class="col-4 title">
                     @item.CommissionTitle
                 </a>
 

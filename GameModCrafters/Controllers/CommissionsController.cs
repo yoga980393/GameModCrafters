@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
+using System.Reflection;
 
 namespace GameModCrafters.Controllers
 {
@@ -64,7 +65,6 @@ namespace GameModCrafters.Controllers
             }
             var applicationDbContext = _context.Commissions.Include(c => c.CommissionStatus).Include(c => c.Delegator).Include(c => c.Game);
 
-
                  List<CommissionViewModel> CommisionVM = new List<CommissionViewModel>();
                  CommisionVM = await _context.Commissions
                 .Where(c => c.DelegatorId == usermail)
@@ -84,7 +84,7 @@ namespace GameModCrafters.Controllers
                     Status = c.CommissionStatus.Status
                 })
                .ToListAsync();
-            return View(CommisionVM);
+            return View();
         }
 
 
@@ -539,6 +539,80 @@ namespace GameModCrafters.Controllers
                 uploaded = true,
                 url = Url.Content("~/ModDescriptionImages/" + newFileName) // Update the path here
             });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCommissionsPartial(int? page, string  sortFilter, string orderFilter, int pageSize, string searchString, string gameName, string status)
+        {
+            int pageNumber = (page ?? 1); // 當前的頁數，如果沒有提供，預設為第一頁
+
+
+            var usermail = User.FindFirstValue(ClaimTypes.Email);
+
+            // 初始查詢
+            var commissionsQuery = _context.Commissions
+                .Where(c => c.DelegatorId == usermail)
+                .Include(c => c.Delegator)
+                .Include(c => c.CommissionStatus)
+                .Include(c => c.Game)
+                .AsQueryable();
+
+            // 應用搜尋過濾
+            if (!string.IsNullOrWhiteSpace(gameName))
+            {
+                commissionsQuery = commissionsQuery.Where(c => c.Game.GameName.Contains(gameName));
+            }
+
+            // 應用搜尋過濾
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                commissionsQuery = commissionsQuery.Where(c => c.CommissionTitle.Contains(searchString));
+            }
+
+            // 應用搜尋過濾
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                commissionsQuery = commissionsQuery.Where(c => c.CommissionStatusId == status);
+            }
+
+            // 排序過濾
+            switch (sortFilter)
+            {
+                case "CreateTime":
+                    commissionsQuery = orderFilter == "asc" ? commissionsQuery.OrderBy(c => c.CreateTime) : commissionsQuery.OrderByDescending(c => c.CreateTime);
+                    break;
+                case "updateTime":
+                    commissionsQuery = orderFilter == "asc" ? commissionsQuery.OrderBy(c => c.UpdateTime) : commissionsQuery.OrderByDescending(c => c.UpdateTime);
+                    break;
+                case "name":
+                    commissionsQuery = orderFilter == "asc" ? commissionsQuery.OrderBy(c => c.CommissionTitle) : commissionsQuery.OrderByDescending(c => c.CommissionTitle);
+                    break;
+            }
+
+            // 計算總頁數
+            var totalItems = await commissionsQuery.CountAsync();
+            var totalPages = (totalItems + pageSize - 1) / pageSize;
+
+            // 獲取該頁的數據
+            var commissions = await commissionsQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(c => new CommissionViewModel
+                {
+                    GameName =  c.Game.GameName,
+                    GameID = c.GameId,
+                    CommissionId = c.CommissionId,
+                    DelegatorName = c.Delegator.Username,
+                    CommissionTitle = c.CommissionTitle,
+                    Budget = c.Budget,
+                    CreateTime = c.CreateTime,
+                    UpdateTime = c.UpdateTime,
+                    Status = c.CommissionStatus.Status
+                })
+                .ToListAsync();
+
+            // 返回包含數據和總頁數的 ViewModel
+            return PartialView("_PersonalCommissionSearch", new CommissionsViewModel { Commissions = commissions, TotalPages = totalPages });
         }
     }
 }

@@ -29,7 +29,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\ModImages\" />
     <Folder Include="wwwroot\BackgroundImages\" />
-    <Folder Include="wwwroot\GameImages\" />
     <Folder Include="wwwroot\GameArchive\" />
     <Folder Include="wwwroot\ModDescriptionImages\" />
     <Folder Include="wwwroot\TransactionFile\" />

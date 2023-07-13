@@ -142,7 +142,16 @@ namespace GameModCrafters.Data
                         Description = "owTest",
                         Thumbnail = "/GameImages/owImg.jpg",
                         CreateTime = new DateTime(2023, 5, 29, 14, 15, 0)
+                    },
+                    new Game
+                    {
+                        GameId = "g004",
+                        GameName = "艾爾登法環",
+                        Description = "EldenRing",
+                        Thumbnail = "/GameImages/eldenring.jpg",
+                        CreateTime = new DateTime(2023, 5, 29, 14, 15, 0)
                     }
+
                 );
 
             modelBuilder.Entity<Tag>()

@@ -923,7 +923,6 @@ namespace GameModCrafters.Controllers
             var commissionsQuery = _context.Commissions
                 .Where(c => c.DelegatorId == usermail)
                 .Where(c => c.IsDone)
-                .Where(c => c.CommissionStatusId == "s01")
                 .Include(c => c.Delegator)
                 .Include(c => c.CommissionStatus)
                 .Include(c => c.Game)
