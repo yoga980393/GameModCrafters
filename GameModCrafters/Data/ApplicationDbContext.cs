@@ -124,7 +124,7 @@ namespace GameModCrafters.Data
                         GameId = "g001",
                         GameName = "Minecraft",
                         Description = "mcTest",
-                        Thumbnail = "/GameImages/mcImg.jpg",
+                        Thumbnail = "/GameImages/mcImgmcImg.jpg",
                         CreateTime = new DateTime(2023, 5, 27, 17, 21, 0)
                     },
                     new Game
@@ -149,9 +149,16 @@ namespace GameModCrafters.Data
                         GameName = "艾爾登法環",
                         Description = "EldenRing",
                         Thumbnail = "/GameImages/eldenring.jpg",
-                        CreateTime = new DateTime(2023, 5, 29, 14, 15, 0)
+                        CreateTime = new DateTime(2023, 5, 30, 14, 15, 0)
+                    },
+                    new Game
+                    {
+                        GameId = "g005",
+                        GameName = "魔物獵人",
+                        Description = "魔物獵人",
+                        Thumbnail = "/GameImages/MH.jpg",
+                        CreateTime = new DateTime(2023, 5, 31, 14, 15, 0)
                     }
-
                 );
 
             modelBuilder.Entity<Tag>()

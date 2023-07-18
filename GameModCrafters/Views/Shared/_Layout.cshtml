@@ -245,12 +245,23 @@
         function SearchUser(){
             $('#searchButton').click(function () {
                 var userEmail = $('#userSearchInput').val();
+                var currentUserEmail = "@(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value)";
+                console.log(userEmail)
+                console.log(currentUserEmail)
                 if (userEmail) {
                     var existingButton = $('.room-link[data-room="' + userEmail + '"]');
                     if (existingButton.length > 0) {
                         // 如果已經在列表中，則觸發click事件
                         existingButton.click();
-                    } else {
+                    } 
+                    else if (userEmail == currentUserEmail) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '錯誤',
+                            text: '請誤輸入自己的Email'
+                        });
+                    }                    
+                    else {
                         $.get('/Home/GetUserByEmail?email=' + userEmail)
                             .done(function (data) {
                                 var roomElement = '<div class="sliderroom"><button class="room-link btn" data-room="' + userEmail + '">' + userEmail + '</button></div>';
