@@ -7,10 +7,13 @@
 }
 <input type="hidden" name="keyword" id="inputkeyword"/>
 <div class="wraped">
-    @if (Model != null && Model.Mods.Count > 0)
+    @if (Model != null && Model.Mods.Count > 0 || Model.Games.Count > 0)
     {
         @await Html.PartialAsync("_SearchGameListPartial", Model)
+        
         @await Html.PartialAsync("_SearchModListPartial", Model)
+        
+        
 
     }
     else
