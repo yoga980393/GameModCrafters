@@ -1,7 +1,9 @@
 ﻿@model NavbarSearchResultViewmodel
 <div class="container my-4 mod Game">
     <h3>搜尋結果：</h3>
-    <div class="row GameRow" id="modCardRow">
+    @if (Model != null && Model.Games.Count > 0)
+    {
+         <div class="row GameRow" id="modCardRow">
         @foreach (var game in Model.Games)
         {
             <div class="col-12 col-md-3 mt-3">
@@ -51,5 +53,10 @@
                 </ul>
             </nav>
         </div>
-    </div>
+        </div>
+    }
+    else
+    {
+        <div class="row nofound" id="modCardRow"><p>找不到任何相關搜尋</p></div>
+    }
 </div>

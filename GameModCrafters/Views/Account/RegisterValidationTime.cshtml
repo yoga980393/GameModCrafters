@@ -9,7 +9,7 @@
         <div class="text">
 
             <p>請去確認您的信箱確認信件並點擊連結...</p>
-            <p>連結將在 <span id="validationminute">1</span>分<span id="validationsecond">0</span>秒後失效...</p>
+            <p>連結將在 <span id="validationminute">5</span>分<span id="validationsecond">0</span>秒後失效...</p>
             <div id="resendEmailContainer">
                 <button class="btn btn-dark" id="resendEmailButton" type="button">重新傳送郵件</button>
             </div>
@@ -27,7 +27,7 @@
         var secondElement = document.getElementById('validationsecond');
 
         // 設置倒數時間（單位：秒）
-        var initialCountdown = 60; // 初始倒數時間為60秒
+        var initialCountdown = 300; // 初始倒數時間為60秒
         var countdown = initialCountdown;
 
         // 定義更新倒數時間的函數

@@ -511,7 +511,7 @@
                     return;
                 }
                 // 发送 AJAX 请求
-                $.get('/Home/Search', { keyword: keyword }, function (data) {
+                $.get('/Home/ SearchResult', { keyword: keyword }, function (data) {
                     $('#searchResults').append(data); // 将搜索结果渲染到页面中
                 });
             });

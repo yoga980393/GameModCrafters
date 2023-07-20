@@ -207,7 +207,47 @@ namespace GameModCrafters.Controllers
             return vm;
         }
 
-
+        private async Task<AutoSearchViewModel> GetSearchResults(string keyword)
+        {
+            var searchResultsGame = await _context.Games
+                .Where(g => g.GameName.Contains(keyword))
+                .ToListAsync();
+            var searchResultMod = await _context.Mods
+                .Where(m => m.ModName.Contains(keyword))
+                .Where(m => m.IsDone)
+                .Include(m => m.Author)
+                .Include(m => m.Game)
+                .Include(m => m.ModLikes)
+                .Include(m => m.Favorite)
+                .Include(m => m.Downloaded)
+                .Include(m => m.ModTags)
+                    .ThenInclude(mt => mt.Tag)
+                .Select(m => new ModViewModel
+                {
+                    ModId = m.ModId,
+                    Thumbnail = m.Thumbnail,
+                    ModName = m.ModName,
+                    Price = (int)m.Price,
+                    GameName = m.Game.GameName,
+                    AuthorName = m.Author.Username,
+                    CreateTime = m.CreateTime,
+                    UpdateTime = m.UpdateTime,
+                    Description = m.Description,
+                    Capacity = 0,
+                    LikeCount = m.ModLikes.Count,
+                    FavoriteCount = m.Favorite.Count,
+                    DownloadCount = m.Downloaded.Count,
+                    TagNames = m.ModTags.Select(mt => mt.Tag.TagName).ToList()
+                })
+                .ToListAsync();
+            var vm = new AutoSearchViewModel()
+            {
+                Games = searchResultsGame,
+                Mods = searchResultMod,
+                Count = searchResultMod.Count + searchResultsGame.Count
+            };
+            return vm;
+        }
 
         //搜尋按鈕按下11
 
@@ -218,7 +258,7 @@ namespace GameModCrafters.Controllers
 
             int ModpageSize = 8;
             int GamepagSize = 8;
-            var searchResults = await GetAutoSearchResults(keyword);
+            var searchResults = await GetSearchResults(keyword);
             var pagedMods = searchResults.Mods
               .Skip((page - 1) * ModpageSize)
               .Take(ModpageSize)
@@ -249,7 +289,7 @@ namespace GameModCrafters.Controllers
         {
 
             int pageSize = 8;
-            var searchResults = await GetAutoSearchResults(keyword);
+            var searchResults = await GetSearchResults(keyword);
             var pagedMods = searchResults.Mods
               .Skip((page - 1) * pageSize)
               .Take(pageSize)
