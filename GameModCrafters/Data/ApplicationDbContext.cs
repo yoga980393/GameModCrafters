@@ -171,7 +171,8 @@ namespace GameModCrafters.Data
                     new Tag { TagId = "t006", TagName = "音樂" },
                     new Tag { TagId = "t007", TagName = "美術" },
                     new Tag { TagId = "t008", TagName = "程式" },
-                    new Tag { TagId = "t009", TagName = "其他" }
+                    new Tag { TagId = "t009", TagName = "怪物" },
+                    new Tag { TagId = "t010", TagName = "其他" }
                 );
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
