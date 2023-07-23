@@ -78,8 +78,8 @@ namespace GameModCrafters.Controllers
             },
                 redirect_urls = new RedirectUrls
                 {
-                    return_url = "https://localhost:44347/payments/success",
-                    cancel_url = "https://localhost:44347/payments/cancel"
+                    return_url = "https://gamemodcrafters20230713133136.azurewebsites.net/payments/success",
+                    cancel_url = "https://gamemodcrafters20230713133136.azurewebsites.net/payments/cancel"
                 }
             };
 
