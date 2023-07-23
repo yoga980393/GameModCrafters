@@ -30,8 +30,8 @@
 
         <div class="More_mod_mark paging_title active">
             <div class="titleorALL">
-                <div class="text">
-                    <h3>更多MOD：</h3>
+                <div class="text" id="myTarget">
+                    <h3>搜索MOD：</h3>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                         <input type="text" name="searchString" placeholder="Search" id="Search" class="form-control">
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary">應用過濾</button>
+                        <button type="submit" class="btn btn-primar">應用過濾</button>
                     </div>
                 </form>
 
@@ -348,5 +348,21 @@
                 loadCommissions(page);
             });
         }
+
+        $(document).ready(function () {
+            // 檢查sessionStorage是否有儲存滾動位置
+            if (sessionStorage.getItem('scrollPosition')) {
+                // 取得滾動位置並設定為當前滾動位置
+                $(window).scrollTop(sessionStorage.getItem('scrollPosition'));
+                // 使用後清除該儲存值
+                sessionStorage.removeItem('scrollPosition');
+            }
+
+            // 當表單提交時，儲存當前滾動位置
+            $('#filterForm').on('submit', function () {
+                var targetPosition = $('#myTarget').offset().top;  // 替換'#myTarget'為你的目標元素id
+                sessionStorage.setItem('scrollPosition', targetPosition);
+            });
+        });
         </script>
 }
