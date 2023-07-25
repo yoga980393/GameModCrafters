@@ -1,6 +1,6 @@
 ﻿
 .agile-voltsub {
-    width: 35%;
+    width: 45%;
     margin: 0 auto;
     background: rgba(20, 20, 20, 0.52);
     box-sizing: border-box;
@@ -58,7 +58,7 @@
             color: #000;
             border: none;
             outline: none;
-            width: 45%;
+            width: fit-content;
             margin: 2em auto 0;
             display: block;
             padding: 0.5em 0.5em;
